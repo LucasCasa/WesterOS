@@ -1,10 +1,10 @@
 #include "video_manager.h"
 
-static uint8_t * const video = (uint8_t*)0xB8000;
-static uint8_t * currentVideo = (uint8_t*)0xB8000;
+static uint8_t * const video = (uint8_t*) 0xA0000;
+static uint8_t * currentVideo = (uint8_t*) 0xA0000;
 static uint8_t * saved_current_video;
 static uint8_t * saved_command_line;
-static uint8_t * command_line = (uint8_t*)0xB8000;
+static uint8_t * command_line = (uint8_t*) 0xA0000;
 
 uint8_t str_modifier = 0x02;
 uint8_t num_modifier = 0x04;
@@ -52,8 +52,8 @@ void draw_new_line(){
 	set_command_line();
 }
 void reset_current_video(){
-	currentVideo = video;
-	draw_new_line();
+	/*currentVideo = video;
+	draw_new_line();*/
 	set_command_line();
 }
 void save_screen(){
@@ -103,7 +103,7 @@ void sys_write(char c,uint8_t mod){
 			}
 			break;
 	}
-	check_end_of_screen(aux);	
+	check_end_of_screen(aux);
 }
 
 char check_end_of_screen(char type){
@@ -131,9 +131,14 @@ void scroll(){
 }
 
 void erase_screen(){
+	/*
 	for(int j = 0; j<25*160;j++){
 		video[j++] = 0;
 		video[j] = (num_modifier & 0xF0) + (num_modifier >> 4);
+	}*/
+	for(int j = 0; j<9*(1024*128);j++){
+		*(currentVideo++) = 'A';
+		currentVideo++;
 	}
 }
 void print_standby(){
@@ -143,7 +148,7 @@ void print_standby(){
 		saved_modifier = get_modifier();
 		modify(0x22);
 	}
-	
+
 }
 void set_command_line(){
 	command_line = currentVideo - ((uint64_t)(currentVideo - 0xB8000) % 160);
