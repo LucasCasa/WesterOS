@@ -8,6 +8,7 @@ IDT_entry* IDT;
 extern void _sti();
 extern void _write_port(char port,char value);
 extern void _int_timer_hand();
+extern void setCurrentVideo(uint8_t* a);
 extern void _int_keyboard_hand();
 extern int _int80_hand();
 extern void _int_start_sound();
@@ -21,10 +22,21 @@ void set_interrupts();
 int kmain(){
 	IDT = 0;
 	set_interrupts();
+	init_serial();
 	return 0;
 }
+void init_serial() {
+	int PORT = 0x3f8;
+   outb(PORT + 1, 0x00);    // Disable all interrupts
+   outb(PORT + 3, 0x80);    // Enable DLAB (set baud rate divisor)
+   outb(PORT + 0, 0x03);    // Set divisor to 3 (lo byte) 38400 baud
+   outb(PORT + 1, 0x00);    //                  (hi byte)
+   outb(PORT + 3, 0x03);    // 8 bits, no parity, one stop bit
+   outb(PORT + 2, 0xC7);    // Enable FIFO, clear them, with 14-byte threshold
+   outb(PORT + 4, 0x0B);    // IRQs enabled, RTS/DSR set
+}
 
-void set_interrupts() {	
+void set_interrupts() {
 	setup_IDT_entry(0x20,0x08,(uint64_t) &_int_timer_hand);
 	setup_IDT_entry(0x21,0x08,(uint64_t) &_int_keyboard_hand);
 	setup_IDT_entry(0x80,0x08,(uint64_t) &_int80_hand);

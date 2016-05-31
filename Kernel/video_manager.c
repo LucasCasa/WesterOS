@@ -1,10 +1,10 @@
 #include "video_manager.h"
-
-static uint8_t * const video = (uint8_t*) 0xA0000;
-static uint8_t * currentVideo = (uint8_t*) 0xA0000;
+void write_serial(char a);
+static uint8_t * video = (uint8_t*) 0xB8000;
+static uint8_t * currentVideo = (uint8_t*) 0xB8000;
 static uint8_t * saved_current_video;
 static uint8_t * saved_command_line;
-static uint8_t * command_line = (uint8_t*) 0xA0000;
+static uint8_t * command_line = (uint8_t*) 0xB8000;
 
 uint8_t str_modifier = 0x02;
 uint8_t num_modifier = 0x04;
@@ -52,8 +52,7 @@ void draw_new_line(){
 	set_command_line();
 }
 void reset_current_video(){
-	/*currentVideo = video;
-	draw_new_line();*/
+	draw_new_line();
 	set_command_line();
 }
 void save_screen(){
@@ -83,6 +82,7 @@ void sys_write(char c,uint8_t mod){
 	char aux = 0;
 	switch(c){
 		case '\n':
+		erase_screen();
 			new_line();
 			aux = 1;
 			break;
@@ -131,15 +131,33 @@ void scroll(){
 }
 
 void erase_screen(){
+	while(1){
+	static uint32_t curr = 2;
+	uint8_t* st = (*(uint32_t*)0x5080);
+	for(int i = 0; i< 1024*768*3;i++){
+		*(st + i++) = curr & 0xFF;
+		*(st + i++) = (curr & 0xFF00) >> 8;
+		*(st +i) = (curr & 0xFF0000) >> 16;
+	}
+	curr+=10;
+}
 	/*
 	for(int j = 0; j<25*160;j++){
 		video[j++] = 0;
 		video[j] = (num_modifier & 0xF0) + (num_modifier >> 4);
 	}*/
-	for(int j = 0; j<9*(1024*128);j++){
-		*(currentVideo++) = 'A';
-		currentVideo++;
-	}
+	uint16_t s = *((uint16_t*)0x5084);
+	write_serial('a');
+	write_serial('\n');
+}
+int is_transmit_empty() {
+   return inb(0x3F8 + 5) & 0x20;
+}
+
+void write_serial(char a) {
+   while (is_transmit_empty() == 0);
+
+   outb(0x3F8,a);
 }
 void print_standby(){
 	if(get_modifier() == 0x22){
