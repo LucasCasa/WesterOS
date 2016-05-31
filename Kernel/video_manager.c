@@ -131,16 +131,68 @@ void scroll(){
 }
 
 void erase_screen(){
-	while(1){
-	static uint32_t curr = 2;
 	uint8_t* st = (*(uint32_t*)0x5080);
-	for(int i = 0; i< 1024*768*3;i++){
-		*(st + i++) = curr & 0xFF;
-		*(st + i++) = (curr & 0xFF00) >> 8;
-		*(st +i) = (curr & 0xFF0000) >> 16;
+	int offsetx = 400;
+	int offsety = 400;
+	int modx = 1;
+	int mody = 1;
+	int offsetx2 = 1;
+	int offsety2 = 1;
+	int modx2 = 1;
+	int mody2 = 1;
+	while(1){
+	/*for(int i = 0; i< 1024*768*3;i++){
+		st[i] = 0;
+	}*/
+	uint8_t* st = (*(uint32_t*)0x5080);
+
+	int totaloffset = offsety*1024*3 + offsetx*3;
+	int totaloffset2 = offsety2*1024*3 + offsetx2*3;
+
+	for(int i = 0; i<gimp_image.height;i++){
+		for(int j = 0;j<gimp_image.width*3;j++){
+			st[totaloffset + j+2 + 1024*i*3] = gimp_image.pixel_data[j + i*gimp_image.width*3];
+			j++;
+			st[totaloffset + j + 1024*i*3] = gimp_image.pixel_data[j + i*gimp_image.width*3];
+			j++;
+			st[totaloffset + j-2 + 1024*i*3] = gimp_image.pixel_data[j + i*gimp_image.width*3];
+		}
 	}
-	curr+=10;
-}
+	if(offsety + gimp_image.height >= 768){
+		mody = -1;
+	}else if(offsety <= 0){
+		mody = 1;
+	}
+	if(offsetx + gimp_image.width >= 1024){
+		modx = -1;
+	}else if(offsetx <= 0){
+		modx = 1;
+	}
+	offsetx+= modx;
+	offsety+= mody;
+
+		for(int i = 0; i<gimp_image2.height;i++){
+			for(int j = 0;j<gimp_image2.width*3;j++){
+				st[totaloffset2 + j+2 + 1024*i*3] = gimp_image2.pixel_data[j + i*gimp_image2.width*3];
+				j++;
+				st[totaloffset2 + j + 1024*i*3] = gimp_image2.pixel_data[j + i*gimp_image2.width*3];
+				j++;
+				st[totaloffset2 + j-2 + 1024*i*3] = gimp_image2.pixel_data[j + i*gimp_image2.width*3];
+			}
+		}
+		if(offsety2 + gimp_image2.height >= 768){
+			mody2 = -1;
+		}else if(offsety2 <= 0){
+			mody2 = 1;
+		}
+		if(offsetx2 + gimp_image2.width >= 1024){
+			modx2 = -1;
+		}else if(offsetx2 <= 0){
+			modx2 = 1;
+		}
+		offsetx2+= modx2;
+		offsety2+= mody2;
+	}
 	/*
 	for(int j = 0; j<25*160;j++){
 		video[j++] = 0;

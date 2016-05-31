@@ -3,6 +3,8 @@
 
 #include "stdint.h"
 #include "sys_lib.h"
+#include "tar.h"
+#include "stark.h"
 
 void sys_write(char c,uint8_t mod);
 char sys_get_screen_char();
@@ -21,4 +23,4 @@ void erase_screen();
 void print_standby();
 void set_command_line();
 
-#endif
+#endif //29880
