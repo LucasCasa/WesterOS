@@ -1,7 +1,10 @@
 include Makefile.inc
 SAMPLE_DATA=0001-sampleDataModule.bin
 
-all: sampleCodeModule sampleDataModule
+all: ImageDataModule sampleCodeModule sampleDataModule
+
+ImageDataModule:
+	cd imageDataModule; make all
 
 sampleCodeModule:
 	cd SampleCodeModule; make all
@@ -12,6 +15,7 @@ sampleDataModule:
 
 clean:
 	cd SampleCodeModule; make clean
+	cd imageDataModule; make clean
 	rm -rf *.bin
 
 

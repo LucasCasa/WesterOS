@@ -1,11 +1,7 @@
 /* GIMP RGB C-Source image dump (tar.c) */
+#include "image.h"
 
-static const struct {
-  unsigned int 	 width;
-  unsigned int 	 height;
-  unsigned int 	 bytes_per_pixel; /* 2:RGB16, 3:RGB, 4:RGBA */
-  unsigned char	 pixel_data[90 * 93 * 3 + 1];
-} gimp_image = {
+const Image tar_img = {
   90, 93, 3,
   "\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2"
   "\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2\2"

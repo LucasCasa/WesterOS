@@ -5,6 +5,8 @@ static uint8_t * currentVideo = (uint8_t*) 0xB8000;
 static uint8_t * saved_current_video;
 static uint8_t * saved_command_line;
 static uint8_t * command_line = (uint8_t*) 0xB8000;
+extern void _change_to_graphics();
+Image image;
 
 uint8_t str_modifier = 0x02;
 uint8_t num_modifier = 0x04;
@@ -52,6 +54,7 @@ void draw_new_line(){
 	set_command_line();
 }
 void reset_current_video(){
+	currentVideo = video;
 	draw_new_line();
 	set_command_line();
 }
@@ -82,7 +85,6 @@ void sys_write(char c,uint8_t mod){
 	char aux = 0;
 	switch(c){
 		case '\n':
-		erase_screen();
 			new_line();
 			aux = 1;
 			break;
@@ -129,9 +131,9 @@ void scroll(){
 		j++;
 	}
 }
-
-void erase_screen(){
+void graphic_screensaver(){
 	uint8_t* st = (*(uint32_t*)0x5080);
+
 	int offsetx = 400;
 	int offsety = 400;
 	int modx = 1;
@@ -141,36 +143,32 @@ void erase_screen(){
 	int modx2 = 1;
 	int mody2 = 1;
 	while(1){
-	/*for(int i = 0; i< 1024*768*3;i++){
-		st[i] = 0;
-	}*/
-	uint8_t* st = (*(uint32_t*)0x5080);
 
 	int totaloffset = offsety*1024*3 + offsetx*3;
 	int totaloffset2 = offsety2*1024*3 + offsetx2*3;
 
-	for(int i = 0; i<gimp_image.height;i++){
-		for(int j = 0;j<gimp_image.width*3;j++){
-			st[totaloffset + j+2 + 1024*i*3] = gimp_image.pixel_data[j + i*gimp_image.width*3];
+	for(int i = 0; i<image.height;i++){
+		for(int j = 0;j<image.width*3;j++){
+			st[totaloffset + j+2 + 1024*i*3] = image.pixel_data[j + i*image.width*3];
 			j++;
-			st[totaloffset + j + 1024*i*3] = gimp_image.pixel_data[j + i*gimp_image.width*3];
+			st[totaloffset + j + 1024*i*3] = image.pixel_data[j + i*image.width*3];
 			j++;
-			st[totaloffset + j-2 + 1024*i*3] = gimp_image.pixel_data[j + i*gimp_image.width*3];
+			st[totaloffset + j-2 + 1024*i*3] = image.pixel_data[j + i*image.width*3];
 		}
 	}
-	if(offsety + gimp_image.height >= 768){
+	if(offsety + image.height >= 768){
 		mody = -1;
 	}else if(offsety <= 0){
 		mody = 1;
 	}
-	if(offsetx + gimp_image.width >= 1024){
+	if(offsetx + image.width >= 1024){
 		modx = -1;
 	}else if(offsetx <= 0){
 		modx = 1;
 	}
 	offsetx+= modx;
 	offsety+= mody;
-
+/*
 		for(int i = 0; i<gimp_image2.height;i++){
 			for(int j = 0;j<gimp_image2.width*3;j++){
 				st[totaloffset2 + j+2 + 1024*i*3] = gimp_image2.pixel_data[j + i*gimp_image2.width*3];
@@ -191,16 +189,14 @@ void erase_screen(){
 			modx2 = 1;
 		}
 		offsetx2+= modx2;
-		offsety2+= mody2;
+		offsety2+= mody2;*/
 	}
-	/*
+}
+void erase_screen(){
 	for(int j = 0; j<25*160;j++){
 		video[j++] = 0;
 		video[j] = (num_modifier & 0xF0) + (num_modifier >> 4);
-	}*/
-	uint16_t s = *((uint16_t*)0x5084);
-	write_serial('a');
-	write_serial('\n');
+	}
 }
 int is_transmit_empty() {
    return inb(0x3F8 + 5) & 0x20;

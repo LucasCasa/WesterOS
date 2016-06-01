@@ -384,6 +384,7 @@ make_interrupt_gates: 			; make gates for the other interrupts
 	mov word [0x09*16], exception_gate_09
 	mov word [0x0A*16], exception_gate_10
 	mov word [0x0B*16], exception_gate_11
+	mov word [0x0B*16], exception_gate_11
 	mov word [0x0C*16], exception_gate_12
 	mov word [0x0D*16], exception_gate_13
 	mov word [0x0E*16], exception_gate_14

@@ -3,8 +3,7 @@
 
 #include "stdint.h"
 #include "sys_lib.h"
-#include "tar.h"
-#include "stark.h"
+#include "image.h"
 
 void sys_write(char c,uint8_t mod);
 char sys_get_screen_char();

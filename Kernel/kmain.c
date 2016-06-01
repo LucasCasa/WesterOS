@@ -12,7 +12,8 @@ extern void setCurrentVideo(uint8_t* a);
 extern void _int_keyboard_hand();
 extern int _int80_hand();
 extern void _int_start_sound();
-
+extern void _set_graphics();
+extern void _change_mode();
 
 
 
@@ -23,6 +24,8 @@ int kmain(){
 	IDT = 0;
 	set_interrupts();
 	init_serial();
+	_set_graphics();
+
 	return 0;
 }
 void init_serial() {
