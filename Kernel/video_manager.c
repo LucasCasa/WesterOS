@@ -80,6 +80,11 @@ void new_line(){
 	aux = (uint64_t)currentVideo - 0xB8000;
 	currentVideo = (uint8_t*)(0xB8000 + (aux + 160) - (aux % 160));
 	draw_new_line();
+
+	if(graphic_video != 0){
+		int currentline = ((current_graphic_video - graphic_video) / (1024*3));
+		current_graphic_video = graphic_video + 1024*3*currentline + (1024*3*LETTER_HEIGHT);
+	}
 }
 void sys_write(char c,uint8_t mod){
 	char aux = 0;
@@ -122,24 +127,17 @@ void put_graphics(char c){
 		int off2 = off*1024*3 + 1024*3 + 1024*3*LETTER_HEIGHT;
 		current_graphic_video = graphic_video + off2;
 	}
-	if(c == ' '){
-
-	}else if(isNumber(c)){
-
-	}else{
-		int p = toUpper(c) - 'A';
 	for(int i = 0; i<LETTER_HEIGHT;i++){
 		int h = 0;
 		for(int j = 0; j<LETTER_WIDTH*3;j++){
-			current_graphic_video[totaloffset + j] = lettersf[p].pixel_data[h+ i*LETTER_WIDTH] * 255;
+			current_graphic_video[totaloffset + j] = lettersf[c].pixel_data[h+ i*LETTER_WIDTH] * 255;
 			j++;
-			current_graphic_video[totaloffset + j] = lettersf[p].pixel_data[h+ i*LETTER_WIDTH] * 255;
+			current_graphic_video[totaloffset + j] = lettersf[c].pixel_data[h+ i*LETTER_WIDTH] * 255;
 			j++;
-			current_graphic_video[totaloffset + j] = lettersf[p].pixel_data[h+ i*LETTER_WIDTH] * 255;
+			current_graphic_video[totaloffset + j] = lettersf[c].pixel_data[h+ i*LETTER_WIDTH] * 255;
 			h++;
 		}
 		totaloffset += 1024*3;
-	}
 	}
 	current_graphic_video = current_graphic_video + LETTER_WIDTH*3;
 }
