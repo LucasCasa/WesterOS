@@ -56,7 +56,12 @@ int isNumber(char a){
 	else
 		return 0;
 }
-
+char toUpper(char c){
+	if(c >= 'a' && c<= 'z'){
+		return c + 'A' - 'a';
+	}
+	return c;
+}
 void print_message(char* message, uint8_t mod){
 	int i = 0;
 	while(message[i] != 0){
@@ -73,4 +78,3 @@ void print_number(uint32_t n){
 		sys_write((n%10)+'0',0xFF);
 	}
 }
-

@@ -1,13 +1,13 @@
 #include "video_manager.h"
+#include "letter.h"
 void write_serial(char a);
 static uint8_t * video = (uint8_t*) 0xB8000;
 static uint8_t * currentVideo = (uint8_t*) 0xB8000;
 static uint8_t * saved_current_video;
 static uint8_t * saved_command_line;
 static uint8_t * command_line = (uint8_t*) 0xB8000;
-extern void _change_to_graphics();
-Image image;
-
+uint8_t * graphic_video = 0;
+uint8_t * current_graphic_video = 0;
 uint8_t str_modifier = 0x02;
 uint8_t num_modifier = 0x04;
 
@@ -93,21 +93,56 @@ void sys_write(char c,uint8_t mod){
 		case 0:
 			break;
 		default:
-			*(currentVideo++) = c;
-			if(mod == 0xFF){
-				if(isNumber(c)){
-					*(currentVideo++) = num_modifier;
-				}else{
-					*(currentVideo++) = str_modifier;
-				}
-			}else{
-				*(currentVideo++) = mod;
-			}
-			break;
+			put_char(c,mod);
+		break;
 	}
 	check_end_of_screen(aux);
 }
+void put_char(char c,uint8_t mod){
+	put_graphics(c);
+	*(currentVideo++) = c;
+	if(mod == 0xFF){
+		if(isNumber(c)){
+			*(currentVideo++) = num_modifier;
+		}else{
+			*(currentVideo++) = str_modifier;
+		}
+	}else{
+		*(currentVideo++) = mod;
+	}
+}
+void put_graphics(char c){
+	if(graphic_video == 0){
+	graphic_video = (*(uint32_t*)0x5080);
+	current_graphic_video = (*(uint32_t*)0x5080);
+	}
+	int totaloffset = 0;
+	if(((current_graphic_video - graphic_video) % (1024*3)) > ((current_graphic_video - graphic_video + LETTER_WIDTH) % (1024*3))){
+		int off = (current_graphic_video - graphic_video) / (1024*3);
+		int off2 = off*1024*3 + 1024*3 + 1024*3*LETTER_HEIGHT;
+		current_graphic_video = graphic_video + off2;
+	}
+	if(c == ' '){
 
+	}else if(isNumber(c)){
+
+	}else{
+		int p = toUpper(c) - 'A';
+	for(int i = 0; i<LETTER_HEIGHT;i++){
+		int h = 0;
+		for(int j = 0; j<LETTER_WIDTH*3;j++){
+			current_graphic_video[totaloffset + j] = lettersf[p].pixel_data[h+ i*LETTER_WIDTH] * 255;
+			j++;
+			current_graphic_video[totaloffset + j] = lettersf[p].pixel_data[h+ i*LETTER_WIDTH] * 255;
+			j++;
+			current_graphic_video[totaloffset + j] = lettersf[p].pixel_data[h+ i*LETTER_WIDTH] * 255;
+			h++;
+		}
+		totaloffset += 1024*3;
+	}
+	}
+	current_graphic_video = current_graphic_video + LETTER_WIDTH*3;
+}
 char check_end_of_screen(char type){
 	if(currentVideo >= (uint8_t *)(0xB8000 + 160*25)){
 		scroll();
@@ -131,9 +166,9 @@ void scroll(){
 		j++;
 	}
 }
-void graphic_screensaver(){
+void screensaver(){
+	/*
 	uint8_t* st = (*(uint32_t*)0x5080);
-
 	int offsetx = 400;
 	int offsety = 400;
 	int modx = 1;
@@ -143,7 +178,7 @@ void graphic_screensaver(){
 	int modx2 = 1;
 	int mody2 = 1;
 	while(1){
-
+	uint8_t* st = (*(uint32_t*)0x5080);
 	int totaloffset = offsety*1024*3 + offsetx*3;
 	int totaloffset2 = offsety2*1024*3 + offsetx2*3;
 
@@ -189,8 +224,8 @@ void graphic_screensaver(){
 			modx2 = 1;
 		}
 		offsetx2+= modx2;
-		offsety2+= mody2;*/
-	}
+		offsety2+= mody2;
+	}*/
 }
 void erase_screen(){
 	for(int j = 0; j<25*160;j++){
