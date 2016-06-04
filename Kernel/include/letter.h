@@ -1,11 +1,11 @@
 #ifndef _LETTERS_H_
 #define _LETTERS_H_
 
-#define LETTER_WIDTH    12
-#define LETTER_HEIGHT   9
+#define LETTER_WIDTH    20//12
+#define LETTER_HEIGHT   20//9
 
 typedef struct letterf{
-   char pixel_data[LETTER_HEIGHT * LETTER_WIDTH];
+   char pixel_data[9 * 12];
 } letterf;
 
 letterf lettersf[127] = {{{

@@ -1,5 +1,6 @@
 #include "video_manager.h"
 #include "letter.h"
+Image* font = (Image*)0x800000;
 void write_serial(char a);
 static uint8_t * video = (uint8_t*) 0xB8000;
 static uint8_t * currentVideo = (uint8_t*) 0xB8000;
@@ -117,29 +118,35 @@ void put_char(char c,uint8_t mod){
 	}
 }
 void put_graphics(char c){
+	int totaloffset = 0;
+	uint32_t fontoffset = 0;
 	if(graphic_video == 0){
 	graphic_video = (*(uint32_t*)0x5080);
 	current_graphic_video = (*(uint32_t*)0x5080);
 	}
-	int totaloffset = 0;
 	if(((current_graphic_video - graphic_video) % (1024*3)) > ((current_graphic_video - graphic_video + LETTER_WIDTH) % (1024*3))){
 		int off = (current_graphic_video - graphic_video) / (1024*3);
 		int off2 = off*1024*3 + 1024*3 + 1024*3*LETTER_HEIGHT;
 		current_graphic_video = graphic_video + off2;
 	}
+	uint8_t* start;
+	if(c < 32){
+	 start = font->pixel_data;
+	}else{
+	 start = font->pixel_data + 22*(c - 32)*3;
+	}
 	for(int i = 0; i<LETTER_HEIGHT;i++){
-		int h = 0;
 		for(int j = 0; j<LETTER_WIDTH*3;j++){
-			current_graphic_video[totaloffset + j] = lettersf[c].pixel_data[h+ i*LETTER_WIDTH] * 255;
+			current_graphic_video[totaloffset + j] =start[fontoffset + j + 2 ] ;
 			j++;
-			current_graphic_video[totaloffset + j] = lettersf[c].pixel_data[h+ i*LETTER_WIDTH] * 255;
+			current_graphic_video[totaloffset + j] = start[j + fontoffset];
 			j++;
-			current_graphic_video[totaloffset + j] = lettersf[c].pixel_data[h+ i*LETTER_WIDTH] * 255;
-			h++;
+			current_graphic_video[totaloffset + j] = start[j-2 + fontoffset];
 		}
 		totaloffset += 1024*3;
+		fontoffset += font->width*3;
 	}
-	current_graphic_video = current_graphic_video + LETTER_WIDTH*3;
+	current_graphic_video = current_graphic_video + LETTER_WIDTH*3; //*3 con la otra font
 }
 char check_end_of_screen(char type){
 	if(currentVideo >= (uint8_t *)(0xB8000 + 160*25)){

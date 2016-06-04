@@ -23,13 +23,13 @@ int main(){
 	memset(&bss, 0, &endOfBinary - &bss);
 	shell_erase_screen();
 
-print_message("#     #                                   #######  #####  \n", 0xFF);
-print_message("#  #  # ######  ####  ##### ###### #####  #     # #     # \n", 0xFF);
-print_message("#  #  # #      #        #   #      #    # #     # #       \n", 0xFF);
-print_message("#  #  # #####   ####    #   #####  #    # #     #  #####  \n", 0xFF);
-print_message("#  #  # #           #   #   #      #####  #     #       # \n", 0xFF);
-print_message("#  #  # #      #    #   #   #      #   #  #     # #     # \n", 0xFF);
-print_message(" ## ##  ######  ####    #   ###### #    # #######  #####  \n", 0xFF);
+print_message("#   #                                ######  #### \n", 0xFF);
+print_message("# # # #####  ###  ##### ##### #####  #    # #    #\n", 0xFF);
+print_message("# # # #     #       #   #     #    # #    # #     \n", 0xFF);
+print_message("# # # ####   ###    #   ####  #    # #    #  #### \n", 0xFF);
+print_message("# # # #         #   #   #     #####  #    #      #\n", 0xFF);
+print_message("# # # #     #   #   #   #     #   #  #    # #    #\n", 0xFF);
+print_message(" # #  #####  ###    #   ##### #    # ######  #### \n", 0xFF);
 
 	print_message("\nType help and hit enter to see available commands\n\n", 0xFF);
 

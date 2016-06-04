@@ -12,9 +12,9 @@ extern uint8_t endOfKernel;
 extern void _change_to_graphics();
 static const uint64_t PageSize = 0x1000;
 
-static void * const sampleCodeModuleAddress = (void*)0x400000;
-static void * const sampleDataModuleAddress = (void*)0x500000;
-static void * const ImageDataModuleAddress = (void*)0x600000;
+static void * const sampleCodeModuleAddress = (void*)0x600000;
+static void * const sampleDataModuleAddress = (void*)0x700000;
+static void * const ImageDataModuleAddress = (void*)0x800000;
 
 typedef int (*EntryPoint)();
 

@@ -2,7 +2,7 @@ OUTPUT_FORMAT("binary")
 ENTRY(main)
 SECTIONS
 {
-	.text 0x400000 :
+	.text 0x600000 :
 	{
 		text = .;
 		*(.text*)
