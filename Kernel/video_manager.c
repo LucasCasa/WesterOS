@@ -6,6 +6,7 @@ static uint8_t * video = (uint8_t*) 0xB8000;
 static uint8_t * currentVideo = (uint8_t*) 0xB8000;
 static uint8_t * saved_current_video;
 static uint8_t * saved_command_line;
+int command_line_graphic = 0;
 static uint8_t * command_line = (uint8_t*) 0xB8000;
 uint8_t * graphic_video = 0;
 uint8_t * current_graphic_video = 0;
@@ -14,7 +15,7 @@ uint8_t num_modifier = 0x04;
 
 uint8_t saved_shell[160*25];
 uint8_t saved_modifier;
-
+int gm = 1;
 
 void set_default_modifiers(char s, char n){
 	str_modifier = s;
@@ -47,12 +48,42 @@ void sys_delete_char(){
 		*(currentVideo +1) = str_modifier;
 	}
 }
+void sys_delete_char_graphic(){
+	if((command_line_graphic != get_yoffset()) || (get_char_xoffset() > 2)){
+		if(((current_graphic_video - graphic_video) % (1024*3)) == 0){
+			current_graphic_video -= 1024*3*(LETTER_HEIGHT);
+			current_graphic_video += (LETTER_WIDTH*3) * (((1024) / (LETTER_WIDTH) )-1);
+		}else{
+			current_graphic_video -= LETTER_WIDTH*3;
+		}
+		draw_char_graphic(0);
+	}
+}
+uint32_t get_char_xoffset(){
+	return get_xoffset() / (LETTER_WIDTH*3); // ACA USO LETTER WIDTH; SI EN ALGUN MOMENTO LO CAMBIO MIRAR
+}
+uint32_t get_char_yoffset(){
+	return get_yoffset() / (LETTER_HEIGHT*3);
+}
+uint32_t get_xoffset(){
+	int o = (current_graphic_video - graphic_video) % (1024*3);
+	return o;
+}
+uint32_t get_yoffset(){
+	int o = (current_graphic_video - graphic_video) / (1024*3);
+	return o;
+}
 void draw_new_line(){
 	*(currentVideo++) = '>';
 	*(currentVideo++) = num_modifier;
 	*(currentVideo++) = ':';
 	*(currentVideo++) = num_modifier;
 	set_command_line();
+}
+void draw_new_line_graphic(){
+	put_char('>');
+	put_char(':');
+	set_command_line_graphic();
 }
 void reset_current_video(){
 	currentVideo = video;
@@ -82,9 +113,39 @@ void new_line(){
 	currentVideo = (uint8_t*)(0xB8000 + (aux + 160) - (aux % 160));
 	draw_new_line();
 
-	if(graphic_video != 0){
-		int currentline = ((current_graphic_video - graphic_video) / (1024*3));
-		current_graphic_video = graphic_video + 1024*3*currentline + (1024*3*LETTER_HEIGHT);
+}
+void new_line_graphic(){
+	if(graphic_video == 0){
+		graphic_video = (*(uint32_t*)0x5080);
+		current_graphic_video = (*(uint32_t*)0x5080);
+	}
+	int currentline = get_yoffset();
+	if(currentline + LETTER_HEIGHT > 768){
+			scroll_graphic(1);
+	}else{
+			current_graphic_video = graphic_video + 1024*3*(currentline + LETTER_HEIGHT);
+	}
+	draw_new_line_graphic();
+}
+void draw_char_graphic(char c){
+	int totaloffset = 0;
+	int fontoffset = 0;
+	uint8_t* start;
+	if(c < 32){
+	 start = font->pixel_data;
+	}else{
+	 start = font->pixel_data + 21*(c - 32)*3;
+	}
+	for(int i = 0; i<LETTER_HEIGHT;i++){
+		for(int j = 0; j<LETTER_WIDTH*3;j++){
+			current_graphic_video[totaloffset + j] =start[fontoffset + j + 2 ] ;
+			j++;
+			current_graphic_video[totaloffset + j] = start[j + fontoffset];
+			j++;
+			current_graphic_video[totaloffset + j] = start[j-2 + fontoffset];
+		}
+		totaloffset += 1024*3;
+		fontoffset += font->width*3;
 	}
 }
 void sys_write(char c,uint8_t mod){
@@ -92,10 +153,12 @@ void sys_write(char c,uint8_t mod){
 	switch(c){
 		case '\n':
 			new_line();
+			new_line_graphic();
 			aux = 1;
 			break;
 		case '\b':
 			sys_delete_char();
+			sys_delete_char_graphic();
 		case 0:
 			break;
 		default:
@@ -124,29 +187,17 @@ void put_graphics(char c){
 	graphic_video = (*(uint32_t*)0x5080);
 	current_graphic_video = (*(uint32_t*)0x5080);
 	}
-	if(((current_graphic_video - graphic_video) % (1024*3)) > ((current_graphic_video - graphic_video + LETTER_WIDTH) % (1024*3))){
-		int off = (current_graphic_video - graphic_video) / (1024*3);
-		int off2 = off*1024*3 + 1024*3 + 1024*3*LETTER_HEIGHT;
+	if(end_of_line()){
+		int off = get_yoffset();
+		int off2 = 1024*3*(LETTER_HEIGHT + off);
 		current_graphic_video = graphic_video + off2;
 	}
-	uint8_t* start;
-	if(c < 32){
-	 start = font->pixel_data;
-	}else{
-	 start = font->pixel_data + 22*(c - 32)*3;
-	}
-	for(int i = 0; i<LETTER_HEIGHT;i++){
-		for(int j = 0; j<LETTER_WIDTH*3;j++){
-			current_graphic_video[totaloffset + j] =start[fontoffset + j + 2 ] ;
-			j++;
-			current_graphic_video[totaloffset + j] = start[j + fontoffset];
-			j++;
-			current_graphic_video[totaloffset + j] = start[j-2 + fontoffset];
-		}
-		totaloffset += 1024*3;
-		fontoffset += font->width*3;
-	}
+	check_end_of_screen_graphic(0);
+	draw_char_graphic(c);
 	current_graphic_video = current_graphic_video + LETTER_WIDTH*3; //*3 con la otra font
+}
+uint8_t end_of_line(){
+	return (((current_graphic_video - graphic_video) % (1024*3)) > (((current_graphic_video - graphic_video) + LETTER_WIDTH*3) % (1024*3)));
 }
 char check_end_of_screen(char type){
 	if(currentVideo >= (uint8_t *)(0xB8000 + 160*25)){
@@ -159,6 +210,28 @@ char check_end_of_screen(char type){
 		return 1;
 	}
 	return 0;
+}
+char check_end_of_screen_graphic(char type){
+	if((current_graphic_video >= graphic_video + 1024*768*3)){
+		scroll_graphic();
+		current_graphic_video = graphic_video + (get_yoffset()-LETTER_HEIGHT)*1024*3;
+		if(type == 1){
+			draw_new_line_graphic();
+		}
+		return 1;
+	}
+	return 0;
+}
+void scroll_graphic(){
+	int j = 0;
+	int jump = 1024*3*LETTER_HEIGHT;
+	for(int i = 1024*3*LETTER_HEIGHT;i<1024*768*3;i++,j++){
+		graphic_video[j] = graphic_video[i];
+		graphic_video[i] = 0;
+	}
+	while( j < 1024*768*3){
+		graphic_video[++j] = 0;
+	}
 }
 void scroll(){
 	int j = 0;
@@ -258,4 +331,7 @@ void print_standby(){
 }
 void set_command_line(){
 	command_line = currentVideo - ((uint64_t)(currentVideo - 0xB8000) % 160);
+}
+void set_command_line_graphic(){
+	command_line_graphic = get_yoffset();
 }

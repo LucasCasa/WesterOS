@@ -22,4 +22,13 @@ void erase_screen();
 void print_standby();
 void set_command_line();
 
+uint32_t get_char_xoffset();
+uint32_t get_char_yoffset();
+uint32_t get_xoffset();
+uint32_t get_yoffset();
+uint8_t end_of_line();
+void scroll_graphic();
+void draw_char_graphic(char c);
+char check_end_of_screen_graphic(char type);
+
 #endif //29880
