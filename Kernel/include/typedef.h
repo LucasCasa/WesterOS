@@ -18,4 +18,14 @@ typedef struct {
   uint16_t limit;
   uint64_t base;
 } IDTR;
+
+typedef struct Point{
+   int x;
+   int y;
+} Point;
+typedef struct Color{
+   int r;
+   int g;
+   int b;
+}Color;
 #endif

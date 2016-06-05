@@ -6,6 +6,7 @@ static int time = 0;
 uint16_t sleep_time = 0;
 uint32_t screensaver_time = 60 * 1000 / 55;
 static int piano = 0;
+extern char_buffer; // ESTO SE TEDNRIA QUE HACER BIEN...
 
 
 void timer_handler(){
@@ -30,7 +31,7 @@ void timer_handler(){
 void setPiano(){
 	piano =1;
 }
- 
+
 void keyboard_handler(uint32_t scancode){
 	if(scancode != 250){
 		if(sleep_time >= screensaver_time){
@@ -46,7 +47,10 @@ void keyboard_handler(uint32_t scancode){
 			}
 			else if(check_special_key(scancode)){
 				if(keyboard_set_key(scancode_to_char(scancode)))
-					sys_write(scancode_to_char(scancode),0xFF);
+					if(!draw_mode){
+						sys_write(scancode_to_char(scancode),0xFF);
+					}
+					char_buffer = scancode_to_char(scancode);
 			}
 		}
 		sleep_time = 0;

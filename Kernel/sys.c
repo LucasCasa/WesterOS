@@ -12,13 +12,17 @@
 // sysall 9 --> lee la cancion que se pasó por pararametro
 extern void _beep();
 extern void _int_start_sound();
+int draw_mode = 0;
+char char_buffer = 0;
 //extern void _int_piano_hand();
 
-char sys_manager(int order,uint64_t arg1, uint64_t arg2){
+char sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 	char c;
 	switch(order){
 		case WRITE:
-			sys_write((char) arg1,(char) arg2);
+			if(!draw_mode){
+				sys_write((char) arg1,(char) arg2);
+			}
 			break;
 		case ERASE_SCR:
 			erase_screen();
@@ -53,9 +57,29 @@ char sys_manager(int order,uint64_t arg1, uint64_t arg2){
 		case SONGS:
 			read_song(arg1);
 			break;
-
+		case ENTER_DRAW_MODE:
+			draw_mode = 1;
+			set_graphic_pointer();
+		break;
+		case EXIT_DRAW_MODE:
+			draw_mode = 0;
+		break;
+		case CLEAR:
+			clear_screen();
+			break;
+		case DRAW_CIRCLE:
+			draw_circle((Point*) arg1,arg2,(Color*)arg3);
+		break;
+		case GET_CHAR_FROM_BUFFER:
+			return get_char_from_buffer();
+		break;
 	}
 	return 0;
+}
+char get_char_from_buffer(){
+	char aux = char_buffer;
+	char_buffer = 0;
+		return aux;
 }
 char read_char(){
 	if(C_is_empty())

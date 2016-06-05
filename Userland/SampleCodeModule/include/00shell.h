@@ -6,8 +6,19 @@ typedef struct {
   char* name;
   char* description;
   void(* function)();
-  
+
 } Command;
+
+typedef struct Point{
+   int x;
+   int y;
+} Point;
+
+typedef struct Color{
+   int r;
+   int g;
+   int b;
+}Color;
 
 
 void * memset(void * destiny, int32_t c, uint64_t length);
@@ -26,6 +37,7 @@ void set_screensaver_time();
 void beep();
 void songs();
 void piano();
+void draw();
 
 char* time_str = "Shows the time and the date";
 char* help_str = "shows all available commands";
@@ -38,5 +50,6 @@ char* saver_str = "change the time until the screensaver appears";
 char* piano_str= "start typing and listen to the sounds of the piano";
 char* songs_str= "choose a song and listen to it";
 char* beep_str= "listen to the beep";
+char* draw_str ="paint un poroto al lado de esto";
 
 #endif

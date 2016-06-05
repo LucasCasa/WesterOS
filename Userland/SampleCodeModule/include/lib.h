@@ -15,6 +15,17 @@
 #define INT_PIANO 10
 #define INT_SONGS 11
 
+/* --- GRAPHIC SYS CALLS --- */
+
+#define INT_CLEAR 42
+#define INT_DRAW_CIRCLE 43
+#define INT_DRAW_IMAGE 44
+#define INT_DRAW_TEXT 45
+#define INT_ENTER_DRAW_MODE 46
+#define INT_EXIT_DRAW_MODE 47
+
+#define INT_GCFB  50
+
 
 void * memset(void * destination, int32_t character, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);

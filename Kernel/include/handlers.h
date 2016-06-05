@@ -12,5 +12,5 @@ void setPiano();
 
 extern void shell_show_screensaver();
 extern void shell_print_standby();
-
-#endif 
+extern int draw_mode;
+#endif

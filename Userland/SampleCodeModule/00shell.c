@@ -5,9 +5,9 @@
 #include "sounds.h"
 
 
-Command commands[11];
+Command commands[12];
 char comm[20];
-int number_of_commands = 11;
+int number_of_commands = 12;
 char aux;
 char name[20] = {0};
 
@@ -44,6 +44,7 @@ print_message(" # #  #####  ###    #   ##### #    # ######  #### \n", 0xFF);
 	init_commands(8,"piano",piano_str,&piano);
 	init_commands(9,"songs",songs_str,&songs);
 	init_commands(10,"beep", beep_str,&beep);
+	init_commands(11,"draw",draw_str,&draw);
 	while(1){
 		shell_command();
 	}
@@ -122,5 +123,29 @@ void whoami(){
 			flush_buffer();
 	}else{
 		printf("%s \n",0xFF,name);
+	}
+}
+
+void draw(){
+	_call_int80(INT_ENTER_DRAW_MODE);
+	_call_int80(INT_CLEAR);
+	Point p = {300,300};
+	Color c = {255,255,255};
+	char ch;
+	while(1){
+	_call_int80(INT_DRAW_CIRCLE,&p,20,&c);
+	while((ch = _call_int80(INT_GCFB)) == 0){
+
+	}
+	if(ch == 'a'){
+		p.x-= 10;
+	}else if( ch== 'w'){
+		p.y-= 10;
+	}else if(ch == 's'){
+		p.y+=10;
+	}else if(ch == 'd'){
+		p.x+=10;
+	}
+	ch = 0;
 	}
 }

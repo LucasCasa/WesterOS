@@ -163,12 +163,12 @@ void sys_write(char c,uint8_t mod){
 			break;
 		default:
 			put_char(c,mod);
+			put_graphics(c);
 		break;
 	}
 	check_end_of_screen(aux);
 }
 void put_char(char c,uint8_t mod){
-	put_graphics(c);
 	*(currentVideo++) = c;
 	if(mod == 0xFF){
 		if(isNumber(c)){
