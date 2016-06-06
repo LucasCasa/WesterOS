@@ -1,7 +1,7 @@
 include ../Makefile.inc
 
 MODULE=sampleCodeModule.bin
-SOURCES= 00shell.c screentime.c changeTime.c colors.c lib.c showKeyDist.c sounds.c
+SOURCES= 00shell.c screentime.c changeTime.c colors.c lib.c showKeyDist.c sounds.c trig.c
 SOURCES_ASM=$(wildcard asm/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)

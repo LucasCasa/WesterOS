@@ -17,8 +17,8 @@ extern char endOfBinary;
 extern uint8_t data;
 extern uint8_t text;
 extern uint8_t rodata;
-
-
+extern double _sin(int angle);
+extern double _cos(int angle);
 int main(){
 	memset(&bss, 0, &endOfBinary - &bss);
 	shell_erase_screen();
@@ -132,20 +132,25 @@ void draw(){
 	Point p = {300,300};
 	Color c = {255,255,255};
 	char ch;
+	int angle = 0;
+	int pass = 0;
+	double accumx = 300, accumy = 300;
 	while(1){
+		p.x = accumx;
+		p.y = accumy;
 	_call_int80(INT_DRAW_CIRCLE,&p,20,&c);
-	while((ch = _call_int80(INT_GCFB)) == 0){
+	while((ch = _call_int80(INT_GCFB)) == 0 && pass < 30000){
+		pass++;
+	}
 
-	}
 	if(ch == 'a'){
-		p.x-= 10;
-	}else if( ch== 'w'){
-		p.y-= 10;
-	}else if(ch == 's'){
-		p.y+=10;
+		angle+=10;
 	}else if(ch == 'd'){
-		p.x+=10;
+		angle-=10;
 	}
+	accumx+= 2*_cos(angle);
+	accumy+= 2*_sin(angle);
 	ch = 0;
+	pass = 0;
 	}
 }
