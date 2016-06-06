@@ -10,13 +10,15 @@
 //syscall 7 ---> beep
 //syscall 8 --> setea el piano
 // sysall 9 --> lee la cancion que se pasó por pararametro
+// syscall 10 --> lee cuantos bytes hay que malloquear
+// syscall 11 --> lee que address hay que hacer free
 extern void _beep();
 extern void _int_start_sound();
 int draw_mode = 0;
 char char_buffer = 0;
 //extern void _int_piano_hand();
 
-char sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
+uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 	char c;
 	switch(order){
 		case WRITE:
@@ -56,6 +58,12 @@ char sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 			break;
 		case SONGS:
 			read_song(arg1);
+			break;
+		case MALLOC:
+			return my_malloc((size_t)arg1);
+			break;
+		case FREE:
+			my_free((void *)arg1);
 			break;
 		case ENTER_DRAW_MODE:
 			draw_mode = 1;

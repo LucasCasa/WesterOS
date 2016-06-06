@@ -22,6 +22,8 @@
 #define BEEP 9
 #define PIANO 10
 #define SONGS 11
+#define MALLOC 12
+#define FREE 13
 
 /* --- GRAPHIC SYS CALLS --- */
 

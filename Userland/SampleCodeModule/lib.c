@@ -115,3 +115,11 @@ void flush_buffer(){
 	while ((c=get_char()) != '\n'){};
 	return;
 }
+
+void * malloc(uint64_t size){
+	_call_int80(MALLOC,size);
+}
+
+void free(void  * address){
+	_call_int80(FREE,(uint64_t)address);
+}
