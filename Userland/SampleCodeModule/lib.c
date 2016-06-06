@@ -117,8 +117,7 @@ void flush_buffer(){
 }
 
 void * malloc(uint64_t size){
-	_call_int80(INT_MALLOC,size);
-	return 0; //no es asi pero bueno
+	return _call_int80(INT_MALLOC,size);
 }
 
 void free(void  * address){
