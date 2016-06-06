@@ -1,6 +1,8 @@
 #ifndef __ALLOCATOR_H__
 #define __ALLOCATOR_H__
 
+// SACADO DE https://github.com/tomelm/C-Malloc-Implementation
+
 /* we need this *ONLY* for the size_t typedef */
 #include <stdio.h>
 
