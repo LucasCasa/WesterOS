@@ -111,7 +111,8 @@ void* my_malloc(size_t size)
   /* If there are no more blocks of free memory in the list
      get more from my_sbrk */
   if (available == 8) {
-    metadata_t *new_heap = my_sbrk(SBRK_SIZE);
+    metadata_t *new_heap;
+    //new_heap = my_sbrk(SBRK_SIZE); ACA DEBERIA IR A LA MEMORIA
 
     // If it's null then my_sbrk errored
     if (!new_heap) return NULL;
@@ -182,7 +183,7 @@ void* my_malloc(size_t size)
 
 /* Initialize the heap and freelist */
 void init_heap() {
-  heap = my_sbrk(SBRK_SIZE);
+  //heap = my_sbrk(SBRK_SIZE); ACA DEBERIA IR A LA MEMORIA
   freelist[7] = (metadata_t *) heap;
   freelist[7]->in_use = 0;
   freelist[7]->size = 2048;
@@ -217,21 +218,21 @@ void* offset_pointer(metadata_t* ptr, int offset) {
 void print_freelist() {
   int size = 16;
   for (int i=0; i<8; i++) {
-    fprintf(stderr, "[%d] -> %d: %p\n", i, size, (void *) freelist[i]);
+    //fprintf(stderr, "[%d] -> %d: %p\n", i, size, (void *) freelist[i]);
     size *= 2;
   }
 }
 
 /* Print the metadata for the block of memory, for debugging */
-void print_block(metadata_t *block) {
-  fprintf(stderr, "Printing block data\n");
-  fprintf(stderr, "address: %p\n", (void *) block);
-  fprintf(stderr, "in use: %d\n", block->in_use);
-  fprintf(stderr, "size: %d\n", block->size);
-  fprintf(stderr, "next: %p\n", (void *) block->next);
-  fprintf(stderr, "prev: %p\n", (void *) block->prev);
-  fprintf(stderr, "\n");
-}
+// void print_block(metadata_t *block) {
+//   fprintf(stderr, "Printing block data\n");
+//   fprintf(stderr, "address: %p\n", (void *) block);
+//   fprintf(stderr, "in use: %d\n", block->in_use);
+//   fprintf(stderr, "size: %d\n", block->size);
+//   fprintf(stderr, "next: %p\n", (void *) block->next);
+//   fprintf(stderr, "prev: %p\n", (void *) block->prev);
+//   fprintf(stderr, "\n");
+// }
 
 void* my_realloc(void* ptr, size_t new_size)
 {

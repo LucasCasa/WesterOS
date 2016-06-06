@@ -9,6 +9,7 @@
 #include "sounds.h"
 #include "handlers.h"
 #include "typedef.h"
+#include "allocator.h"
 
 
 #define WRITE 1
@@ -38,7 +39,7 @@
 
 char read(char* buff, uint8_t size);
 char read_char();
-char sys_manager(int order, uint64_t arg1, uint64_t arg2,uint64_t arg3);
+uint64_t sys_manager(int order, uint64_t arg1, uint64_t arg2,uint64_t arg3);
 extern uint32_t screensaver_time;
 char get_char_from_buffer();
 

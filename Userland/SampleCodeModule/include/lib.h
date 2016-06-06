@@ -14,6 +14,8 @@
 #define INT_BEEP 9
 #define INT_PIANO 10
 #define INT_SONGS 11
+#define INT_MALLOC 12
+#define INT_FREE 13
 
 /* --- GRAPHIC SYS CALLS --- */
 
