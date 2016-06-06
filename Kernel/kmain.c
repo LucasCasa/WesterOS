@@ -14,6 +14,7 @@ extern int _int80_hand();
 extern void _int_start_sound();
 extern void _set_graphics();
 extern void _change_mode();
+extern int initIPC();
 
 
 
@@ -25,7 +26,7 @@ int kmain(){
 	set_interrupts();
 	init_serial();
 	_set_graphics();
-
+	initIPC();
 	return 0;
 }
 void init_serial() {

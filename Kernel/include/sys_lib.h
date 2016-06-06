@@ -8,5 +8,6 @@ void * memcpy(void * destination, const void * source, uint64_t length);
 int isNumber(char a);
 void print_message(char * message, uint8_t mod);
 void print_number(uint32_t n);
+int strcmp(char*,char*);
 
 #endif

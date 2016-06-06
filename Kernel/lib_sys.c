@@ -78,3 +78,13 @@ void print_number(uint32_t n){
 		sys_write((n%10)+'0',0xFF);
 	}
 }
+
+int strcmp(char *s1, char *s2) {
+  int ret = 0;
+  while (!(ret = *(uint8_t *) s1 - *(uint8_t *) s2) && *s2) ++s1, ++s2;
+  if (ret < 0)
+    ret = -1;
+  else if (ret > 0)
+    ret = 1 ;
+  return ret;
+}

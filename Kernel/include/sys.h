@@ -10,6 +10,7 @@
 #include "handlers.h"
 #include "typedef.h"
 #include "allocator.h"
+#include "ipc.h"
 
 
 #define WRITE 1
@@ -26,6 +27,14 @@
 #define MALLOC 12
 #define FREE 13
 
+/* --- IPC CALLS --- */
+
+#define MKFIFO 20
+#define OPENFIFO 21
+#define CLOSEFIFO 22
+#define WRITEFIFO 23
+#define READFIFO 24
+
 /* --- GRAPHIC SYS CALLS --- */
 
 #define CLEAR 42
@@ -36,6 +45,7 @@
 #define EXIT_DRAW_MODE 47
 
 #define GET_CHAR_FROM_BUFFER 50
+
 
 char read(char* buff, uint8_t size);
 char read_char();

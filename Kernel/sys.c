@@ -81,6 +81,21 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case GET_CHAR_FROM_BUFFER:
 			return get_char_from_buffer();
 		break;
+		case MKFIFO:
+			return mkfifo((char*)arg1);
+		break;
+		case OPENFIFO:
+			return openfifo((char*)arg1);
+		break;
+		case CLOSEFIFO:
+			return closefifo(arg1);
+		break;
+		case WRITEFIFO:
+			return writefifo(arg1,(void*)arg2,arg3);
+		break;
+		case READFIFO:
+			return readfifo(arg1,(void*)arg2,arg3);
+		break;
 	}
 	return 0;
 }
