@@ -9,16 +9,6 @@ typedef struct {
 
 } Command;
 
-typedef struct Point{
-   int x;
-   int y;
-} Point;
-
-typedef struct Color{
-   int r;
-   int g;
-   int b;
-}Color;
 
 
 void * memset(void * destiny, int32_t c, uint64_t length);
@@ -38,6 +28,7 @@ void beep();
 void songs();
 void piano();
 void draw();
+void game();
 
 char* time_str = "Shows the time and the date";
 char* help_str = "shows all available commands";

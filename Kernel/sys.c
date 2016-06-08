@@ -14,6 +14,8 @@
 // syscall 11 --> lee que address hay que hacer free
 extern void _beep();
 extern void _int_start_sound();
+extern void (*up)(uint8_t);
+extern void (*down)(uint8_t);
 int draw_mode = 0;
 char char_buffer = 0;
 //extern void _int_piano_hand();
@@ -93,6 +95,18 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		break;
 		case READFIFO:
 			return readfifo(arg1,(void*)arg2,arg3);
+		break;
+		case SET_EVENT_KEYUP:
+			up = arg1;
+		break;
+		case UNSET_EVENT_KEYUP:
+			up = 0;
+		break;
+		case SET_EVENT_KEYDOWN:
+			down = arg1;
+		break;
+		case UNSET_EVENT_KEYDOWN:
+			down = 0;
 		break;
 	}
 	return 0;

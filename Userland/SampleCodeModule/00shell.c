@@ -5,9 +5,9 @@
 #include "sounds.h"
 
 
-Command commands[12];
+Command commands[13];
 char comm[20];
-int number_of_commands = 12;
+int number_of_commands = 13;
 char aux;
 char name[20] = {0};
 
@@ -45,6 +45,7 @@ print_message(" # #  #####  ###    #   ##### #    # ######  #### \n", 0xFF);
 	init_commands(9,"songs",songs_str,&songs);
 	init_commands(10,"beep", beep_str,&beep);
 	init_commands(11,"draw",draw_str,&draw);
+	init_commands(12,"game",draw_str,&game);
 	while(1){
 		shell_command();
 	}
@@ -147,6 +148,11 @@ void draw(){
 		angle+=10;
 	}else if(ch == 'd'){
 		angle-=10;
+	}
+	if(ch == 'x'){
+		_call_int80(INT_EXIT_DRAW_MODE);
+		_call_int80(INT_CLEAR);
+		return;
 	}
 	accumx+= 2*_cos(angle);
 	accumy+= 2*_sin(angle);

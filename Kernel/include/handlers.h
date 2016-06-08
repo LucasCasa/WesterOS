@@ -7,7 +7,7 @@
 #include "keyboard_buffer.h"
 
 void timer_handler();
-void keyboard_handler(uint32_t scancode);
+void keyboard_handler(uint8_t scancode);
 void setPiano();
 
 extern void shell_show_screensaver();

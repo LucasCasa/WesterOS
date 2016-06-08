@@ -27,6 +27,11 @@
 #define INT_EXIT_DRAW_MODE 47
 
 #define INT_GCFB  50
+#define INT_SET_EVENT_KEYUP 51
+#define INT_UNSET_EVENT_KEYUP 52
+#define INT_SET_EVENT_KEYDOWN 53
+#define INT_UNSET_EVENT_KEYDOWN 54
+
 
 
 void * memset(void * destination, int32_t character, uint64_t length);
@@ -47,5 +52,17 @@ void printf(const char * string, uint8_t mod, ...);
 char get_char();
 
 void flush_buffer();
+
+
+typedef struct Point{
+   int x;
+   int y;
+} Point;
+
+typedef struct Color{
+   int r;
+   int g;
+   int b;
+}Color;
 
 #endif
