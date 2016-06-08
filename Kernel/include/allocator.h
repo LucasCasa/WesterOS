@@ -11,15 +11,21 @@
 #include <stdint.h>
 
 typedef struct {
-    char * address;
+  	char * address;
     void * offset;
     uint64_t size;
     uint64_t last_alloc;
 } MemoryMap;
+
+void init_malloc();
 
 void init_bitmap(MemoryMap * bitmap, char * address, void * offset, uint64_t memory_size);
 
 void * alloc_block(MemoryMap * bitmap);
 
 void free_block(MemoryMap * bitmap, void * address);
+
+void *  malloc(uint64_t size);
+
+void free(void * address);
 #endif
