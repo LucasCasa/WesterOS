@@ -45,6 +45,10 @@
 #define EXIT_DRAW_MODE 47
 
 #define GET_CHAR_FROM_BUFFER 50
+#define SET_EVENT_KEYUP 51
+#define UNSET_EVENT_KEYUP 52
+#define SET_EVENT_KEYDOWN 53
+#define UNSET_EVENT_KEYDOWN 54
 
 
 char read(char* buff, uint8_t size);
