@@ -1,9 +1,11 @@
 #include "include/typedef.h"
 
 #include "sounds.h"
+#include "allocator.h"
 
 
 IDT_entry* IDT;
+MemoryMap mm;
 
 extern void _sti();
 extern void _write_port(char port,char value);
@@ -18,6 +20,7 @@ extern int initIPC();
 
 
 
+
 void setup_IDT_entry (int index,uint16_t selector, uint64_t offset);
 void set_interrupts();
 
@@ -25,10 +28,12 @@ int kmain(){
 	IDT = 0;
 	set_interrupts();
 	init_serial();
+	init_malloc();
 	_set_graphics();
 	initIPC();
 	return 0;
 }
+
 void init_serial() {
 	int PORT = 0x3f8;
    outb(PORT + 1, 0x00);    // Disable all interrupts
