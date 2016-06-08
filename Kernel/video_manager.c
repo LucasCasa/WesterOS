@@ -81,14 +81,19 @@ void draw_new_line(){
 	set_command_line();
 }
 void draw_new_line_graphic(){
-	put_char('>');
-	put_char(':');
+	put_graphics('>');
+	put_graphics(':');
 	set_command_line_graphic();
 }
 void reset_current_video(){
 	currentVideo = video;
 	draw_new_line();
 	set_command_line();
+}
+void reset_current_video_graphic(){
+	current_graphic_video = graphic_video;
+	draw_new_line_graphic();
+	set_command_line_graphic();
 }
 void save_screen(){
 	for(int i = 0; i<160*25;i++){
