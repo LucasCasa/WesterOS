@@ -29,7 +29,7 @@ int kmain(){
 	set_interrupts();
 	init_serial();
 	init_malloc();
-	_set_graphics();
+	set_graphic_pointer();
 	initIPC();
 	return 0;
 }

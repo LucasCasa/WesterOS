@@ -31,6 +31,8 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case ERASE_SCR:
 			erase_screen();
 			reset_current_video();
+			clear_screen();
+			reset_current_video_graphic();
 			break;
 		case GET_STR:
 			return read((char *)arg1,(uint8_t) arg2);
@@ -62,9 +64,11 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 			read_song(arg1);
 			break;
 		case MALLOC:
+			return malloc((void *)arg1);
 			break;
 		case FREE:
-			break;
+			free(arg1);
+			return;
 		case ENTER_DRAW_MODE:
 			draw_mode = 1;
 			set_graphic_pointer();
