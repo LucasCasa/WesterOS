@@ -2,6 +2,9 @@
 #include <stdarg.h>
 #include "lib.h"
 #include "call80.h"
+
+static unsigned long int next = 1;
+
 int isNumber(char a);
 
 void * memset(void * destination, int32_t c, uint64_t length)
@@ -42,11 +45,11 @@ int strcmp(char *s1, char *s2) {
 }
 int atoi(char * string){
 	int num=0;
-	while(*string != 0 && num>=0){		
+	while(*string != 0 && num>=0){
 		num = num*10;
 		if(isNumber(*string))
 			num=num+(*string-'0');
-		else 
+		else
 			num=-1;
 		string++;
 	}
@@ -123,4 +126,15 @@ void * malloc(uint64_t size){
 void free(void  * address){
 	_call_int80(INT_FREE,(uint64_t)address);
 	return;
+}
+
+
+
+
+int rand(void){ // RAND_MAX assumed to be 32767
+    next = next * 1103515245 + 12345;
+    return (unsigned int)(next/65536) % 32768;
+}
+void srand(unsigned int seed) {
+    next = seed;
 }

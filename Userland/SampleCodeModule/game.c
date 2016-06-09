@@ -1,5 +1,5 @@
 #include "lib.h"
-#define  RADIUS 10
+#define  RADIUS 5
 extern double _sin(int angle);
 extern double _cos(int angle);
 char board[1024*768];
@@ -8,23 +8,28 @@ void get_key_down(uint8_t);
 int mod1 = 0,mod2 = 0;
 uint32_t last[] = {1,2};
 uint32_t next[] = {3,4};
-#define P1 1
-#define P2 2
+int ttinv1 = 255;
+int ttinv2 = 255;
+int tsinv1 = 0;
+int tsinv2 = 0;
 
 char draw_into_board(uint32_t pn,Point p);
 void exit_game();
 
 void game(){
    //CANTIDAD DE JUGADORES
+   srand(*((uint32_t*)0xB8078));
    mod1 = 0;
    mod2 = 0;
    Point p1 = {20,20};
    Color c1 = {255,0,0};
+   Color c1h = {100,0,0};
    for(int i = 0; i<1024*768;i++){
      board[i] = 0;
    }
    Point p2 = { 1000,700};
    Color c2 = {0,0,255};
+   Color c2h = {0,0,100};
    double accumx1 = p1.x, accumy1 = p1.y;
    double accumx2 = p2.x, accumy2 = p2.y;
 
@@ -42,11 +47,14 @@ void game(){
 
    _call_int80(INT_SET_EVENT_KEYUP,&get_key_up);
    _call_int80(INT_SET_EVENT_KEYDOWN,&get_key_down);
-
+   ttinv1 = rand() % 90;
+   ttinv2 = rand() % 90;
     while(1){
       while(pass < 6000000){
          pass++;
       }
+    //_call_int80(INT_DRAW_CIRCLE,&p1,RADIUS,&c1h);
+    //_call_int80(INT_DRAW_CIRCLE,&p2,RADIUS,&c2h);
 /*
       if(ch == 'a'){
          angle1-=10;
@@ -62,25 +70,37 @@ void game(){
       _call_int80(INT_CLEAR);
       return;
    }
+   tsinv1++;
+   if(tsinv1 == ttinv1 + 10){
+     tsinv1 = 0;
+     ttinv1 = rand() % 90;
+   }
+   tsinv2++;
+   if(tsinv2 == ttinv2 + 10){
+     tsinv2 = 0;
+     ttinv2 = rand() % 90;
+   }
    angle1+= 3*mod1;
    angle2+= 3*mod2;
-   accumx1+= 4*_cos(angle1);
-   accumy1+= 4*_sin(angle1);
-   accumx2+= 4*_cos(angle2);
-   accumy2+= 4*_sin(angle2);
+   accumx1+= 3*_cos(angle1);
+   accumy1+= 3*_sin(angle1);
+   accumx2+= 3*_cos(angle2);
+   accumy2+= 3*_sin(angle2);
    ch = 0;
    pass = 0;
 
-
    p1.x = accumx1;
    p1.y = accumy1;
+   if(tsinv1 < ttinv1){
    _call_int80(INT_DRAW_CIRCLE,&p1,RADIUS,&c1);
    game_over1 = draw_into_board(1,p1);
-   p2.x = accumx2;
-   p2.y = accumy2;
-   _call_int80(INT_DRAW_CIRCLE,&p2,RADIUS,&c2);
+  }
+  p2.x = accumx2;
+  p2.y = accumy2;
+  if(tsinv2 < ttinv2){
+    _call_int80(INT_DRAW_CIRCLE,&p2,RADIUS,&c2);
    game_over2 = draw_into_board(2,p2);
-
+  }
 
    if(game_over1 && game_over2){
      exit_game();
