@@ -20,7 +20,7 @@ void free_block(MemoryMap * bitmap, void * address);
 
 void
 init_malloc(){
-    init_bitmap(&bm,(void *)0x10000000,(void *)0x10000000,0x600000); //6 mb de heap
+    init_bitmap(&bm,(void *)0x10000000,(void *)0x1000,0x100000); //6 mb de heap
     return;
 }
 
