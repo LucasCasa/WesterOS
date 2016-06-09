@@ -31,7 +31,8 @@ void game(){
    _call_int80(INT_ENTER_DRAW_MODE);
    _call_int80(INT_CLEAR);
    //_call_int80(INT_EXIT_DRAW_MODE);
-   char game_over = 0;
+   char game_over1 = 0;
+   char game_over2 = 0;
 
    int pass = 0;
    int ch = 0;
@@ -43,7 +44,7 @@ void game(){
    _call_int80(INT_SET_EVENT_KEYDOWN,&get_key_down);
 
     while(1){
-      while(pass < 3000000){
+      while(pass < 6000000){
          pass++;
       }
 /*
@@ -74,17 +75,24 @@ void game(){
    p1.x = accumx1;
    p1.y = accumy1;
    _call_int80(INT_DRAW_CIRCLE,&p1,RADIUS,&c1);
-   game_over = draw_into_board(1,p1);
-   if(game_over){
-     exit_game();
-     return;
-   }
+   game_over1 = draw_into_board(1,p1);
    p2.x = accumx2;
    p2.y = accumy2;
    _call_int80(INT_DRAW_CIRCLE,&p2,RADIUS,&c2);
-   game_over = draw_into_board(2,p2);
-   if(game_over){
+   game_over2 = draw_into_board(2,p2);
+
+
+   if(game_over1 && game_over2){
      exit_game();
+     print_message("Corbata",0xFF);
+     return;
+   }else if(game_over1){
+     exit_game();
+     print_message("Gano jugador 2",0xFF);
+     return;
+   }else if(game_over2){
+     exit_game();
+     print_message("Gano jugador 1",0xFF);
      return;
    }
    }
