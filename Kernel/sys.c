@@ -82,6 +82,12 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case DRAW_CIRCLE:
 			draw_circle((Point*) arg1,arg2,(Color*)arg3);
 		break;
+		case DRAW_ERASABLE_CIRCLE:
+		return draw_erasable_circle((Point*) arg1,arg2,(Color*)arg3);
+		break;
+		case UNDRAW_ERASABLE_CIRCLE:
+		undraw_erasable_circle(arg1);
+		break;
 		case GET_CHAR_FROM_BUFFER:
 			return get_char_from_buffer();
 		break;
@@ -112,6 +118,7 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case UNSET_EVENT_KEYDOWN:
 			down = 0;
 		break;
+
 	}
 	return 0;
 }

@@ -12,9 +12,12 @@ uint8_t * graphic_video = 0;
 uint8_t * current_graphic_video = 0;
 uint8_t str_modifier = 0x02;
 uint8_t num_modifier = 0x04;
-
 uint8_t saved_shell[160*25];
 uint8_t saved_modifier;
+uint8_t* saved_shell_graphic = (uint8_t* ) 0xA000000;
+uint8_t* saved_current_video_graphic = 0;
+uint8_t* saved_command_line_graphic = 0;
+
 int gm = 1;
 
 void set_default_modifiers(char s, char n){
@@ -103,12 +106,27 @@ void save_screen(){
 	saved_command_line = command_line;
 	currentVideo = video;
 }
+void save_screen_graphic(){
+	for (int i = 0; i<1024*768*3;i++){
+			saved_shell_graphic[i] = graphic_video[i];
+	}
+	saved_current_video_graphic = current_graphic_video;
+	saved_command_line_graphic = command_line_graphic;
+	current_graphic_video = graphic_video;
+}
 void restore_screen(){
 	for(int i = 0; i<160*25;i++){
 		video[i] = saved_shell[i];
 	}
 	currentVideo = saved_current_video;
 	command_line = saved_command_line;
+}
+void restore_screen_graphic(){
+	for(int i = 0; i<1024*768*3;i++){
+		graphic_video[i] = saved_shell_graphic[i];
+	}
+	current_graphic_video = saved_current_video_graphic;
+	command_line_graphic = saved_command_line_graphic;
 }
 void new_line(){
 	*currentVideo = 0;
@@ -249,67 +267,7 @@ void scroll(){
 		j++;
 	}
 }
-void screensaver(){
-	/*
-	uint8_t* st = (*(uint32_t*)0x5080);
-	int offsetx = 400;
-	int offsety = 400;
-	int modx = 1;
-	int mody = 1;
-	int offsetx2 = 1;
-	int offsety2 = 1;
-	int modx2 = 1;
-	int mody2 = 1;
-	while(1){
-	uint8_t* st = (*(uint32_t*)0x5080);
-	int totaloffset = offsety*1024*3 + offsetx*3;
-	int totaloffset2 = offsety2*1024*3 + offsetx2*3;
 
-	for(int i = 0; i<image.height;i++){
-		for(int j = 0;j<image.width*3;j++){
-			st[totaloffset + j+2 + 1024*i*3] = image.pixel_data[j + i*image.width*3];
-			j++;
-			st[totaloffset + j + 1024*i*3] = image.pixel_data[j + i*image.width*3];
-			j++;
-			st[totaloffset + j-2 + 1024*i*3] = image.pixel_data[j + i*image.width*3];
-		}
-	}
-	if(offsety + image.height >= 768){
-		mody = -1;
-	}else if(offsety <= 0){
-		mody = 1;
-	}
-	if(offsetx + image.width >= 1024){
-		modx = -1;
-	}else if(offsetx <= 0){
-		modx = 1;
-	}
-	offsetx+= modx;
-	offsety+= mody;
-/*
-		for(int i = 0; i<gimp_image2.height;i++){
-			for(int j = 0;j<gimp_image2.width*3;j++){
-				st[totaloffset2 + j+2 + 1024*i*3] = gimp_image2.pixel_data[j + i*gimp_image2.width*3];
-				j++;
-				st[totaloffset2 + j + 1024*i*3] = gimp_image2.pixel_data[j + i*gimp_image2.width*3];
-				j++;
-				st[totaloffset2 + j-2 + 1024*i*3] = gimp_image2.pixel_data[j + i*gimp_image2.width*3];
-			}
-		}
-		if(offsety2 + gimp_image2.height >= 768){
-			mody2 = -1;
-		}else if(offsety2 <= 0){
-			mody2 = 1;
-		}
-		if(offsetx2 + gimp_image2.width >= 1024){
-			modx2 = -1;
-		}else if(offsetx2 <= 0){
-			modx2 = 1;
-		}
-		offsetx2+= modx2;
-		offsety2+= mody2;
-	}*/
-}
 void erase_screen(){
 	for(int j = 0; j<25*160;j++){
 		video[j++] = 0;

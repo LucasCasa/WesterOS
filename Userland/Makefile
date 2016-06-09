@@ -1,11 +1,13 @@
 include Makefile.inc
 SAMPLE_DATA=0001-sampleDataModule.bin
 
-all: ImageDataModule sampleCodeModule sampleDataModule
+all: ImageDataModule sampleCodeModule sampleDataModule TarImageModule
 
 ImageDataModule:
 	cd imageDataModule; make all
 
+TarImageModule:
+	cd tarImageModule; make all
 sampleCodeModule:
 	cd SampleCodeModule; make all
 

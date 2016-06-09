@@ -9,5 +9,6 @@ int isNumber(char a);
 void print_message(char * message, uint8_t mod);
 void print_number(uint32_t n);
 int strcmp(char*,char*);
-
+void srand(unsigned int seed);
+int rand();
 #endif

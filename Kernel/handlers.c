@@ -4,7 +4,7 @@
 
 static int time = 0;
 uint16_t sleep_time = 0;
-uint32_t screensaver_time = 60 * 1000 / 55;
+uint32_t screensaver_time = 10 * 1000 / 55;
 static int piano = 0;
 extern char_buffer; // ESTO SE TEDNRIA QUE HACER BIEN...
 void (*up)(uint8_t) = 0;
@@ -16,11 +16,11 @@ void timer_handler(){
 	if(sleep_time >= screensaver_time){
 		if(sleep_time < screensaver_time + 10){
 			save_screen();
+			save_screen_graphic();
+			clear_screen();
 			sleep_time = screensaver_time + 10;
 		}
-		if((sleep_time % 10) == 0){
 			show_screensaver();
-		}
 	}else{
 		if(time >= 10){
 			print_standby();
@@ -41,6 +41,7 @@ void keyboard_handler(uint8_t scancode){
 	if(scancode != 250){
 		if(sleep_time >= screensaver_time){
 			restore_screen();
+			restore_screen_graphic();
 		}else{
 			if(piano == 1){
 				uint32_t frec = getFrec(scancode);

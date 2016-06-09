@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "sys_lib.h"
-
+static int next = 1;
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
@@ -87,4 +87,12 @@ int strcmp(char *s1, char *s2) {
   else if (ret > 0)
     ret = 1 ;
   return ret;
+}
+
+int rand(void){ // RAND_MAX assumed to be 32767
+    next = next * 1103515245 + 12345;
+    return (unsigned int)(next/65536) % 32768;
+}
+void srand(unsigned int seed) {
+    next = seed;
 }

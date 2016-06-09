@@ -23,6 +23,12 @@ typedef struct Point{
    int x;
    int y;
 } Point;
+
+typedef struct PointD{
+   double x;
+   double y;
+} PointD;
+
 typedef struct Color{
    int r;
    int g;

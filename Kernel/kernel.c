@@ -15,6 +15,7 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x600000;
 static void * const sampleDataModuleAddress = (void*)0x700000;
 static void * const ImageDataModuleAddress = (void*)0x800000;
+static void * const TarImageModuleAddress = (void*)0x850000;
 
 typedef int (*EntryPoint)();
 
@@ -50,7 +51,8 @@ void * initializeKernelBinary()
 	void * moduleAddresses[] = {
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress,
-		ImageDataModuleAddress
+		ImageDataModuleAddress,
+		TarImageModuleAddress
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
@@ -85,7 +87,6 @@ void * initializeKernelBinary()
 int main()
 {
 	kmain();
-	_change_to_graphics();
 	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
 	return 0;
 }
