@@ -1,4 +1,4 @@
-#ifndef _PROCESS_H_
+/*#ifndef _PROCESS_H_
 #define _PROCESS_H_
 
 #define PROC_READY      1
@@ -44,3 +44,4 @@ typedef struct Process {
    Process* next_process;
 }Process;
 #endif
+*/

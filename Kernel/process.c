@@ -1,5 +1,6 @@
-
-
+#include "process.h"
+#include "scheduler.h"
+/*
 void * fill_stack_frame(void * entry_point, void * userStack) {
 	StackFrame * frame = (StackFrame*)userStack - 1;
 	frame->gs =		0x001;
@@ -36,3 +37,4 @@ void process_ready(Process* p){
 void process_pause(Process* p){
 	p->state = TASK_PAUSED;
 }
+*/
