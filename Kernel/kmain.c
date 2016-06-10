@@ -31,6 +31,7 @@ int kmain(){
 	init_malloc();
 	set_graphic_pointer();
 	initIPC();
+	srand(RTCparameters(0));
 	return 0;
 }
 

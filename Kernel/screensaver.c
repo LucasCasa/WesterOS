@@ -7,6 +7,7 @@ Point offset[10];
 PointD mod[10];
 static int next = 0;
 int ttn = 1;
+int time_to_reset = 1000;
 void show_screensaver(){
 	//clear_screen();
 	reset_current_video();
@@ -24,6 +25,12 @@ int validateScreenTime(int time){
 	return 1;
 }
 void westeros(){
+	time_to_reset--;
+	if(!time_to_reset){
+		next = 0;
+		ttn = 1;
+		clear_screen();
+	}
 	int r = 0,g = 0, b = 0;
 	uint8_t* st = (*(uint32_t*)0x5080);
 	ttn--;
