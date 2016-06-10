@@ -19,4 +19,7 @@ clean:
 	cd Kernel; make clean
 	cd Userland; make clean
 
-.PHONY: bootloader image collections kernel userland all clean
+run: clean all
+	./run.sh
+
+.PHONY: bootloader image collections kernel userland all clean run
