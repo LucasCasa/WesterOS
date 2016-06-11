@@ -2,14 +2,29 @@
 #include "include/handlers.h"
 #include "sounds.h"
 
+#define PIT_FREQ 	100
+extern void set_PIT(uint64_t);
 static int time = 0;
 uint16_t sleep_time = 0;
-uint32_t screensaver_time = 10 * 1000 / 55;
+uint32_t screensaver_time = 10*PIT_FREQ;
 static int piano = 0;
 extern char_buffer; // ESTO SE TEDNRIA QUE HACER BIEN...
 void (*up)(uint8_t) = 0;
 void (*down)(uint8_t) = 0;
 
+void init_PIT(){
+	set_PIT(1193182 / PIT_FREQ);
+}
+int validateScreenTime(int time){
+	if(time <= 0){		// Error for invalid value
+		return 0;
+	}
+	if(time > MINSCRSAVERTIME){ // If the time is too big, it is set to a default value
+		time = MINSCRSAVERTIME;
+	}
+	screensaver_time = time * PIT_FREQ;
+	return 1;
+}
 void timer_handler(){
 	time++;
 	sleep_time++;

@@ -13,17 +13,6 @@ void show_screensaver(){
 	reset_current_video();
 	westeros();
 }
-
-int validateScreenTime(int time){
-	if(time <= 0){		// Error for invalid value
-		return 0;
-	}
-	if(time > MINSCRSAVERTIME){ // If the time is too big, it is set to a default value
-		time = MINSCRSAVERTIME;
-	}
-	screensaver_time = time * 1000 / 55;
-	return 1;
-}
 void westeros(){
 	time_to_reset--;
 	if(!time_to_reset){

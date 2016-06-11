@@ -17,7 +17,7 @@ extern void _int_start_sound();
 extern void _set_graphics();
 extern void _change_mode();
 extern int initIPC();
-
+extern void init_PIT();
 
 
 
@@ -31,6 +31,7 @@ int kmain(){
 	init_malloc();
 	set_graphic_pointer();
 	initIPC();
+	init_PIT(1193182 / 100);
 	srand(RTCparameters(0));
 	return 0;
 }

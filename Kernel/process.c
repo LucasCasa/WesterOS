@@ -1,8 +1,8 @@
 #include "process.h"
 #include "scheduler.h"
-/*
-void * fill_stack_frame(void * entry_point, void * userStack) {
-	StackFrame * frame = (StackFrame*)userStack - 1;
+
+void* fill_stack_frame(void * entry_point, void * user_stack) {
+	stack_frame* frame = (stack_frame*) user_stack  - 1;
 	frame->gs =		0x001;
 	frame->fs =		0x002;
 	frame->r15 =	0x003;
@@ -31,10 +31,9 @@ void * fill_stack_frame(void * entry_point, void * userStack) {
 }
 
 void process_ready(Process* p){
-	p->state = TASK_READY;
+	p->state = PROC_READY;
 }
 
-void process_pause(Process* p){
-	p->state = TASK_PAUSED;
+void process_waiting(Process* p){
+	p->state = PROC_WAITING;
 }
-*/

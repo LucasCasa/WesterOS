@@ -1,11 +1,13 @@
-/*#ifndef _PROCESS_H_
+#ifndef _PROCESS_H_
 #define _PROCESS_H_
 
+#include <stdint.h>
+
 #define PROC_READY      1
-#define PROC_SLEEP      2
+#define PROC_WAITING    2
 #define PROC_RUNNING    3
 
-struct stack_frame {
+typedef struct stack_frame {
 	//Registers restore context
 	uint64_t gs;
 	uint64_t fs;
@@ -32,7 +34,7 @@ struct stack_frame {
 	uint64_t rsp;
 	uint64_t ss;
 	uint64_t base;
-};
+}stack_frame;
 
 
 
@@ -40,8 +42,8 @@ typedef struct Process {
    uint8_t pid;
    uint8_t state;
 
-   (void*)(*entry_point)(void*);
-   Process* next_process;
+   void* (*entry_point)(void*);
+   struct Process* next_process;
 }Process;
+
 #endif
-*/
