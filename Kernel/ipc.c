@@ -8,31 +8,30 @@ int initIPC(){
 	for(int i=0; i<TABLE_SIZE; i++){
 		table[i].fd = 0;
 	}
+	return 1;
 }
 
 
 int mkfifo(char * name){
-	FIFO_entry entry;
 
 	if(!validateName(name))
-		return -1;
+		return 0;
 
 	for(int condom = 0; current_pos<TABLE_SIZE+1; current_pos++, condom++){
 		if(current_pos==TABLE_SIZE){
 			current_pos = 0;
 		}
 		if(condom == TABLE_SIZE)
-			break;
+			return 0;
 		if(!table[current_pos].fd){
-			entry = table[current_pos];
 			break;
 		}
 	}
-	entry.fd = current_pos + OFFSET;
-	copyName(entry.name, name, NAME_SIZE);
+	table[current_pos].fd = current_pos + OFFSET;
+	copyName(table[current_pos].name, name, NAME_SIZE);
 	// ACA DEBERIA SER MALLOC
-	entry.addr = BASE_MEMORY + BUFFER_SIZE * current_pos;
-	return entry.fd;
+	table[current_pos].addr = (uint8_t*)(BASE_MEMORY + BUFFER_SIZE * current_pos);
+	return table[current_pos].fd;
 }
 
 int openfifo(char * name){
@@ -41,14 +40,15 @@ int openfifo(char * name){
 			return table[i].fd;
 		}
 	}
-	return -1;
+	return 0;
 }
 
 int closefifo(int fd){
 	int i = entryIndex(fd);
 	if(i<0)
-		return -1;
+		return 0;
 	table[i].fd = 0;
+	// cuando ande el malloc acordarse del FREE aca --!--
 	return 1;
 }
 
@@ -56,7 +56,7 @@ int closefifo(int fd){
 int writefifo(int fd, void * msg, int size){ // ret -1 on error (fifo not exists (?))
 	int i = entryIndex(fd);
 	if(i<0 || size>BUFFER_SIZE)
-		return -1;
+		return 0;
 	memcpy(table[i].addr, msg, size);
 	return 1;
 }
@@ -64,7 +64,7 @@ int writefifo(int fd, void * msg, int size){ // ret -1 on error (fifo not exists
 int readfifo(int fd, void * buf, int size){ // returns message length; size is the buf size (max read amount)
 	int i = entryIndex(fd),j;
 	if(i<0)
-		return -1;
+		return 0;
 	for(j=0; j<size-1 && table[i].addr[j]!=0; j++){
 		((char*)buf)[j] = table[i].addr[j];
 		table[i].addr[j] = 0;

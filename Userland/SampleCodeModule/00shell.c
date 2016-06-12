@@ -160,3 +160,19 @@ void draw(){
 	pass = 0;
 	}
 }
+
+/*void testipc(){
+	char buf[6];
+	int n;
+	int fd = _call_int80(MKFIFO,"muffin");
+	printf("mk ret: %d\n",0xFF,fd);
+	n = _call_int80(OPENFIFO,"muffin");
+	printf("open ret: %d\n",0xFF,fd);
+	n = _call_int80(WRITEFIFO,fd,"fucku\n",6);
+	printf("write ret: %d\n",0xFF,n);
+	n = _call_int80(READFIFO,fd,buf,6);
+	printf("read ret: %d\n",0xFF,n);
+	printf("leo: %s\n",0xFF,buf);
+	fd = _call_int80(MKFIFO,"muffin");
+	printf("segundo mkfifo ret: %d\n",0xFF,fd);
+}*/

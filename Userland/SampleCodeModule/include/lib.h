@@ -17,6 +17,14 @@
 #define INT_MALLOC 12
 #define INT_FREE 13
 
+/* --- IPC CALLS --- */
+
+#define MKFIFO 20
+#define OPENFIFO 21
+#define CLOSEFIFO 22
+#define WRITEFIFO 23
+#define READFIFO 24
+
 /* --- GRAPHIC SYS CALLS --- */
 
 #define INT_CLEAR 42
