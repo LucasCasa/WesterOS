@@ -146,9 +146,9 @@ void draw(){
 	}
 
 	if(ch == 'a'){
-		angle+=10;
-	}else if(ch == 'd'){
 		angle-=10;
+	}else if(ch == 'd'){
+		angle+=10;
 	}
 	if(ch == 'x'){
 		_call_int80(INT_EXIT_DRAW_MODE);
