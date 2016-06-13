@@ -12,5 +12,6 @@ uint8_t keyboard_size();
 uint8_t keyboard_set_key(uint8_t c);
 uint8_t keyboard_get_key();
 void load_user_buffer();
+void flush_buffer();
 
 #endif

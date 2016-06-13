@@ -1,8 +1,7 @@
 #ifndef _LETTERS_H_
 #define _LETTERS_H_
 
-#define LETTER_WIDTH    18//12
-#define LETTER_HEIGHT   24//9
+
 
 typedef struct letterf{
    char pixel_data[9 * 12];

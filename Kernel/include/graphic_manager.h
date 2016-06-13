@@ -2,6 +2,7 @@
 #define _GRAPHIC_MANAGER_H_
 
 #include "typedef.h"
+#include "image.h"
 
 #define SCR_WIDTH    1024
 #define SCR_HEIGHT   768

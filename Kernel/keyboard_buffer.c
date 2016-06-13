@@ -3,7 +3,7 @@
 //El Buffer de Teclado guarda Scan Codes
 uint8_t keyboard_buffer[KB_SIZE];
 
-// Indices para iterar sobre el buffer ciclico 
+// Indices para iterar sobre el buffer ciclico
 uint8_t keyboard_actual=0;
 uint8_t keyboard_last=0;
 uint8_t size = 0;
@@ -19,14 +19,17 @@ uint8_t keyboard_is_empty() {
 
 void keyboard_clear() {
 	keyboard_actual = 0;
-	keyboard_last = 0;	
+	keyboard_last = 0;
 	size = 0;
 }
 uint8_t keyboard_size(){
-	return size;	
+	return size;
+}
+void flush_buffer(){
+	keyboard_actual=keyboard_last;
 }
 uint8_t keyboard_set_key(uint8_t c) {
-	
+
 	if( !keyboard_is_full() ) {
 		if(c == '\b'){
 			if(size > 0){
@@ -41,7 +44,7 @@ uint8_t keyboard_set_key(uint8_t c) {
 		}
 		if( keyboard_last == KB_SIZE )
 			keyboard_last = 0;
-		
+
 		if( c == '\n'){
 			load_user_buffer();
 		}
@@ -54,12 +57,12 @@ uint8_t keyboard_set_key(uint8_t c) {
 	}else if( c == '\n'){
 		keyboard_buffer[keyboard_last++] = c;
 		size++;
-		if( keyboard_last == KB_SIZE )			
+		if( keyboard_last == KB_SIZE )
 			keyboard_last = 0;
 		load_user_buffer();
 		return 1;
 	}
-	
+
 	return 0;
 }
 
@@ -72,7 +75,7 @@ uint8_t keyboard_get_key(){
 	if( keyboard_actual == KB_SIZE )
 		keyboard_actual = 0;
 
-	if(size > 0) 
+	if(size > 0)
 		size--;
 	return c;
 }

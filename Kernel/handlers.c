@@ -27,7 +27,9 @@ int validateScreenTime(int time){
 }
 void timer_handler(){
 	time++;
-	sleep_time++;
+	if(!draw_mode){ // DRAW MODE ESTA EN SYS.C
+		sleep_time++;
+	}
 	if(sleep_time >= screensaver_time){
 		if(sleep_time < screensaver_time + 10){
 			save_screen();

@@ -75,12 +75,16 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		break;
 		case EXIT_DRAW_MODE:
 			draw_mode = 0;
+			flush_buffer();
 		break;
 		case CLEAR:
 			clear_screen();
 			break;
 		case DRAW_CIRCLE:
 			draw_circle((Point*) arg1,arg2,(Color*)arg3);
+		break;
+		case DRAW_TEXT:
+			draw_text((Point*) arg1, (char*) arg2);
 		break;
 		case DRAW_ERASABLE_CIRCLE:
 			return draw_erasable_circle((Point*) arg1,arg2,(Color*)arg3);

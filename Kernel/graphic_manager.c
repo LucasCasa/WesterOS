@@ -3,6 +3,8 @@
 erasable_circle buffer[10];
 int next = 0;
 uint64_t st = 0xD000000;
+static Image* font = (Image*)0x800000;
+
 static uint8_t* start = 0;
 
 void draw_circle(Point* p, uint64_t radius, Color* c){
@@ -21,7 +23,32 @@ void setpixel(int x ,int y, Color* c){
    start[x+2 + y*SCR_WIDTH*BPP] = c->r;
 }
 void draw_text(Point*p,char* text){
-
+  int i = 0;
+  while(text[i] != 0){
+    draw_letter(p->x + LETTER_WIDTH*i,p->y,text[i]);
+    i++;
+  }
+}
+void draw_letter(int x, int y, char c){
+  int totaloffset = x*BPP + y*SCR_WIDTH*BPP;
+	int fontoffset = 0;
+	uint8_t* startf;
+	if(c < 32){
+	 startf = font->pixel_data;
+	}else{
+	 startf = font->pixel_data + 21*(c - 32)*3;
+	}
+	for(int i = 0; i<LETTER_HEIGHT;i++){
+		for(int j = 0; j<LETTER_WIDTH*BPP;j++){
+			start[totaloffset + j] =startf[fontoffset + j + 2 ] ;
+			j++;
+			start[totaloffset + j] = startf[j + fontoffset];
+			j++;
+			start[totaloffset + j] = startf[j-2 + fontoffset];
+		}
+		totaloffset += SCR_WIDTH*BPP;
+		fontoffset += font->width*BPP;
+	}
 }
 int draw_erasable_circle(Point* p, uint64_t radius, Color* c){
   signed int r = radius;
