@@ -1,17 +1,6 @@
-#include "lib.h"
-#define RADIUS      4
-#define MAX_PLAYERS 6 // DOBLE TECLADO SE PUEDEN HASTA 6??
-#define HOLE_SIZE   10
-#define MAX_DRAW    90
-#define COLOR_POS   50
-#define NUMBER_POS  180
-#define RIGHT_POS   310
-#define LEFT_POS    500
-extern double _sin(int angle);
-extern double _cos(int angle);
+#include "game.h"
+
 char board[1024*768];
-void get_key_up(uint8_t);
-void get_key_down(uint8_t);
 int mod[MAX_PLAYERS] = {0,0,0,0,0,0};
 uint32_t last[] = {1,2,3,4,5,6};
 uint32_t next[] = {7,8,9,11,12};
@@ -21,8 +10,6 @@ int erasable[MAX_PLAYERS] = {-1,-1,-1,-1,-1,-1};
 Color c[] = {{255,0,0},{0,0,255},{0,255,0},{255,0,255},{255,255,0},{255,255,255}};
 char* controls[6][2] = {{"A","D"},{"J","L"},{"L Arrow","R Arrow"},{"Z","C"},{"I","P"},{"1","3"}};
 int starting = 1;
-char draw_into_board(uint32_t pn,Point p);
-void exit_game();
 
 void game(){
   _call_int80(INT_ENTER_DRAW_MODE);
@@ -73,18 +60,17 @@ void game(){
     }
 
     for(int i = 0; i<nplayers;i++){
-      if(!starting){
-         tsinv[i]++;
-      }
-      if(tsinv[i] == ttinv[i] + HOLE_SIZE){
-        tsinv[i] = 0;
-        ttinv[i] = rand() % MAX_DRAW;
-      }
-      angle[i]+= 3*mod[i];
-      accumx[i]+= 3*_cos(angle[i]);
-      accumy[i]+= 3*_sin(angle[i]);
-
       if(!game_over[i]){
+        if(!starting){
+           tsinv[i]++;
+        }
+        if(tsinv[i] == ttinv[i] + HOLE_SIZE){
+          tsinv[i] = 0;
+          ttinv[i] = rand() % MAX_DRAW;
+        }
+        angle[i]+= 3*mod[i];
+        accumx[i]+= 3*_cos(angle[i]);
+        accumy[i]+= 3*_sin(angle[i]);
         p[i].x = accumx[i];
         p[i].y = accumy[i];
         if(tsinv[i] < ttinv[i]){
