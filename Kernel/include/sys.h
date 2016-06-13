@@ -34,6 +34,7 @@
 #define CLOSEFIFO    22
 #define WRITEFIFO    23
 #define READFIFO     24
+#define SHOWIPCS	 25
 
 /* --- GRAPHIC SYS CALLS --- */
 

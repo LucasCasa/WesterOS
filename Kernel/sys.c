@@ -83,10 +83,10 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 			draw_circle((Point*) arg1,arg2,(Color*)arg3);
 		break;
 		case DRAW_ERASABLE_CIRCLE:
-		return draw_erasable_circle((Point*) arg1,arg2,(Color*)arg3);
+			return draw_erasable_circle((Point*) arg1,arg2,(Color*)arg3);
 		break;
 		case UNDRAW_ERASABLE_CIRCLE:
-		undraw_erasable_circle(arg1);
+			undraw_erasable_circle(arg1);
 		break;
 		case GET_CHAR_FROM_BUFFER:
 			return get_char_from_buffer();
@@ -105,6 +105,9 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		break;
 		case READFIFO:
 			return readfifo(arg1,(void*)arg2,arg3);
+		break;
+		case SHOWIPCS:
+			list_ipc();
 		break;
 		case SET_EVENT_KEYUP:
 			up = arg1;

@@ -24,6 +24,7 @@
 #define CLOSEFIFO 22
 #define WRITEFIFO 23
 #define READFIFO 24
+#define SHOWIPCS 25
 
 /* --- GRAPHIC SYS CALLS --- */
 
@@ -60,6 +61,7 @@ int pow(int x, unsigned int y);
 void putChar(uint8_t c,uint8_t mod);
 void printf(const char * string, uint8_t mod, ...);
 char get_char();
+void list_ipcs();
 
 void flush_buffer();
 

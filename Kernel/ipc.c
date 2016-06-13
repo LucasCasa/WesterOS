@@ -17,6 +17,7 @@ int mkfifo(char * name){
 	if(!validateName(name))
 		return 0;
 
+	// Advances current_pos to the next available slot -- If none is found return 0
 	for(int condom = 0; current_pos<TABLE_SIZE+1; current_pos++, condom++){
 		if(current_pos==TABLE_SIZE){
 			current_pos = 0;
@@ -27,10 +28,12 @@ int mkfifo(char * name){
 			break;
 		}
 	}
+
 	table[current_pos].fd = current_pos + OFFSET;
 	copyName(table[current_pos].name, name, NAME_SIZE);
 	// ACA DEBERIA SER MALLOC
 	table[current_pos].addr = (uint8_t*)(BASE_MEMORY + BUFFER_SIZE * current_pos);
+	table[current_pos].addr[0] = 0;
 	return table[current_pos].fd;
 }
 
@@ -94,4 +97,24 @@ int entryIndex(int fd){
 			return i;
 	}
 	return -1;
+}
+
+void list_ipc(){
+	print_message("\n\n********************************************\n",0xFF);
+	print_message("******* List of currently open IPC's *******\n",0xFF);
+	print_message("********************************************\n\n",0xFF);
+	for(int i=0; i<TABLE_SIZE; i++){
+		if(table[i].fd != 0)
+			list_entry(i);
+	}
+}
+
+void list_entry(int index){
+	print_message("File descriptor: ",0xFF);
+	print_number(table[index].fd);
+	print_message(" - Name: ",0xFF);
+	print_message(table[index].name,0xFF);
+	print_message("\nContent: ",0xFF);
+	print_message((char*)table[index].addr,0xFF);
+	print_message("\n--------------------------------------------\n",0xFF);
 }

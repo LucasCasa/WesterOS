@@ -31,16 +31,17 @@ void draw();
 void game();
 
 char* time_str = "Shows the time and the date";
-char* help_str = "shows all available commands";
-char* change_time_str = "change time and date";
-char* whoami_str = "who am i?";
-char* keyboard_str = "shows the keyboard distribution graphically";
-char* modi_str = "change the console set of colours";
-char* clear_str = "clear the screen";
-char* saver_str = "change the time until the screensaver appears";
-char* piano_str= "start typing and listen to the sounds of the piano";
-char* songs_str= "choose a song and listen to it";
-char* beep_str= "listen to the beep";
-char* draw_str ="paint un poroto al lado de esto";
+char* help_str = "Shows all available commands";
+char* change_time_str = "Change time and date";
+char* whoami_str = "Who am i?";
+char* keyboard_str = "Shows the keyboard distribution graphically";
+char* modi_str = "Change the console set of colours";
+char* clear_str = "Clear the screen";
+char* saver_str = "Change the time until the screensaver appears";
+char* piano_str= "Start typing and listen to the sounds of the piano";
+char* songs_str= "Choose a song and listen to it";
+char* beep_str= "Listen to the beep";
+char* draw_str ="Paint un poroto al lado de esto";
+char* ipcs_str = "List all existing IPC's";
 
 #endif

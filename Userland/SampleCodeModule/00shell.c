@@ -5,9 +5,9 @@
 #include "sounds.h"
 
 
-Command commands[13];
+Command commands[14];
 char comm[20];
-int number_of_commands = 13;
+int number_of_commands = 14;
 char aux;
 char name[20] = {0};
 
@@ -46,6 +46,7 @@ print_message(" # #  #####  ###    #   ##### #    # ######  #### \n", 0xFF);
 	init_commands(10,"beep", beep_str,&beep);
 	init_commands(11,"draw",draw_str,&draw);
 	init_commands(12,"game",draw_str,&game);
+	init_commands(13,"ipcs",ipcs_str,&list_ipcs);
 	while(1){
 		shell_command();
 	}
@@ -159,6 +160,10 @@ void draw(){
 	ch = 0;
 	pass = 0;
 	}
+}
+
+void list_ipcs(){
+	_call_int80(SHOWIPCS);
 }
 
 /*void testipc(){
