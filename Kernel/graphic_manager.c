@@ -19,9 +19,11 @@ void draw_circle(Point* p, uint64_t radius, Color* c){
    }
 }
 void setpixel(int x ,int y, Color* c){
+  if(x>=0 && x<SCR_WIDTH*3 && y>=0 && y<SCR_HEIGHT){
    start[x + y*SCR_WIDTH*BPP] = c->b;
    start[x+1 + y*SCR_WIDTH*BPP] = c->g;
    start[x+2 + y*SCR_WIDTH*BPP] = c->r;
+ }
 }
 void draw_text(Point*p,char* text){
   int i = 0;

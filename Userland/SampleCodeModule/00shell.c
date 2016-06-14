@@ -162,6 +162,11 @@ void draw(){
 		}else if(accumy >= 768){
 			accumy = accumy - 768;
 		}
+		if(accumx < 0){
+			accumx = 1024+accumx;
+		}else if(accumx >= 1024){
+			accumx = accumx - 1024;
+		}
 		ch = 0;
 		pass = 0;
 	}
