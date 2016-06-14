@@ -24,22 +24,63 @@ void modify_colors(){
 		}
 	}
 	}while(i > 1 || res == 0 || res > 5);
-
+	Color fr;
+	Color bk;
 	switch(res){
 		case 1:
 			_call_int80(INT_COLORS,0x02,0x04);
+			fr.r = 0;
+			fr.g = 255;
+			fr.b = 0;
+
+			bk.r = 0;
+			bk.g = 0;
+			bk.b = 0;
+			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk);
 			break;
 		case 2:
 			_call_int80(INT_COLORS,0x1F,0x12);
+			fr.r = 255;
+			fr.g = 255;
+			fr.b = 255;
+
+			bk.r = 0;
+			bk.g = 0;
+			bk.b = 255;
+			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk);
 			break;
 		case 3:
 			_call_int80(INT_COLORS,0x0E,0x0B);
+			fr.r = 255;
+			fr.g = 255;
+			fr.b = 0;
+
+			bk.r = 0;
+			bk.g = 0;
+			bk.b = 0;
+			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk);
 			break;
 		case 4:
 			_call_int80(INT_COLORS,0x70,0x71);
+			fr.r = 0;
+			fr.g = 0;
+			fr.b = 0;
+
+			bk.r = 192;
+			bk.g = 192;
+			bk.b = 192;
+			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk);
 			break;
 		case 5:
 			_call_int80(INT_COLORS,0x04,0x0F);
+			fr.r = 255;
+			fr.g = 0;
+			fr.b = 0;
+
+			bk.r = 0;
+			bk.g = 0;
+			bk.b = 0;
+			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk);
 			break;
 	}
 }

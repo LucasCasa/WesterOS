@@ -27,7 +27,7 @@
 #define SHOWIPCS 25
 
 /* --- GRAPHIC SYS CALLS --- */
-
+#define INT_COLORS_GRAPHIC 41
 #define INT_CLEAR 42
 #define INT_DRAW_CIRCLE 43
 #define INT_DRAW_IMAGE 44

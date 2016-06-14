@@ -50,6 +50,9 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case COLORS:
 			set_default_modifiers((uint8_t) arg1, (uint8_t) arg2);
 			break;
+		case COLORS_GRAPHIC:
+			set_default_modifiers_graphic((Color*) arg1, (Color*) arg2);
+			break;
 		case SCR_TIME:
 			return validateScreenTime(arg1);
 			break;

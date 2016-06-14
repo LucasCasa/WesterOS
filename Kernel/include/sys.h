@@ -34,10 +34,10 @@
 #define CLOSEFIFO    22
 #define WRITEFIFO    23
 #define READFIFO     24
-#define SHOWIPCS	 25
+#define SHOWIPCS	   25
 
 /* --- GRAPHIC SYS CALLS --- */
-
+#define COLORS_GRAPHIC           41
 #define CLEAR                    42
 #define DRAW_CIRCLE              43
 #define DRAW_IMAGE               44

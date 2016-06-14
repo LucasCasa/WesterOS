@@ -27,6 +27,40 @@ void set_default_modifiers(char s, char n){
 	num_modifier = n;
 	set_new_modifier();
 }
+void set_default_modifiers_graphic(Color* front, Color* back){
+	set_new_modifier_graphic(front,back);
+	font_color.b = front->b;
+	font_color.r = front->r;
+	font_color.g = front->g;
+
+	background_color.r = back->r;
+	background_color.g = back->g;
+	background_color.b = back->b;
+
+}
+void set_new_modifier_graphic(Color* nf, Color* nb){
+	Color newc;
+	for(int i = 0; i<1024*768*3;i++){
+		if(graphic_video[i] == font_color.b && graphic_video[i+1] == font_color.g && graphic_video[i+2] == font_color.r){
+			newc.r = nf->r;
+			newc.g = nf->g;
+			newc.b = nf->b;
+		}else if(graphic_video[i] == background_color.b && graphic_video[i+1] == background_color.g && graphic_video[i+2] == background_color.r){
+			newc.r = nb->r;
+			newc.g = nb->g;
+			newc.b = nb->b;
+		}else{
+			newc.r = graphic_video[i+2];
+			newc.g = graphic_video[i+1];
+			newc.b = graphic_video[i];
+		}
+		graphic_video[i++] = newc.b;
+		graphic_video[i++] = newc.g;
+		graphic_video[i] = newc.r;
+
+	}
+
+}
 void set_new_modifier(){
 	for(int i = 0; i<160*25;i++){
 		if(isNumber((char) video[i]) || i % 160 < 4){
@@ -144,6 +178,9 @@ void new_line_graphic(){
 	if(graphic_video == 0){
 		graphic_video = (*(uint32_t*)0x5080);
 		current_graphic_video = (*(uint32_t*)0x5080);
+	}
+	if(stand_by_active){
+		draw_char_graphic(0);
 	}
 	int currentline = get_yoffset();
 	if(currentline + LETTER_HEIGHT > 768){
