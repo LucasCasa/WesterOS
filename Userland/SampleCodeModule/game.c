@@ -1,54 +1,59 @@
 #include "game.h"
 
-char board[1024*768];
-int mod[MAX_PLAYERS] = {0,0,0,0,0,0};
+char board[WIDTH*HEIGHT];
+
 uint32_t last[] = {1,2,3,4,5,6};
 uint32_t next[] = {7,8,9,11,12};
-int ttinv[MAX_PLAYERS] = {0,0,0,0,0,0};
-int tsinv[MAX_PLAYERS] = {0,0,0,0,0,0};
-int erasable[MAX_PLAYERS] = {-1,-1,-1,-1,-1,-1};
+
 Color c[] = {{255,0,0},{0,0,255},{0,255,0},{255,0,255},{255,255,0},{255,255,255}};
 char* controls[6][2] = {{"A","D"},{"J","L"},{"L Arrow","R Arrow"},{"Z","C"},{"I","P"},{"1","3"}};
 int starting = 1;
+
+void (*powerup_effects[NUM_POWERUPS])(Player*) = {powerUp_cleanScreen};
+Color powerup_color[NUM_POWERUPS] = {{0,191,255}};
+PowerUp powerups[MAX_POWERUPS];
+int num_powerup, powerup_cont, powerup_next;
+
+Player p[MAX_PLAYERS];
 
 void game(){
   _call_int80(INT_ENTER_DRAW_MODE);
   _call_int80(INT_CLEAR);
 
-  //CANTIDAD DE JUGADORES
+  //AMOUNT OF PLAYERS
   int nplayers = lobby();
-  _call_int80(INT_CLEAR);
-  starting = 1;
-  Point p[MAX_PLAYERS];
-  int angle[MAX_PLAYERS];
-  for(int i = 0; i<nplayers;i++){
-     p[i].x = rand() % 600 + 100;
-     p[i].y = rand() % 500 + 80;
-     angle[i] = rand() % 360;
- }
 
-  //Color ch[] = {{100,0,0},{0,0,100},{0,100,0},{100,0,100}};
-  for(int i = 0; i<1024*768;i++){
+  _call_int80(INT_CLEAR);
+
+  starting = 1;
+
+  // INIT powerups
+  num_powerup = 0;
+  for(int i=0; i<NUM_POWERUPS; i++){
+    powerups[i].active = 0;
+  }
+
+  // INIT players
+  for(int i = 0; i<nplayers;i++){
+     p[i].pos.x = rand() % 600 + 100;
+     p[i].pos.y = rand() % 500 + 80;
+     p[i].acum.x = p[i].pos.x;
+     p[i].acum.y = p[i].pos.y;
+     p[i].angle = rand() % 360;
+     p[i].mod = 0;
+     p[i].alive = 1;
+     p[i].radius = RADIUS;
+     p[i].time_with_inv = 0;
+     p[i].time_no_inv = 0;
+     p[i].erasable = -1;
+  }
+
+  // INIT board
+  for(int i = 0; i<WIDTH*HEIGHT;i++){
     board[i] = 0;
   }
-  double accumx[MAX_PLAYERS];
-  double accumy[MAX_PLAYERS];
-  for(int i = 0; i<nplayers;i++){
-    accumx[i] = p[i].x;
-    accumy[i] = p[i].y;
-    erasable[i] = -1;
-    mod[i] = 0;
-    ttinv[i] = 0;
-    tsinv[i] = 0;
-  }
-
-
-  char game_over[MAX_PLAYERS] = {0,0,0,0,0,0};
 
   int pass = 0;
-
-
-
 
   _call_int80(INT_SET_EVENT_KEYUP,&get_key_up);
   _call_int80(INT_SET_EVENT_KEYDOWN,&get_key_down);
@@ -59,51 +64,68 @@ void game(){
       pass++;
     }
 
-    for(int i = 0; i<nplayers;i++){
-      if(!game_over[i]){
-        if(!starting){
-           tsinv[i]++;
-        }
-        if(tsinv[i] == ttinv[i] + HOLE_SIZE){
-          tsinv[i] = 0;
-          ttinv[i] = rand() % MAX_DRAW;
-        }
-        angle[i]+= 3*mod[i];
-        accumx[i]+= 3*_cos(angle[i]);
-        accumy[i]+= 3*_sin(angle[i]);
-        p[i].x = accumx[i];
-        p[i].y = accumy[i];
-        if(tsinv[i] < ttinv[i]){
-          _call_int80(INT_DRAW_CIRCLE,&p[i],RADIUS,&c[i]);
-          game_over[i] = draw_into_board(i+1,p[i]);
-          if(erasable[i] > 0){
-            _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,erasable[i]);
-            erasable[i] = -1;
+    // Decides when to create new powerups
+    managePowerups();
+
+    // Check powerup collisions
+    for(int i=0; i<MAX_POWERUPS; i++){
+      if(powerups[i].active){
+        for(int j=0; j<nplayers; j++){
+          // check collision with player
+          if(square((powerups[i].radius+p[j].radius))>square(p[j].pos.x - powerups[i].pos.x)+square(p[j].pos.y - powerups[i].pos.y)){
+            powerups[i].effect(&(p[j]));
+            powerups[i].active = 0;
           }
-        }else{
-          if(erasable[i] > 0){
-            _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,erasable[i]);
-          }
-          erasable[i] = _call_int80(INT_DRAW_ERASABLE_CIRCLE,&p[i],RADIUS,&c[i]);
         }
       }
     }
-    int alive = 0;
+
     for(int i = 0; i<nplayers;i++){
-      alive+= game_over[i];
+      if(p[i].alive){
+        if(!starting){
+           p[i].time_no_inv++;
+        }
+        if(p[i].time_no_inv == p[i].time_with_inv + HOLE_SIZE){
+          p[i].time_no_inv = 0;
+          p[i].time_with_inv = rand() % MAX_DRAW;
+        }
+        p[i].angle += 3*p[i].mod;
+        p[i].acum.x += 3*_cos(p[i].angle);
+        p[i].acum.y += 3*_sin(p[i].angle);
+        p[i].pos.x = p[i].acum.x;
+        p[i].pos.y = p[i].acum.y;
+        if(p[i].time_no_inv < p[i].time_with_inv){
+          _call_int80(INT_DRAW_CIRCLE,&(p[i].pos),p[i].radius,&c[i]);
+          p[i].alive = draw_into_board(i+1,p[i].pos);
+          if(p[i].erasable > 0){
+            _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,p[i].erasable);
+            p[i].erasable = -1;
+          }
+        }else{
+          if(p[i].erasable > 0){
+            _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,p[i].erasable);
+          }
+          p[i].erasable = _call_int80(INT_DRAW_ERASABLE_CIRCLE,&(p[i].pos),p[i].radius,&c[i]);
+        }
+      }
     }
-    if(alive >= nplayers -1){
+    int total_alive = 0;
+    for(int i = 0; i<nplayers;i++){
+      if(p[i].alive)
+        total_alive++;
+    }
+    if(total_alive <= nplayers -1){
       for(int i = 0; i<nplayers;i++){
-        if(!game_over[i]){
+        if(p[i].alive){
           exit_game();
-          print_message("Gano Jugador ",0xFF);
+          print_message("Player ",0xFF);
           print_number(i+1);
-          print_message("\n",0xFF);
+          print_message(" has won!\n",0xFF);
           return;
         }
       }
       exit_game();
-      print_message("Corbata",0xFF);
+      print_message("Tie\n",0xFF);
       return;
     }
     pass = 0;
@@ -117,58 +139,53 @@ void game(){
   _call_int80(INT_UNSET_EVENT_KEYDOWN);
   //MALLOC DE UN TABLERO??
 }
+
 int lobby(){
   char* div = "|";
   char* bar = "_________________________________";
   char play[2] = "1";
-  Point p = {50,50};
-    _call_int80(INT_DRAW_TEXT,&p,"Ingresar cantidad de jugadores(2 a 6):");
-    p.y+=50;
-    p.x = COLOR_POS;
-    _call_int80(INT_DRAW_TEXT,&p,"COLOR");
-    p.x = NUMBER_POS - 20;
-    _call_int80(INT_DRAW_TEXT,&p,div);
-    p.x = NUMBER_POS;
-    _call_int80(INT_DRAW_TEXT,&p,"NUMERO");
-    p.x = RIGHT_POS- 20;
-    _call_int80(INT_DRAW_TEXT,&p,div);
-    p.x = RIGHT_POS;
-    _call_int80(INT_DRAW_TEXT,&p,"IZQUIERDA");
-    p.x = LEFT_POS- 20;
-    _call_int80(INT_DRAW_TEXT,&p,div);
-    p.x = LEFT_POS;
-    _call_int80(INT_DRAW_TEXT,&p,"DERECHA");
-    p.y+=25;
-    p.x = COLOR_POS;
-    _call_int80(INT_DRAW_TEXT,&p,bar);
-    p.y+=30;
+  Point point = {50,50};
+    _call_int80(INT_DRAW_TEXT,&point,"Ingresar cantidad de jugadores(2 a 6):");
+    point.y+=50;
+    point.x = COLOR_POS;
+    _call_int80(INT_DRAW_TEXT,&point,"COLOR");
+    point.x = NUMBER_POS - 20;
+    _call_int80(INT_DRAW_TEXT,&point,div);
+    point.x = NUMBER_POS;
+    _call_int80(INT_DRAW_TEXT,&point,"NUMERO");
+    point.x = RIGHT_POS- 20;
+    _call_int80(INT_DRAW_TEXT,&point,div);
+    point.x = RIGHT_POS;
+    _call_int80(INT_DRAW_TEXT,&point,"IZQUIERDA");
+    point.x = LEFT_POS- 20;
+    _call_int80(INT_DRAW_TEXT,&point,div);
+    point.x = LEFT_POS;
+    _call_int80(INT_DRAW_TEXT,&point,"DERECHA");
+    point.y+=25;
+    point.x = COLOR_POS;
+    _call_int80(INT_DRAW_TEXT,&point,bar);
+    point.y+=30;
     for(int i = 0; i<6;i++){
-      p.y+= 10;
-      p.x = COLOR_POS + ((NUMBER_POS - COLOR_POS) / 2 - RADIUS*2);
-      _call_int80(INT_DRAW_CIRCLE,&p,RADIUS*2,&c[i]);
-      p.y-=10;
-      p.x = NUMBER_POS - 20;
-      _call_int80(INT_DRAW_TEXT,&p,div);
-      p.x = NUMBER_POS + ((RIGHT_POS - NUMBER_POS) / 2 - 11);
+      point.y+= 10;
+      point.x = COLOR_POS + ((NUMBER_POS - COLOR_POS) / 2 - RADIUS*2);
+      _call_int80(INT_DRAW_CIRCLE,&point,RADIUS*2,&c[i]);
+      point.y-=10;
+      point.x = NUMBER_POS - 20;
+      _call_int80(INT_DRAW_TEXT,&point,div);
+      point.x = NUMBER_POS + ((RIGHT_POS - NUMBER_POS) / 2 - 11);
       play[0] = i + '1';
-      _call_int80(INT_DRAW_TEXT,&p,play);
-      p.x = RIGHT_POS- 20;
-      _call_int80(INT_DRAW_TEXT,&p,div);
-      p.x = RIGHT_POS;
-      _call_int80(INT_DRAW_TEXT,&p,controls[i][0]);
-      p.x = LEFT_POS - 20;
-      _call_int80(INT_DRAW_TEXT,&p,div);
-      p.x= LEFT_POS;
-      _call_int80(INT_DRAW_TEXT,&p,controls[i][1]);
-      p.y+=30;
+      _call_int80(INT_DRAW_TEXT,&point,play);
+      point.x = RIGHT_POS- 20;
+      _call_int80(INT_DRAW_TEXT,&point,div);
+      point.x = RIGHT_POS;
+      _call_int80(INT_DRAW_TEXT,&point,controls[i][0]);
+      point.x = LEFT_POS - 20;
+      _call_int80(INT_DRAW_TEXT,&point,div);
+      point.x= LEFT_POS;
+      _call_int80(INT_DRAW_TEXT,&point,controls[i][1]);
+      point.y+=30;
     }
-    /*
-    _call_int80(INT_DRAW_TEXT,&p,"Jugador 2");
-    _call_int80(INT_DRAW_TEXT,&p,"Jugador 3");
-    _call_int80(INT_DRAW_TEXT,&p,"Jugador 4");
-    _call_int80(INT_DRAW_TEXT,&p,"Jugador 5");
-    _call_int80(INT_DRAW_TEXT,&p,"Jugador 6");
-    */
+
     char cha = 0;
     do{
       cha = _call_int80(INT_GCFB);
@@ -184,107 +201,107 @@ void exit_game(){
 void get_key_down(uint8_t key){
   switch(key){
     case 'a':
-    mod[0] =-1;
-    break;
+      p[0].mod =-1;
+      break;
     case 'd':
-    mod[0] = 1;
-    break;
+      p[0].mod = 1;
+      break;
     case 'j':
-    mod[1] = -1;
-    break;
+      p[1].mod = -1;
+      break;
     case 'l':
-    mod[1] = 1;
-    break;
+      p[1].mod = 1;
+      break;
     case '4':
-    mod[2] = -1;
-    break;
+      p[2].mod = -1;
+      break;
     case '6':
-    mod[2] = 1;
-    break;
+      p[2].mod = 1;
+      break;
     case 'z':
-    mod[3] = -1;
-    break;
+      p[3].mod = -1;
+      break;
     case 'c':
-    mod[3] = 1;
-    break;
+      p[3].mod = 1;
+      break;
     case 'i':
-    mod[4] = -1;
-    break;
+      p[4].mod = -1;
+      break;
     case 'p':
-    mod[4] = 1;
-    break;
+      p[4].mod = 1;
+      break;
     case '1':
-    mod[5] = -1;
-    break;
+      p[5].mod = -1;
+      break;
     case '3':
-    mod[5] = 1;
-    break;
+      p[5].mod = 1;
+      break;
   }
 }
 void get_key_up(uint8_t key){
   switch(key){
     case 'a':
-    mod[0] = 0;
-    break;
+      p[0].mod = 0;
+      break;
     case 'd':
-    mod[0] = 0;
-    break;
+      p[0].mod = 0;
+      break;
     case 'j':
-    mod[1] = 0;
-    break;
+      p[1].mod = 0;
+      break;
     case 'l':
-    mod[1] = 0;
-    break;
+      p[1].mod = 0;
+      break;
     case '4':
-    mod[2] = 0;
-    break;
+      p[2].mod = 0;
+      break;
     case '6':
-    mod[2] = 0;
-    break;
+      p[2].mod = 0;
+      break;
     case 'z':
-    mod[3] = 0;
-    break;
+      p[3].mod = 0;
+      break;
     case 'c':
-    mod[3] = 0;
-    break;
+      p[3].mod = 0;
+      break;
     case 'i':
-    mod[4] = 0;
-    break;
+      p[4].mod = 0;
+      break;
     case 'p':
-    mod[4] = 0;
-    break;
+      p[4].mod = 0;
+      break;
     case '1':
-    mod[5] = 0;
-    break;
+      p[5].mod = 0;
+      break;
     case '3':
-    mod[5] = 0;
-    break;
+      p[5].mod = 0;
+      break;
   }
 }
-char draw_into_board(uint32_t pn,Point p){
-  if(p.x-RADIUS < 0 || p.x+RADIUS > 1024){
-    return 1;
+char draw_into_board(uint32_t pn,Point point){
+  if(point.x-RADIUS < 0 || point.x+RADIUS > WIDTH){
+    return 0;
   }
-  if(p.y-RADIUS < 0 || p.y+RADIUS > 768){
-    return 1;
+  if(point.y-RADIUS < 0 || point.y+RADIUS > HEIGHT){
+    return 0;
   }
   for(signed int y=-RADIUS ; y<=RADIUS; y++){
     for(signed int x=-RADIUS ; x<=RADIUS; x++){
       if(x*x+y*y <= RADIUS*RADIUS){
-        if(board[p.x + x + (p.y+y)*1024 ] == last[pn-1] || board[p.x + x + (p.y +y)*1024] == 0){
-          board[p.x + x + (p.y +y)*1024 ] = next[pn-1];
+        if(board[point.x + x + (point.y+y)*WIDTH ] == last[pn-1] || board[point.x + x + (point.y +y)*WIDTH] == 0){
+          board[point.x + x + (point.y +y)*WIDTH ] = next[pn-1];
         }else{
           print_message("Crash at",0xFF);
-          print_number(p.x + x);
+          print_number(point.x + x);
           print_message(",",0xFF);
-          print_number(p.y +y);
+          print_number(point.y +y);
           print_message("Extra",0xFF);
-          print_number(board[p.x + x + (p.y +y)*1024]);
+          print_number(board[point.x + x + (point.y +y)*WIDTH]);
           print_number(pn);
           print_number(next[pn-1]);
           print_number(last[pn-1]);
 
-          return 1;
+          return 0;
         }
       }
     }
@@ -293,5 +310,51 @@ char draw_into_board(uint32_t pn,Point p){
   aux = last[pn - 1];
   last[pn - 1] = next[pn - 1];
   next[pn - 1] = aux;
-  return 0;
+  return 1;
+}
+
+void powerUp_cleanScreen(Player * trigger){
+  for(int i = 0; i<WIDTH*HEIGHT;i++){
+    board[i] = 0;
+  }
+  //_call_int80(INT_ERASE_SCR);
+}
+
+int getRandIndex(int max){
+  return rand() % max;
+}
+
+int getAvailablePowerupIndex(){
+  for(int i=0; i<MAX_POWERUPS; i++){
+    if(!powerups[i].active)
+      return i;
+  }
+  return -1;
+}
+
+void createNewPowerup(){
+  int n;
+  if((n=getAvailablePowerupIndex())<0)
+    return;
+  powerups[n].active = 1;
+  powerups[n].radius = POWERUP_RADIUS;
+  powerups[n].pos.x = rand() % (WIDTH - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
+  powerups[n].pos.y = rand() % (HEIGHT - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
+  powerups[n].effect = powerup_effects[getRandIndex(MAX_POWERUPS)];
+
+  _call_int80(INT_DRAW_CIRCLE,&(powerups[n].pos),powerups[n].radius,&(powerup_color[n]));
+}
+
+void managePowerups(){
+  if(powerup_cont == powerup_next){
+    createNewPowerup();
+    powerup_cont = 0;
+    powerup_next = rand()%(MAX_POWERUP_TIME - MIN_POWERUP_TIME) + MIN_POWERUP_TIME;
+  }
+
+  powerup_cont++;
+}
+
+int square(int n){
+  return  n*n;
 }
