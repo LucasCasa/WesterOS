@@ -17,8 +17,9 @@ uint8_t saved_modifier;
 uint8_t* saved_shell_graphic = (uint8_t* ) 0xA000000;
 uint8_t* saved_current_video_graphic = 0;
 uint8_t* saved_command_line_graphic = 0;
-Color font_color = {255,255,255};
+Color font_color = {0,255,0};
 Color background_color = {0,0,0};
+Color number_color = {255,0,0};
 char stand_by_active = 0;
 int gm = 1;
 
@@ -27,8 +28,8 @@ void set_default_modifiers(char s, char n){
 	num_modifier = n;
 	set_new_modifier();
 }
-void set_default_modifiers_graphic(Color* front, Color* back){
-	set_new_modifier_graphic(front,back);
+void set_default_modifiers_graphic(Color* front, Color* back,Color* num){
+	set_new_modifier_graphic(front,back,num);
 	font_color.b = front->b;
 	font_color.r = front->r;
 	font_color.g = front->g;
@@ -37,8 +38,11 @@ void set_default_modifiers_graphic(Color* front, Color* back){
 	background_color.g = back->g;
 	background_color.b = back->b;
 
+	number_color.r = num->r;
+	number_color.g = num->g;
+	number_color.b = num->b;
 }
-void set_new_modifier_graphic(Color* nf, Color* nb){
+void set_new_modifier_graphic(Color* nf, Color* nb,Color* nnum){
 	Color newc;
 	for(int i = 0; i<1024*768*3;i++){
 		if(graphic_video[i] == font_color.b && graphic_video[i+1] == font_color.g && graphic_video[i+2] == font_color.r){
@@ -49,6 +53,10 @@ void set_new_modifier_graphic(Color* nf, Color* nb){
 			newc.r = nb->r;
 			newc.g = nb->g;
 			newc.b = nb->b;
+		}else if(graphic_video[i] == number_color.b && graphic_video[i+1] == number_color.g && graphic_video[i+2] == number_color.r){
+			newc.r = nnum->r;
+			newc.g = nnum->g;
+			newc.b = nnum->b;
 		}else{
 			newc.r = graphic_video[i+2];
 			newc.g = graphic_video[i+1];
@@ -220,10 +228,14 @@ void draw_char_graphic_basic(char c,Color front,Color back){
 	uint8_t b = 0;
 	for(int i = 0; i<LETTER_HEIGHT;i++){
 		for(int j = 0; j<LETTER_WIDTH*3;j++){
-			if(lettersf[c].pixel_data[l]){
+			if(lettersf[c].pixel_data[l] && !isNumber(c)){
 				r = font_color.r;
 				g = font_color.g;
 				b = font_color.b;
+			}else if(lettersf[c].pixel_data[l]){
+				r = number_color.r;
+				g = number_color.g;
+				b = number_color.b;
 			}else{
 				r = background_color.r;
 				g = background_color.g;
