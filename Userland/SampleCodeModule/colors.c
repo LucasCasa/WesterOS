@@ -87,6 +87,7 @@ void modify_colors(){
 			num.g = 0;
 			num.b = 255;
 			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk,&num);
+			break;
 		case 5:
 			_call_int80(INT_COLORS,0x04,0x0F);
 			fr.r = 255;

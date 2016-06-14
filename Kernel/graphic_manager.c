@@ -1,5 +1,6 @@
 #include "graphic_manager.h"
 
+extern Color background_color;
 erasable_circle buffer[10];
 int next = 0;
 uint64_t st = 0xD000000;
@@ -104,7 +105,9 @@ void undraw_erasable_circle(int id){
 }
 void clear_screen(){
    for( int i = 0; i<SCR_WIDTH*SCR_HEIGHT*BPP;i++){
-      start[i] = 0;
+      start[i++] = background_color.b;
+      start[i++] = background_color.g;
+      start[i] = background_color.r;
    }
 }
 /*void draw_image(Image g){
