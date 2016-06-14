@@ -65,6 +65,7 @@ void list_ipcs();
 
 void flush_buffer();
 
+int rand(void);
 
 typedef struct Point{
    int x;
