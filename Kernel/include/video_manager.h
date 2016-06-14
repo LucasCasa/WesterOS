@@ -2,6 +2,7 @@
 #define VIDEO_MANAGER_H
 
 #include "stdint.h"
+#include "typedef.h"
 #include "sys_lib.h"
 #include "image.h"
 

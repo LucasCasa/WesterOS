@@ -39,11 +39,11 @@ typedef struct stack_frame {
 
 
 typedef struct Process {
+	 char name[20];
+
    uint8_t pid;
    uint8_t state;
-
    void* (*entry_point)(void*);
-   struct Process* next_process;
 }Process;
 
 #endif

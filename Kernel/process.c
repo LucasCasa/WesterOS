@@ -1,5 +1,4 @@
 #include "process.h"
-#include "scheduler.h"
 
 void* fill_stack_frame(void * entry_point, void * user_stack) {
 	stack_frame* frame = (stack_frame*) user_stack  - 1;

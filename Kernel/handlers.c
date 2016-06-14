@@ -39,7 +39,7 @@ void timer_handler(){
 		}
 			show_screensaver();
 	}else{
-		if(time >= 10){
+		if(time >= 1*PIT_FREQ/2){
 			print_standby();
 			time = 0;
 		}
@@ -79,5 +79,6 @@ void keyboard_handler(uint8_t scancode){
 			}
 		}
 		sleep_time = 0;
+		time = 0;
 	}
 }

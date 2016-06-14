@@ -1,8 +1,8 @@
 #ifndef _IMAGE_H
 #define _IMAGE_H
 
-#define LETTER_WIDTH    18//12
-#define LETTER_HEIGHT   24//9
+#define LETTER_WIDTH    /*18*/12
+#define LETTER_HEIGHT   /*24*/9
 
 typedef struct Image {
   unsigned int 	 width;

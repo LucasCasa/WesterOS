@@ -18,6 +18,7 @@ void westeros(){
 	if(!time_to_reset){
 		next = 0;
 		ttn = 1;
+		time_to_reset = 1000;
 		clear_screen();
 	}
 	int r = 0,g = 0, b = 0;
@@ -36,8 +37,8 @@ void westeros(){
 				}
 			}
 		}
-		mod[next].x =(rand() % 10 - 5 )*2;
-		mod[next].y = (rand() % 10 - 5)*2;
+		mod[next].x =(rand() % 5 - 2 )*2;
+		mod[next].y = (rand() % 5 - 2)*2;
 		next++;
 		ttn = INTERVAL;
 	}

@@ -17,7 +17,9 @@ uint8_t saved_modifier;
 uint8_t* saved_shell_graphic = (uint8_t* ) 0xA000000;
 uint8_t* saved_current_video_graphic = 0;
 uint8_t* saved_command_line_graphic = 0;
-
+Color font_color = {255,255,255};
+Color background_color = {0,0,0};
+char stand_by_active = 0;
 int gm = 1;
 
 void set_default_modifiers(char s, char n){
@@ -52,6 +54,7 @@ void sys_delete_char(){
 	}
 }
 void sys_delete_char_graphic(){
+	draw_char_graphic(0);
 	if((command_line_graphic != get_yoffset()) || (get_char_xoffset() > 2)){
 		if(((current_graphic_video - graphic_video) % (1024*3)) == 0){
 			current_graphic_video -= 1024*3*(LETTER_HEIGHT);
@@ -151,7 +154,7 @@ void new_line_graphic(){
 	draw_new_line_graphic();
 }
 void draw_char_graphic(char c){
-	int totaloffset = 0;
+	/*int totaloffset = 0;
 	int fontoffset = 0;
 	uint8_t* start;
 	if(c < 32){
@@ -169,6 +172,35 @@ void draw_char_graphic(char c){
 		}
 		totaloffset += 1024*3;
 		fontoffset += font->width*3;
+	}*/
+	draw_char_graphic_basic(c,0,0);
+}
+void draw_char_graphic_basic(char c,Color front,Color back){
+	int totaloffset = 0;
+	int l = 0;
+	uint8_t r = 0;
+	uint8_t g = 0;
+	uint8_t b = 0;
+	for(int i = 0; i<LETTER_HEIGHT;i++){
+		for(int j = 0; j<LETTER_WIDTH*3;j++){
+			if(lettersf[c].pixel_data[l]){
+				r = font_color.r;
+				g = font_color.g;
+				b = font_color.b;
+			}else{
+				r = background_color.r;
+				g = background_color.g;
+				b = background_color.b;
+			}
+			current_graphic_video[totaloffset + j] = b;
+			j++;
+			current_graphic_video[totaloffset + j] = g;
+			j++;
+			current_graphic_video[totaloffset + j] = r;
+			l++;
+		}
+
+		totaloffset += 1024*3;
 	}
 }
 void sys_write(char c,uint8_t mod){
@@ -290,7 +322,30 @@ void print_standby(){
 		saved_modifier = get_modifier();
 		modify(0x22);
 	}
-
+ 	print_standby_graphic();
+}
+void print_standby_graphic(){
+	Color c;
+	if(!stand_by_active){
+		c.r = font_color.r;
+		c.g = font_color.g;
+		c.b = font_color.b;
+		stand_by_active = 1;
+	}else{
+		c.r = background_color.r;
+		c.g = background_color.g;
+		c.b = background_color.b;
+		stand_by_active = 0;
+	}
+	int totaloffset = 0;
+	for(int i = 0; i<LETTER_HEIGHT;i++){
+		for(int j = 0; j<LETTER_WIDTH*3;j++){
+			current_graphic_video[totaloffset + j++] = c.b;
+			current_graphic_video[totaloffset + j++] = c.g;
+			current_graphic_video[totaloffset + j] = c.r;
+		}
+		totaloffset+=1024*3;
+	}
 }
 void set_command_line(){
 	command_line = currentVideo - ((uint64_t)(currentVideo - 0xB8000) % 160);
