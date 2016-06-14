@@ -140,25 +140,30 @@ void draw(){
 	while(1){
 		p.x = accumx;
 		p.y = accumy;
-	_call_int80(INT_DRAW_CIRCLE,&p,20,&c);
-	while((ch = _call_int80(INT_GCFB)) == 0 && pass < 30000){
-		pass++;
-	}
+		_call_int80(INT_DRAW_CIRCLE,&p,20,&c);
+		while((ch = _call_int80(INT_GCFB)) == 0 && pass < 30000){
+			pass++;
+		}
 
-	if(ch == 'a'){
-		angle-=10;
-	}else if(ch == 'd'){
-		angle+=10;
-	}
-	if(ch == 'x'){
-		_call_int80(INT_EXIT_DRAW_MODE);
-		_call_int80(INT_CLEAR);
-		return;
-	}
-	accumx+= 2*_cos(angle);
-	accumy+= 2*_sin(angle);
-	ch = 0;
-	pass = 0;
+		if(ch == 'a'){
+			angle-=10;
+		}else if(ch == 'd'){
+			angle+=10;
+		}
+		if(ch == 'x'){
+			_call_int80(INT_EXIT_DRAW_MODE);
+			_call_int80(INT_CLEAR);
+			return;
+		}
+		accumx+= 2*_cos(angle);
+		accumy+= 2*_sin(angle);
+		if(accumy < 0){
+			accumy = 768 + accumy;
+		}else if(accumy >= 768){
+			accumy = accumy - 768;
+		}
+		ch = 0;
+		pass = 0;
 	}
 }
 

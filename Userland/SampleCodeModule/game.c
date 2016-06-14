@@ -60,7 +60,7 @@ void game(){
 
 
   while(1){
-    while(pass < 4500000){
+    while(pass < 6500000){
       pass++;
     }
 
@@ -317,7 +317,7 @@ void powerUp_cleanScreen(Player * trigger){
   for(int i = 0; i<WIDTH*HEIGHT;i++){
     board[i] = 0;
   }
-  //_call_int80(INT_ERASE_SCR);
+  _call_int80(INT_ERASE_SCR);
 }
 
 int getRandIndex(int max){
