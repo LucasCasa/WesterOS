@@ -59,6 +59,7 @@
 		Point pos;
 		void (*initial_effect)(Player*);
 		void (*final_effect)(Player*);
+		Color color;
 	}PowerUp;
 
 	extern double _sin(int angle);

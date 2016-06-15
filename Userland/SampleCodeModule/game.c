@@ -72,9 +72,9 @@ void game(){
       if(p[i].alive){
         checkEffects(&(p[i]));
         if(!starting){
-           p[i].time_no_inv++;
+           p[i].time_no_inv += p[i].speed;
         }
-        if(p[i].time_no_inv == p[i].time_with_inv + HOLE_SIZE){
+        if(p[i].time_no_inv >= p[i].time_with_inv + HOLE_SIZE){
           p[i].time_no_inv = 0;
           p[i].time_with_inv = rand() % MAX_DRAW;
         }
@@ -329,6 +329,11 @@ void powerUp_cleanScreen(Player * trigger){
     board[i] = 0;
   }
   _call_int80(INT_ERASE_SCR);
+  for(int i = 0; i<MAX_POWERUPS; i++){
+    if(powerups[i].active){
+      powerups[i].id = _call_int80(INT_DRAW_ERASABLE_CIRCLE,&(powerups[i].pos),powerups[i].radius,&(powerups[i].color));
+    }
+  }
 }
 
 void powerUp_speed(Player * trigger){
@@ -372,6 +377,7 @@ void createNewPowerup(){
   k = getRandIndex(MAX_POWERUPS-1);
   powerups[n].initial_effect = powerup_effects[k][0];
   powerups[n].final_effect = powerup_effects[k][1];
+  powerups[n].color = powerup_color[k];
 
   powerups[n].id = _call_int80(INT_DRAW_ERASABLE_CIRCLE,&(powerups[n].pos),powerups[n].radius,&(powerup_color[k]));
 }
@@ -406,7 +412,7 @@ void collide_powerup(PowerUp * pwup, Player * player){
     print_number(n);
     pwup->initial_effect(player);
     player->effects[n].active = 1;
-    player->effects[n].time_left = 1000; // MAGIC NUMBER CAMBIAR DESP
+    player->effects[n].time_left = 500; // MAGIC NUMBER CAMBIAR DESP
     player->effects[n].final_effect = pwup->final_effect;
   }
   pwup->active = 0;
