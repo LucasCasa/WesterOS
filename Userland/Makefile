@@ -18,6 +18,7 @@ sampleDataModule:
 clean:
 	cd SampleCodeModule; make clean
 	cd imageDataModule; make clean
+	cd tarImageModule;make clean
 	rm -rf *.bin
 
 

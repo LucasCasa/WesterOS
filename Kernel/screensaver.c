@@ -2,7 +2,7 @@
 #define INTERVAL 50
 double MASS = 1;
 double RADIUS = 52;
-TarImage* image = (TarImage*) 0x850000;
+ScreenImage* image = (ScreenImage*) 0x850000;
 Point offset[10];
 PointD mod[10];
 static int next = 0;
@@ -16,10 +16,12 @@ void show_screensaver(){
 void westeros(){
 	time_to_reset--;
 	if(!time_to_reset){
+		image++;
 		next = 0;
 		ttn = 1;
 		time_to_reset = 1000;
 		clear_screen();
+		print_number(image);
 	}
 	int r = 0,g = 0, b = 0;
 	uint8_t* st = (*(uint32_t*)0x5080);

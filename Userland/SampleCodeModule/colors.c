@@ -3,11 +3,11 @@
 
 void modify_colors(){
 	print_message("Select Colors:\n",0xFF);
-	print_message("1- Black Background, Green Letters,  Red Numbers  (default)\n",0xFF);
-	print_message("2- Blue Background,  White Letters,  Green Numbers  \n",0xFF);
-	print_message("3- Black Background, Yellow Letters, Sky Blue Numbers  \n",0xFF);
-	print_message("4- Grey Background,  Black Letters,  Blue Numbers  \n",0xFF);
-	print_message("5- Black Background, Red Letters,   White Numbers  \n",0xFF);
+	print_message("1- GREYJOY\n",0xFF);
+	print_message("2- TYRELL \n",0xFF); //TYRELL
+	print_message("3- LANNISTER \n",0xFF); // LANNISTER
+	print_message("4- STARK \n",0xFF); //STARK
+	print_message("5- TARGARYEN\n",0xFF); //TARGARYEN
 	char c = 0,i = 0,res = 0;
 	do{
 	c = 0;
@@ -30,7 +30,7 @@ void modify_colors(){
 	switch(res){
 		case 1:
 			_call_int80(INT_COLORS,0x02,0x04);
-			fr.r = 0;
+			fr.r = 255;
 			fr.g = 255;
 			fr.b = 0;
 
@@ -47,15 +47,15 @@ void modify_colors(){
 			_call_int80(INT_COLORS,0x1F,0x12);
 			fr.r = 255;
 			fr.g = 255;
-			fr.b = 255;
+			fr.b = 30;
 
 			bk.r = 0;
-			bk.g = 0;
-			bk.b = 255;
+			bk.g = 200;
+			bk.b = 0;
 
-			num.r = 0;
-			num.g = 255;
-			num.b = 0;
+			num.r = 30;
+			num.g = 30;
+			num.b = 30;
 			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk,&num);
 			break;
 		case 3:
@@ -64,28 +64,28 @@ void modify_colors(){
 			fr.g = 255;
 			fr.b = 0;
 
-			bk.r = 0;
+			bk.r = 255;
 			bk.g = 0;
 			bk.b = 0;
 
-			num.r = 0;
+			num.r = 255;
 			num.g = 255;
-			num.b = 255;
+			num.b = 100;
 			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk,&num);
 			break;
 		case 4:
 			_call_int80(INT_COLORS,0x70,0x71);
-			fr.r = 0;
-			fr.g = 0;
-			fr.b = 0;
+			fr.r = 255;
+			fr.g = 255;
+			fr.b = 255;
 
-			bk.r = 192;
-			bk.g = 192;
-			bk.b = 192;
+			bk.r = 128;
+			bk.g = 128;
+			bk.b = 128;
 
 			num.r = 0;
 			num.g = 0;
-			num.b = 255;
+			num.b = 0;
 			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk,&num);
 			break;
 		case 5:
