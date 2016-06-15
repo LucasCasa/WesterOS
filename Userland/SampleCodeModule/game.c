@@ -19,7 +19,7 @@ Player p[MAX_PLAYERS];
 void game(){
   _call_int80(INT_ENTER_DRAW_MODE);
   _call_int80(INT_CLEAR);
-  _call_int80(INT_EXIT_DRAW_MODE);
+  //_call_int80(INT_EXIT_DRAW_MODE);
   //AMOUNT OF PLAYERS
   int nplayers = lobby();
 
@@ -178,7 +178,7 @@ int lobby(){
     char cha = 0;
     do{
       cha = _call_int80(INT_GCFB);
-    }while(cha < '2' || cha > '6');
+    }while(cha < '1' || cha > '6');
       return cha-'0';
 }
 void exit_game(){
@@ -190,40 +190,40 @@ void exit_game(){
 void get_key_down(uint8_t key){
   switch(key){
     case 'a':
-      p[0].mod =-1;
+      p[0].mod =-p[0].speed;
       break;
     case 'd':
-      p[0].mod = 1;
+      p[0].mod = p[0].speed;
       break;
     case 'j':
-      p[1].mod = -1;
+      p[1].mod = -p[1].speed;
       break;
     case 'l':
-      p[1].mod = 1;
+      p[1].mod = p[1].speed;
       break;
     case '4':
-      p[2].mod = -1;
+      p[2].mod = -p[2].speed;
       break;
     case '6':
-      p[2].mod = 1;
+      p[2].mod = p[2].speed;
       break;
     case 'z':
-      p[3].mod = -1;
+      p[3].mod = -p[3].speed;
       break;
     case 'c':
-      p[3].mod = 1;
+      p[3].mod = p[3].speed;
       break;
     case 'i':
-      p[4].mod = -1;
+      p[4].mod = -p[4].speed;
       break;
     case 'p':
-      p[4].mod = 1;
+      p[4].mod = p[4].speed;
       break;
     case '1':
-      p[5].mod = -1;
+      p[5].mod = -p[5].speed;
       break;
     case '3':
-      p[5].mod = 1;
+      p[5].mod = p[5].speed;
       break;
   }
 }
@@ -332,12 +332,21 @@ void powerUp_cleanScreen(Player * trigger){
 }
 
 void powerUp_speed(Player * trigger){
-   print_message("Se activo PowerUp",0xFF);
   trigger->speed *= 2;
+  if(trigger->mod > 0){
+    trigger->mod = trigger->speed;
+  }else if(trigger->mod<0){
+    trigger->mod = -trigger->speed;
+  }
 }
 
 void powerUp_speed_end(Player * player){
   player->speed /= 2;
+  if(player->mod > 0){
+    player->mod = player->speed;
+  }else if(player->mod<0){
+    player->mod = -player->speed;
+  }
 }
 
 int getRandIndex(int max){
@@ -360,11 +369,11 @@ void createNewPowerup(){
   powerups[n].radius = POWERUP_RADIUS;
   powerups[n].pos.x = rand() % (WIDTH - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
   powerups[n].pos.y = rand() % (HEIGHT - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
-  k = getRandIndex(MAX_POWERUPS);
+  k = getRandIndex(MAX_POWERUPS-1);
   powerups[n].initial_effect = powerup_effects[k][0];
   powerups[n].final_effect = powerup_effects[k][1];
 
-  powerups[n].id = _call_int80(INT_DRAW_ERASABLE_CIRCLE,&(powerups[n].pos),powerups[n].radius,&(powerup_color[n]));
+  powerups[n].id = _call_int80(INT_DRAW_ERASABLE_CIRCLE,&(powerups[n].pos),powerups[n].radius,&(powerup_color[k]));
 }
 
 void managePowerups(){
@@ -392,10 +401,9 @@ int getAvailableEffectIndex(Player * player){
 }
 
 void collide_powerup(PowerUp * pwup, Player * player){
-   print_message("collision con powerup",0xFF);
   int n;
   if((n=getAvailableEffectIndex(player))>=0){
-    print_message("intento setear efecto",0xFF);
+    print_number(n);
     pwup->initial_effect(player);
     player->effects[n].active = 1;
     player->effects[n].time_left = 1000; // MAGIC NUMBER CAMBIAR DESP
