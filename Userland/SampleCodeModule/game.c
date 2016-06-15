@@ -19,7 +19,7 @@ Player p[MAX_PLAYERS];
 void game(){
   _call_int80(INT_ENTER_DRAW_MODE);
   _call_int80(INT_CLEAR);
-
+  _call_int80(INT_EXIT_DRAW_MODE);
   //AMOUNT OF PLAYERS
   int nplayers = lobby();
 
@@ -332,11 +332,12 @@ void powerUp_cleanScreen(Player * trigger){
 }
 
 void powerUp_speed(Player * trigger){
-  trigger->speed *= 5;
+   print_message("Se activo PowerUp",0xFF);
+  trigger->speed *= 2;
 }
 
 void powerUp_speed_end(Player * player){
-  player->speed /= 5;
+  player->speed /= 2;
 }
 
 int getRandIndex(int max){
@@ -391,8 +392,10 @@ int getAvailableEffectIndex(Player * player){
 }
 
 void collide_powerup(PowerUp * pwup, Player * player){
+   print_message("collision con powerup",0xFF);
   int n;
-  if((n=getAvailableEffectIndex(player))>0){
+  if((n=getAvailableEffectIndex(player))>=0){
+    print_message("intento setear efecto",0xFF);
     pwup->initial_effect(player);
     player->effects[n].active = 1;
     player->effects[n].time_left = 1000; // MAGIC NUMBER CAMBIAR DESP
