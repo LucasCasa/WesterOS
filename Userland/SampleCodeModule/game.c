@@ -9,8 +9,8 @@ Color c[] = {{255,0,0},{0,0,255},{0,255,0},{255,0,255},{255,255,0},{255,255,255}
 char* controls[6][2] = {{"A","D"},{"J","L"},{"L Arrow","R Arrow"},{"Z","C"},{"I","P"},{"1","3"}};
 int starting = 1;
 
-void (*powerup_effects[NUM_POWERUPS])(Player*) = {powerUp_cleanScreen};
-Color powerup_color[NUM_POWERUPS] = {{0,191,255}};
+void (*powerup_effects[NUM_POWERUPS][2])(Player*) = {{powerUp_cleanScreen,nothing},{powerUp_speed,powerUp_speed_end}};
+Color powerup_color[NUM_POWERUPS] = {{0,191,255},{42,223,60}};
 PowerUp powerups[MAX_POWERUPS];
 int num_powerup, powerup_cont, powerup_next;
 
@@ -34,19 +34,7 @@ void game(){
   }
 
   // INIT players
-  for(int i = 0; i<nplayers;i++){
-     p[i].pos.x = rand() % 600 + 100;
-     p[i].pos.y = rand() % 500 + 80;
-     p[i].acum.x = p[i].pos.x;
-     p[i].acum.y = p[i].pos.y;
-     p[i].angle = rand() % 360;
-     p[i].mod = 0;
-     p[i].alive = 1;
-     p[i].radius = RADIUS;
-     p[i].time_with_inv = 0;
-     p[i].time_no_inv = 0;
-     p[i].erasable = -1;
-  }
+  init_players(nplayers);
 
   // INIT board
   for(int i = 0; i<WIDTH*HEIGHT;i++){
@@ -65,7 +53,8 @@ void game(){
     }
 
     // Decides when to create new powerups
-    managePowerups();
+    if(!starting)
+      managePowerups();
 
     // Check powerup collisions
     for(int i=0; i<MAX_POWERUPS; i++){
@@ -73,8 +62,7 @@ void game(){
         for(int j=0; j<nplayers; j++){
           // check collision with player
           if(square((powerups[i].radius+p[j].radius))>square(p[j].pos.x - powerups[i].pos.x)+square(p[j].pos.y - powerups[i].pos.y)){
-            powerups[i].effect(&(p[j]));
-            powerups[i].active = 0;
+            collide_powerup(&(powerups[i]),&(p[j]));
           }
         }
       }
@@ -82,6 +70,7 @@ void game(){
 
     for(int i = 0; i<nplayers;i++){
       if(p[i].alive){
+        checkEffects(&(p[i]));
         if(!starting){
            p[i].time_no_inv++;
         }
@@ -90,8 +79,8 @@ void game(){
           p[i].time_with_inv = rand() % MAX_DRAW;
         }
         p[i].angle += 3*p[i].mod;
-        p[i].acum.x += 3*_cos(p[i].angle);
-        p[i].acum.y += 3*_sin(p[i].angle);
+        p[i].acum.x += 3*_cos(p[i].angle)*p[i].speed;
+        p[i].acum.y += 3*_sin(p[i].angle)*p[i].speed;
         p[i].pos.x = p[i].acum.x;
         p[i].pos.y = p[i].acum.y;
         if(p[i].time_no_inv < p[i].time_with_inv){
@@ -313,11 +302,41 @@ char draw_into_board(uint32_t pn,Point point){
   return 1;
 }
 
+void init_players(int nplayers){
+  for(int i = 0; i<nplayers;i++){
+    p[i].id = i;
+    p[i].pos.x = rand() % (WIDTH-200) + 100;
+    p[i].pos.y = rand() % (HEIGHT-160) + 80;
+    p[i].acum.x = p[i].pos.x;
+    p[i].acum.y = p[i].pos.y;
+    p[i].angle = rand() % 360;
+    p[i].mod = 0;
+    p[i].alive = 1;
+    p[i].radius = RADIUS;
+    p[i].time_with_inv = 0;
+    p[i].time_no_inv = 0;
+    p[i].erasable = -1;
+    p[i].speed = INIT_SPEED;
+    for(int j = 0; j<MAX_ACTIVE_EFFECTS; j++){
+      p[i].effects[j].active = 0;
+      p[i].effects[j].time_left = 0;
+    }
+  }
+}
+
 void powerUp_cleanScreen(Player * trigger){
   for(int i = 0; i<WIDTH*HEIGHT;i++){
     board[i] = 0;
   }
   _call_int80(INT_ERASE_SCR);
+}
+
+void powerUp_speed(Player * trigger){
+  trigger->speed *= 5;
+}
+
+void powerUp_speed_end(Player * player){
+  player->speed /= 5;
 }
 
 int getRandIndex(int max){
@@ -333,16 +352,18 @@ int getAvailablePowerupIndex(){
 }
 
 void createNewPowerup(){
-  int n;
+  int n, k;
   if((n=getAvailablePowerupIndex())<0)
     return;
   powerups[n].active = 1;
   powerups[n].radius = POWERUP_RADIUS;
   powerups[n].pos.x = rand() % (WIDTH - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
   powerups[n].pos.y = rand() % (HEIGHT - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
-  powerups[n].effect = powerup_effects[getRandIndex(MAX_POWERUPS)];
+  k = getRandIndex(MAX_POWERUPS);
+  powerups[n].initial_effect = powerup_effects[k][0];
+  powerups[n].final_effect = powerup_effects[k][1];
 
-  _call_int80(INT_DRAW_CIRCLE,&(powerups[n].pos),powerups[n].radius,&(powerup_color[n]));
+  powerups[n].id = _call_int80(INT_DRAW_ERASABLE_CIRCLE,&(powerups[n].pos),powerups[n].radius,&(powerup_color[n]));
 }
 
 void managePowerups(){
@@ -357,4 +378,38 @@ void managePowerups(){
 
 int square(int n){
   return  n*n;
+}
+
+void nothing(Player * p){}
+
+int getAvailableEffectIndex(Player * player){
+  for(int i=0; i<MAX_ACTIVE_EFFECTS; i++){
+    if(!player->effects[i].active)
+      return i;
+  }
+  return -1;
+}
+
+void collide_powerup(PowerUp * pwup, Player * player){
+  int n;
+  if((n=getAvailableEffectIndex(player))>0){
+    pwup->initial_effect(player);
+    player->effects[n].active = 1;
+    player->effects[n].time_left = 1000; // MAGIC NUMBER CAMBIAR DESP
+    player->effects[n].final_effect = pwup->final_effect;
+  }
+  pwup->active = 0;
+  _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,pwup->id);
+}
+
+void checkEffects(Player * player){
+  for(int i=0; i<MAX_ACTIVE_EFFECTS; i++){
+    if(player->effects[i].active){
+      if(player->effects[i].time_left == 0){
+        player->effects[i].final_effect(player);
+        player->effects[i].active = 0;
+      }
+      player->effects[i].time_left--;
+    }
+  }
 }

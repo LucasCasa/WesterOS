@@ -25,6 +25,7 @@ void setpixel(int x ,int y, Color* c){
    start[x+2 + y*SCR_WIDTH*BPP] = c->r;
  }
 }
+
 void draw_text(Point*p,char* text){
   int i = 0;
   while(text[i] != 0){
