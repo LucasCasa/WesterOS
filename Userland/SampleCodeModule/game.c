@@ -74,10 +74,10 @@ void game(){
         checkEffects(&(p[i]));
         if(!starting){
            p[i].time_no_inv += p[i].speed;
-        }
-        if(p[i].time_no_inv >= p[i].time_with_inv + HOLE_SIZE*(p[i].radius / RADIUS)){
-          p[i].time_no_inv = 0;
-          p[i].time_with_inv = (rand() % MAX_DRAW);
+          if(p[i].time_no_inv >= p[i].time_with_inv + HOLE_SIZE*(p[i].radius / RADIUS)){
+            p[i].time_no_inv = 0;
+            p[i].time_with_inv = (rand() % MAX_DRAW);
+          }
         }
         p[i].angle += 3*p[i].mod;
         p[i].acum.x += 3*_cos(p[i].angle)*p[i].speed;
@@ -87,12 +87,12 @@ void game(){
         if(p[i].time_no_inv < p[i].time_with_inv){
           _call_int80(INT_DRAW_CIRCLE,&(p[i].pos),p[i].radius,&c[i]);
           p[i].alive = draw_into_board(i+1,p[i].pos);
-          if(p[i].erasable > 0){
+          if(p[i].erasable >= 0){
             _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,p[i].erasable);
             p[i].erasable = -1;
           }
         }else{
-          if(p[i].erasable > 0){
+          if(p[i].erasable >= 0){
             _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,p[i].erasable);
           }
           p[i].erasable = _call_int80(INT_DRAW_ERASABLE_CIRCLE,&(p[i].pos),p[i].radius,&c[i]);
