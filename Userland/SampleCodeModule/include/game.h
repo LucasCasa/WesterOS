@@ -12,7 +12,7 @@
 	#define NUMBER_POS  180
 	#define RIGHT_POS   310
 	#define LEFT_POS    500
-	#define INIT_SPEED 	1
+	#define INIT_SPEED 	3
 
 	#define WIDTH 1024
 	#define HEIGHT 768

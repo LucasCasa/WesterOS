@@ -73,15 +73,15 @@ void game(){
       if(p[i].alive){
         checkEffects(&(p[i]));
         if(!starting){
-           p[i].time_no_inv += p[i].speed;
+           p[i].time_no_inv += p[i].speed/INIT_SPEED;
           if(p[i].time_no_inv >= p[i].time_with_inv + HOLE_SIZE*(p[i].radius / RADIUS)){
             p[i].time_no_inv = 0;
             p[i].time_with_inv = (rand() % MAX_DRAW);
           }
         }
-        p[i].angle += 3*p[i].mod;
-        p[i].acum.x += 3*_cos(p[i].angle)*p[i].speed;
-        p[i].acum.y += 3*_sin(p[i].angle)*p[i].speed;
+        p[i].angle += p[i].mod;
+        p[i].acum.x += _cos(p[i].angle)*p[i].speed;
+        p[i].acum.y += _sin(p[i].angle)*p[i].speed;
         p[i].pos.x = p[i].acum.x;
         p[i].pos.y = p[i].acum.y;
         if(p[i].time_no_inv < p[i].time_with_inv){
@@ -322,13 +322,14 @@ void powerUp_cleanScreen(Player * trigger){
   _call_int80(INT_ERASE_SCR);
   for(int i = 0; i<MAX_POWERUPS; i++){
     if(powerups[i].active){
+      _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,powerups[i].id);
       powerups[i].id = _call_int80(INT_DRAW_ERASABLE_CIRCLE,&(powerups[i].pos),powerups[i].radius,&(powerups[i].color));
     }
   }
 }
 
 void powerUp_speed(Player * trigger){
-  trigger->speed *= 2;
+  trigger->speed += INIT_SPEED;
   if(trigger->mod > 0){
     trigger->mod = trigger->speed;
   }else if(trigger->mod<0){
@@ -337,7 +338,7 @@ void powerUp_speed(Player * trigger){
 }
 
 void powerUp_speed_end(Player * player){
-  player->speed /= 2;
+  player->speed -= INIT_SPEED;
   if(player->mod > 0){
     player->mod = player->speed;
   }else if(player->mod<0){
@@ -364,7 +365,7 @@ void powerUp_speed_others_end(Player * player){
 void powerUp_make_fat(Player * player){
   for(int i=0; i<nplayers; i++){
     if(p[i].id != player->id){
-      p[i].radius *= 2;
+      p[i].radius += RADIUS;
     }
   }
 }
@@ -372,7 +373,7 @@ void powerUp_make_fat(Player * player){
 void powerUp_make_fat_end(Player * player){
   for(int i=0; i<nplayers; i++){
     if(p[i].id != player->id){
-      p[i].radius /= 2;
+      p[i].radius -= RADIUS;
     }
   }
 }
@@ -397,7 +398,7 @@ void createNewPowerup(){
   powerups[n].radius = POWERUP_RADIUS;
   powerups[n].pos.x = rand() % (WIDTH - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
   powerups[n].pos.y = rand() % (HEIGHT - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
-  k = 3;//getRandIndex(NUM_POWERUPS);
+  k = getRandIndex(NUM_POWERUPS-1); // SACAR -1
   powerups[n].initial_effect = powerup_effects[k][0];
   powerups[n].final_effect = powerup_effects[k][1];
   powerups[n].color = powerup_color[k];
@@ -435,7 +436,7 @@ void collide_powerup(PowerUp * pwup, Player * player){
     print_number(n);
     pwup->initial_effect(player);
     player->effects[n].active = 1;
-    player->effects[n].time_left = 500; // MAGIC NUMBER CAMBIAR DESP
+    player->effects[n].time_left = 250; // MAGIC NUMBER CAMBIAR DESP
     player->effects[n].final_effect = pwup->final_effect;
   }
   pwup->active = 0;
