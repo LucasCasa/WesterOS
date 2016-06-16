@@ -17,8 +17,8 @@
 	#define WIDTH 1024
 	#define HEIGHT 768
 
-	#define NUM_POWERUPS 2
-	#define MAX_POWERUPS 3
+	#define NUM_POWERUPS 4
+	#define MAX_POWERUPS 5
 	#define MIN_POWERUP_TIME 50
 	#define MAX_POWERUP_TIME 500
 	#define POWERUP_RADIUS 15
@@ -86,5 +86,9 @@
 	void powerUp_cleanScreen(Player *);
 	void powerUp_speed(Player *);
 	void powerUp_speed_end(Player *);
+	void powerUp_speed_others(Player *);
+	void powerUp_speed_others_end(Player *);
+	void powerUp_make_fat(Player *);
+	void powerUp_make_fat_end(Player *);
 	
 #endif

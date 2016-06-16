@@ -5,12 +5,13 @@ char board[WIDTH*HEIGHT];
 uint32_t last[] = {1,2,3,4,5,6};
 uint32_t next[] = {7,8,9,11,12};
 
+int nplayers;
 Color c[] = {{255,0,0},{0,0,255},{0,255,0},{255,0,255},{255,255,0},{255,255,255}};
 char* controls[6][2] = {{"A","D"},{"J","L"},{"L Arrow","R Arrow"},{"Z","C"},{"I","P"},{"1","3"}};
 int starting = 1;
 
-void (*powerup_effects[NUM_POWERUPS][2])(Player*) = {{powerUp_cleanScreen,nothing},{powerUp_speed,powerUp_speed_end}};
-Color powerup_color[NUM_POWERUPS] = {{0,191,255},{42,223,60}};
+void (*powerup_effects[NUM_POWERUPS][2])(Player*) = {{powerUp_cleanScreen,nothing},{powerUp_speed,powerUp_speed_end},{powerUp_speed_others,powerUp_speed_others_end},{powerUp_make_fat,powerUp_make_fat_end}};
+Color powerup_color[NUM_POWERUPS] = {{0,191,255},{42,223,60},{240,101,101},{179,4,176}};
 PowerUp powerups[MAX_POWERUPS];
 int num_powerup, powerup_cont, powerup_next;
 
@@ -19,9 +20,9 @@ Player p[MAX_PLAYERS];
 void game(){
   _call_int80(INT_ENTER_DRAW_MODE);
   _call_int80(INT_CLEAR);
-  //_call_int80(INT_EXIT_DRAW_MODE);
+
   //AMOUNT OF PLAYERS
-  int nplayers = lobby();
+  nplayers = lobby();
 
   _call_int80(INT_CLEAR);
 
@@ -74,9 +75,9 @@ void game(){
         if(!starting){
            p[i].time_no_inv += p[i].speed;
         }
-        if(p[i].time_no_inv >= p[i].time_with_inv + HOLE_SIZE){
+        if(p[i].time_no_inv >= p[i].time_with_inv + HOLE_SIZE*(p[i].radius / RADIUS)){
           p[i].time_no_inv = 0;
-          p[i].time_with_inv = rand() % MAX_DRAW;
+          p[i].time_with_inv = (rand() % MAX_DRAW);
         }
         p[i].angle += 3*p[i].mod;
         p[i].acum.x += 3*_cos(p[i].angle)*p[i].speed;
@@ -354,6 +355,38 @@ void powerUp_speed_end(Player * player){
   }
 }
 
+void powerUp_speed_others(Player * player){
+  for(int i=0; i<nplayers; i++){
+    if(p[i].id != player->id){
+      powerUp_speed(&(p[i]));
+    }
+  }
+}
+
+void powerUp_speed_others_end(Player * player){
+  for(int i=0; i<nplayers; i++){
+    if(p[i].id != player->id){
+      powerUp_speed_end(&(p[i]));
+    }
+  }
+}
+
+void powerUp_make_fat(Player * player){
+  for(int i=0; i<nplayers; i++){
+    if(p[i].id != player->id){
+      p[i].radius *= 2;
+    }
+  }
+}
+
+void powerUp_make_fat_end(Player * player){
+  for(int i=0; i<nplayers; i++){
+    if(p[i].id != player->id){
+      p[i].radius /= 2;
+    }
+  }
+}
+
 int getRandIndex(int max){
   return rand() % max;
 }
@@ -374,7 +407,7 @@ void createNewPowerup(){
   powerups[n].radius = POWERUP_RADIUS;
   powerups[n].pos.x = rand() % (WIDTH - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
   powerups[n].pos.y = rand() % (HEIGHT - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
-  k = getRandIndex(MAX_POWERUPS-1);
+  k = getRandIndex(NUM_POWERUPS);
   powerups[n].initial_effect = powerup_effects[k][0];
   powerups[n].final_effect = powerup_effects[k][1];
   powerups[n].color = powerup_color[k];
