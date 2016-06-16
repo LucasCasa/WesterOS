@@ -105,14 +105,23 @@ _int80_hand:
     call sys_manager
     iretq
 
-_int_timer_hand:
-		pushState; Handler de INT 8 ( Timer tick) ; Se salvan los registros
-                            ; Carga de DS y ES con el valor del selector
-    mov     ax, 10h			; a utilizar.
-    mov     ds, ax
-    mov     es, ax
-   	call    timer_handler
+_int_timer_hand: ;Handler de INT 8 ( Timer tick) 
 
+		pushState; Se salvan los registros
+		; save current process's RSP
+		mov rdi, rsp
+
+		; enter kernel context by setting current process's kernel-RSP
+		call switchUserToKernel
+
+		mov rsp, rax
+
+		; schedule, get new process's RSP and load it
+		call switchKernelToUser
+
+		mov rsp, rax
+
+	; Send end of interrupt
     mov		al,20h			; Envio de EOI generico al PIC
 	out		20h,al
 

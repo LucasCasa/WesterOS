@@ -36,14 +36,19 @@ typedef struct stack_frame {
 	uint64_t base;
 }stack_frame;
 
+typedef void*(*entry)(void*);
 
 
 typedef struct Process {
 	 char name[20];
 
+	 void* stack;
+ 	 void* stack_base;
+
    uint8_t pid;
    uint8_t state;
-   void* (*entry_point)(void*);
+	 
+   entry entry_point;
 }Process;
 
 #endif

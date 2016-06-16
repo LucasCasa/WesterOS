@@ -1,4 +1,7 @@
 #include "process.h"
+void* stacks[64];
+Process tasks[64];
+uint8_t next_pid = 1;
 
 void* fill_stack_frame(void * entry_point, void * user_stack) {
 	stack_frame* frame = (stack_frame*) user_stack  - 1;
@@ -28,7 +31,18 @@ void* fill_stack_frame(void * entry_point, void * user_stack) {
 
 	return frame;
 }
+Process* create_process(entry entry_point){
+	_cli();
+	Process p; //ESTO CON UN MALLOC
+	p.stack -= sizeof(stack_frame);
+	stack_frame* context = (stack_frame*)p.stack;
+	fill_stack_frame(entry_point,p.stack);
+	p.entry_point = entry_point;
+	process_ready(&p);
+	_sti();
+	return &p
 
+}
 void process_ready(Process* p){
 	p->state = PROC_READY;
 }
