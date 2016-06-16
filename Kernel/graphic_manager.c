@@ -29,7 +29,7 @@ void setpixel(int x ,int y, Color* c){
 void draw_text(Point*p,char* text){
   int i = 0;
   while(text[i] != 0){
-    draw_letter(p->x + LETTER_WIDTH*i,p->y,text[i]);
+    draw_letter(p->x + LETTER_WIDTH_GRAPHIC*i,p->y,text[i]);
     i++;
   }
 }
@@ -42,8 +42,8 @@ void draw_letter(int x, int y, char c){
 	}else{
 	 startf = font->pixel_data + 21*(c - 32)*3;
 	}
-	for(int i = 0; i<LETTER_HEIGHT;i++){
-		for(int j = 0; j<LETTER_WIDTH*BPP;j++){
+	for(int i = 0; i<LETTER_HEIGHT_GRAPHIC;i++){
+		for(int j = 0; j<LETTER_WIDTH_GRAPHIC*BPP;j++){
 			start[totaloffset + j] =startf[fontoffset + j + 2 ] ;
 			j++;
 			start[totaloffset + j] = startf[j + fontoffset];

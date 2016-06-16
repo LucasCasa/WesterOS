@@ -8,6 +8,9 @@
 #define SCR_HEIGHT   768
 #define BPP          3
 
+#define LETTER_WIDTH_GRAPHIC 18
+#define LETTER_HEIGHT_GRAPHIC 24
+
 typedef struct erasable_circle{
   int x;
   int y;

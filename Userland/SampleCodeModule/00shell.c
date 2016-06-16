@@ -131,6 +131,7 @@ void whoami(){
 void draw(){
 	_call_int80(INT_ENTER_DRAW_MODE);
 	_call_int80(INT_CLEAR);
+	Point aux;
 	Point p = {300,300};
 	Color c = {255,255,255};
 	char ch;
@@ -141,7 +142,28 @@ void draw(){
 		p.x = accumx;
 		p.y = accumy;
 		_call_int80(INT_DRAW_CIRCLE,&p,20,&c);
-		while((ch = _call_int80(INT_GCFB)) == 0 && pass < 30000){
+
+		if(p.x<20){
+			aux.x = p.x+1024;
+			aux.y = p.y;
+			_call_int80(INT_DRAW_CIRCLE,&aux,20,&c);
+		}else if(p.x>1024-20,p.y){
+			aux.x = p.x-1024;
+			aux.y = p.y;
+			_call_int80(INT_DRAW_CIRCLE,&aux,20,&c);
+		}
+
+		if(p.y<20){
+			aux.x = p.x;
+			aux.y = p.y+768;
+			_call_int80(INT_DRAW_CIRCLE,&aux,20,&c);
+		}else if(p.y>768-20){
+			aux.x = p.x;
+			aux.y = p.y-768;
+			_call_int80(INT_DRAW_CIRCLE,&aux,20,&c);
+		}
+
+		while((ch = _call_int80(INT_GCFB)) == 0 && pass < 300000){
 			pass++;
 		}
 

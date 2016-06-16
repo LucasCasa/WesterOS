@@ -1,6 +1,7 @@
 #include "video_manager.h"
 #include "letter.h"
 static Image* font = (Image*)0x800000;
+extern draw_mode;
 void write_serial(char a);
 static uint8_t * video = (uint8_t*) 0xB8000;
 static uint8_t * currentVideo = (uint8_t*) 0xB8000;
@@ -135,7 +136,8 @@ void draw_new_line_graphic(){
 }
 void reset_current_video(){
 	currentVideo = video;
-	draw_new_line();
+	if(!draw_mode)
+		draw_new_line();
 	set_command_line();
 }
 void reset_current_video_graphic(){

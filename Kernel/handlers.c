@@ -3,12 +3,15 @@
 #include "sounds.h"
 
 #define PIT_FREQ 	100
+
 extern void set_PIT(uint64_t);
 static int time = 0;
+
 uint16_t sleep_time = 0;
 uint32_t screensaver_time = 10*PIT_FREQ;
 static int piano = 0;
 extern char_buffer; // ESTO SE TEDNRIA QUE HACER BIEN...
+extern draw_mode;
 void (*up)(uint8_t) = 0;
 void (*down)(uint8_t) = 0;
 
@@ -39,7 +42,7 @@ void timer_handler(){
 		}
 			show_screensaver();
 	}else{
-		if(time >= 1*PIT_FREQ/2){
+		if(time >= 1*PIT_FREQ/2 && !draw_mode){
 			print_standby();
 			time = 0;
 		}
