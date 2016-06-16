@@ -86,7 +86,7 @@ void game(){
         p[i].pos.y = p[i].acum.y;
         if(p[i].time_no_inv < p[i].time_with_inv){
           _call_int80(INT_DRAW_CIRCLE,&(p[i].pos),p[i].radius,&c[i]);
-          p[i].alive = draw_into_board(i+1,p[i].pos);
+          p[i].alive = draw_into_board(i+1,&(p[i]));
           if(p[i].erasable >= 0){
             _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,p[i].erasable);
             p[i].erasable = -1;
@@ -268,29 +268,19 @@ void get_key_up(uint8_t key){
       break;
   }
 }
-char draw_into_board(uint32_t pn,Point point){
-  if(point.x-RADIUS < 0 || point.x+RADIUS > WIDTH){
+char draw_into_board(uint32_t pn,Player * player){
+  if(player->pos.x-player->radius < 0 || player->pos.x+player->radius > WIDTH){
     return 0;
   }
-  if(point.y-RADIUS < 0 || point.y+RADIUS > HEIGHT){
+  if(player->pos.y-player->radius < 0 || player->pos.y+player->radius > HEIGHT){
     return 0;
   }
-  for(signed int y=-RADIUS ; y<=RADIUS; y++){
-    for(signed int x=-RADIUS ; x<=RADIUS; x++){
-      if(x*x+y*y <= RADIUS*RADIUS){
-        if(board[point.x + x + (point.y+y)*WIDTH ] == last[pn-1] || board[point.x + x + (point.y +y)*WIDTH] == 0){
-          board[point.x + x + (point.y +y)*WIDTH ] = next[pn-1];
+  for(signed int y=-player->radius ; y<=player->radius; y++){
+    for(signed int x=-player->radius ; x<=player->radius; x++){
+      if(x*x+y*y <= player->radius*player->radius){
+        if(board[player->pos.x + x + (player->pos.y+y)*WIDTH ] == last[pn-1] || board[player->pos.x + x + (player->pos.y +y)*WIDTH] == 0){
+          board[player->pos.x + x + (player->pos.y +y)*WIDTH ] = next[pn-1];
         }else{
-          print_message("Crash at",0xFF);
-          print_number(point.x + x);
-          print_message(",",0xFF);
-          print_number(point.y +y);
-          print_message("Extra",0xFF);
-          print_number(board[point.x + x + (point.y +y)*WIDTH]);
-          print_number(pn);
-          print_number(next[pn-1]);
-          print_number(last[pn-1]);
-
           return 0;
         }
       }
@@ -306,8 +296,8 @@ char draw_into_board(uint32_t pn,Point point){
 void init_players(int nplayers){
   for(int i = 0; i<nplayers;i++){
     p[i].id = i;
-    p[i].pos.x = rand() % (WIDTH-200) + 100;
-    p[i].pos.y = rand() % (HEIGHT-160) + 80;
+    p[i].pos.x = rand() % (WIDTH-400) + 200;
+    p[i].pos.y = rand() % (HEIGHT-360) + 180;
     p[i].acum.x = p[i].pos.x;
     p[i].acum.y = p[i].pos.y;
     p[i].angle = rand() % 360;
@@ -407,7 +397,7 @@ void createNewPowerup(){
   powerups[n].radius = POWERUP_RADIUS;
   powerups[n].pos.x = rand() % (WIDTH - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
   powerups[n].pos.y = rand() % (HEIGHT - 2*POWERUP_RADIUS) + POWERUP_RADIUS;
-  k = getRandIndex(NUM_POWERUPS);
+  k = 3;//getRandIndex(NUM_POWERUPS);
   powerups[n].initial_effect = powerup_effects[k][0];
   powerups[n].final_effect = powerup_effects[k][1];
   powerups[n].color = powerup_color[k];

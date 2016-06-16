@@ -20,7 +20,7 @@
 	#define NUM_POWERUPS 4
 	#define MAX_POWERUPS 5
 	#define MIN_POWERUP_TIME 50
-	#define MAX_POWERUP_TIME 500
+	#define MAX_POWERUP_TIME 100
 	#define POWERUP_RADIUS 15
 	#define MAX_ACTIVE_EFFECTS 10
 	
@@ -67,7 +67,7 @@
 
 	void get_key_up(uint8_t);
 	void get_key_down(uint8_t);
-	char draw_into_board(uint32_t pn,Point p);
+	char draw_into_board(uint32_t pn,Player *);
 	void exit_game();
 	void init_players(int nplayers);
 	int lobby();
