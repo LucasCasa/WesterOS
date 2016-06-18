@@ -22,7 +22,7 @@ static uint64_t address =0x10000000;
 
 void
 init_malloc(){
-    init_bitmap(&bm,0x10000000,0x1000000); //6 mb de heap
+    init_bitmap(&bm,0x10000000,0x1000000); //16 mb de heap
     return;
 }
 

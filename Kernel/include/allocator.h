@@ -3,7 +3,7 @@
 
 
 #define BITS_IN_BYTE    8
-#define BLOCK_SIZE      1000
+#define BLOCK_SIZE      0x1000
 
 #define FREE_BLOCK  0
 #define ALLC_BLOCK  1
