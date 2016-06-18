@@ -4,9 +4,18 @@
 
 
 void changeTime(){
-	void * aux = malloc(1);
-	print_message("ACA EL OTRO",0xFF);
-	print_number(&aux);
+	int sum;
+	int * aux[1000];
+	for(int i=0;i<1000;i++){
+		aux[i] = malloc();
+	}
+	for(int i=0;i<1000;i++){
+		aux[i][i]=i;
+	}
+	for(int i=0;i<1000;i++){
+		sum += aux[i][i];
+	}
+	print_number(sum);
 	// unsigned int parameters[6];
 	// int size = 6,i=0;
 	// char aux[10];
