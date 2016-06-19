@@ -195,6 +195,7 @@ void draw(){
 }
 
 void list_ipcs(){
+	testipc();
 	_call_int80(SHOWIPCS);
 }
 
@@ -210,6 +211,7 @@ void list_ipcs(){
 	n = _call_int80(READFIFO,fd,buf,6);
 	printf("read ret: %d\n",0xFF,n);
 	printf("leo: %s\n",0xFF,buf);
-	fd = _call_int80(MKFIFO,"muffin");
+	fd = _call_int80(MKFIFO,"magda");
+	n = _call_int80(WRITEFIFO,fd,"panqueque",9);
 	printf("segundo mkfifo ret: %d\n",0xFF,fd);
 }*/
