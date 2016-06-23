@@ -74,11 +74,11 @@ void keyboard_handler(uint8_t scancode){
 				if(scancode < 128 && down != 0){
 					down(scancode_to_char(scancode));
 				}
-				if(keyboard_set_key(scancode_to_char(scancode)))
-					if(!draw_mode){
-						sys_write(scancode_to_char(scancode),0xFF);
-					}
-					char_buffer = scancode_to_char(scancode);
+
+				if(!draw_mode && keyboard_set_key(scancode_to_char(scancode))){
+					sys_write(scancode_to_char(scancode),0xFF);
+				}
+				char_buffer = scancode_to_char(scancode);
 			}
 		}
 		sleep_time = 0;
