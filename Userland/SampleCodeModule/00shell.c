@@ -195,7 +195,6 @@ void draw(){
 }
 
 void list_ipcs(){
-	testipc();
 	_call_int80(SHOWIPCS);
 }
 
