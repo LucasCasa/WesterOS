@@ -37,6 +37,7 @@
 #define SHOWIPCS	   25
 
 /* --- GRAPHIC SYS CALLS --- */
+#define SET_SCREENSAVER          40
 #define COLORS_GRAPHIC           41
 #define CLEAR                    42
 #define DRAW_CIRCLE              43

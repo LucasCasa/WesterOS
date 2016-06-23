@@ -56,6 +56,9 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case SCR_TIME:
 			return validateScreenTime(arg1);
 			break;
+			case SET_SCREENSAVER:
+			set_screensaver_image(arg1);
+			break;
 		case BEEP:
 		 	//beep();
 		 	_beep();

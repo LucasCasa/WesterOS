@@ -11,7 +11,7 @@ KERNEL=../Kernel/kernel.bin
 USERLAND=../Userland/sampleCodeModule.bin ../Userland/0001-sampleDataModule.bin ../Userland/imageDataModule.bin ../Userland/tarImageModule.bin
 
 PACKEDKERNEL=packedKernel.bin
-IMGSIZE=6291456
+IMGSIZE=10485760
 
 all: $(IMG) $(VMDK) $(QCOW2)
 
