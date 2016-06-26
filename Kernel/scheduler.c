@@ -1,12 +1,16 @@
 #include "scheduler.h"
 
-stack_ptr stacks[64];
-task_t tasks[64];
+ProcessHolder phs[MAX_PROC];
 
 ProcessHolder* current = 0;
 ProcessHolder* last;
+extern void** stacks;
 void init_scheduler(){
 
+   uint64_t stack_end = STACK_END;
+
+   	for(int i = 0; i<MAX_PROC; i++)
+   		stacks[i] = (void*)(stack_end - STACK_SIZE*i);
 
 }
 
@@ -18,16 +22,21 @@ void start_process(){
 
 }
 void schedule(){
-
+    _cli();
+	do{
+		current = current->next;
+   }while(current->p->state == PROC_WAITING);
+    _sti();
 }
 void add_new_process(Process* p){
   _cli();
-  ProcessHolder ph;
-  ph.p = p;
+  ProcessHolder* ph = &phs[p->pid];
+  ph->p = p;
   if(current == 0){
     current = &ph;
+    ph->next = &ph;
   }else{
-    ph.next = current->next;
+    ph->next = current->next;
     current->next = &ph;
   }
   _sti();
@@ -43,4 +52,18 @@ void push_to_top(uint8_t pid){
 
 void* get_all_process(){
 
+}
+void* get_entry_point(){
+   return current->p->entry_point;
+}
+void* switch_user_to_kernel(uint64_t esp) {
+   _cli();
+	current->p->stack = esp;
+   _sti();
+	return kernel_stack;
+}
+
+void* switch_kernel_to_user(uint64_t esp){
+	schedule();
+	return current->p->stack;
 }

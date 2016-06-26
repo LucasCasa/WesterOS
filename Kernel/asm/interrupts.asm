@@ -13,6 +13,7 @@ GLOBAL _int_start_sound
 GLOBAL _int_end_sound
 GLOBAL _beep
 GLOBAL _song_note
+GLOBAL _start_userland
 
 GLOBAL haltcpu
 GLOBAL _call_int80
@@ -21,6 +22,9 @@ EXTERN timer_handler
 EXTERN keyboard_handler
 EXTERN sys_manager
 EXTERN piano_handler
+EXTERN switch_user_to_kernel
+EXTERN switch_kernel_to_user
+EXTERN get_entry_point
 
 %macro	pushState 0
 	push rax
@@ -105,19 +109,22 @@ _int80_hand:
     call sys_manager
     iretq
 
-_int_timer_hand: ;Handler de INT 8 ( Timer tick) 
+_int_timer_hand: ;Handler de INT 8 ( Timer tick)
 
 		pushState; Se salvan los registros
 		; save current process's RSP
 		mov rdi, rsp
 
 		; enter kernel context by setting current process's kernel-RSP
-		call switchUserToKernel
+		call switch_user_to_kernel
+		;mov al,10h
+		;mov es, ax
+		;mov ds, ax
 
+		;call 		timer_handler
 		mov rsp, rax
-
 		; schedule, get new process's RSP and load it
-		call switchKernelToUser
+		call switch_kernel_to_user
 
 		mov rsp, rax
 
@@ -128,6 +135,12 @@ _int_timer_hand: ;Handler de INT 8 ( Timer tick)
 		popState
     iretq
 
+_start_userland:
+	  	call switch_kernel_to_user
+	  	mov rsp, rax
+
+	  	call get_entry_point
+	  	jmp rax
 
 _int_keyboard_hand:				; Handler de INT 9 ( Teclado )
     pushState                      ; Se salvan los registros

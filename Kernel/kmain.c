@@ -26,10 +26,10 @@ void set_interrupts();
 
 int kmain(){
 	IDT = 0;
-	set_interrupts();
+	//set_interrupts();
 	init_serial();
 	init_malloc();
-	set_graphic_pointer();
+	//set_graphic_pointer();
 	initIPC();
 	init_PIT(1193182 / 100);
 	srand(RTCparameters(0));

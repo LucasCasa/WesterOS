@@ -3,6 +3,11 @@
 
 #include <stdint.h>
 
+
+#define STACK_SIZE	((uint64_t) 4 * 1024 * 1024)
+#define STACK_END		0x40000000
+
+#define MAX_PROC			64
 #define PROC_READY      1
 #define PROC_WAITING    2
 #define PROC_RUNNING    3
@@ -47,7 +52,7 @@ typedef struct Process {
 
    uint8_t pid;
    uint8_t state;
-	 
+
    entry entry_point;
 }Process;
 
