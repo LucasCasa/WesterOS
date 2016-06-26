@@ -8,6 +8,9 @@ static Image* font = (Image*)0x800000;
 
 static uint8_t* start = 0;
 
+void draw_letter(int x, int y, char c);
+void find_new_next();
+
 void draw_circle(Point* p, uint64_t radius, Color* c){
    signed int r = radius;
    for(signed int y=-r ; y<=r; y++){

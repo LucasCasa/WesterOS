@@ -57,7 +57,7 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 			return validateScreenTime(arg1);
 			break;
 			case SET_SCREENSAVER:
-			set_screensaver_image(arg1);
+			set_screensaver_image((ScreenImage *)arg1);
 			break;
 		case BEEP:
 		 	//beep();
@@ -70,11 +70,11 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 			read_song(arg1);
 			break;
 		case MALLOC:
-			return malloc();
+			return (uint64_t)malloc();
 			break;
 		case FREE:
-			free(arg1);
-			return;
+			free((void *)arg1);
+			break;
 		case ENTER_DRAW_MODE:
 			draw_mode = 1;
 			set_graphic_pointer();

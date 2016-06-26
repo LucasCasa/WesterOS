@@ -5,11 +5,9 @@
 
 #include <stdint.h>
 #include "video_manager.h"
+#include "graphic_manager.h"
 #include "sys_lib.h"
 #include "sys.h"
-
-void alien();
-void show_screensaver();
 
 typedef struct ScreenImage{
   unsigned int 	 width;
@@ -17,5 +15,11 @@ typedef struct ScreenImage{
   unsigned int 	 bytes_per_pixel; /* 2:RGB16, 3:RGB, 4:RGBA */
   unsigned char	 pixel_data[105 * 105 * 3 + 1];
 } ScreenImage;
+
+void alien();
+void show_screensaver();
+void set_screensaver_image(ScreenImage* s);
+
+
 
 #endif

@@ -8,11 +8,17 @@ PointD mod[10];
 static int next = 0;
 int ttn = 1;
 int time_to_reset = 1000;
+
+void westeros();
+int getDistance2(Point p1, Point p2);
+void bounce(Point* p1, PointD* mod1,Point* p2, PointD* mod2);
+
 void show_screensaver(){
 	//clear_screen();
 	reset_current_video();
 	westeros();
 }
+
 void set_screensaver_image(ScreenImage* s){
 	image = s;
 }
@@ -31,7 +37,6 @@ void westeros(){
 	ttn--;
 	if(ttn == 0 && next < 10){
 		int valid = 0;
-		int j = 0;
 		while(!valid){
 			valid = 1;
 			offset[next].x = (rand() % 800) + 50;

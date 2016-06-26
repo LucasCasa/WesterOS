@@ -34,9 +34,14 @@
  
  
 #include <stdint.h>
+#include "sys_lib.h"
+#include "video_manager.h"
 
 void read_song(uint64_t songNum);
 void playPiano(uint32_t frec);
 void play_song2(uint8_t song, uint32_t tempo);
+
+extern void outb(uint8_t, uint8_t);
+extern uint8_t inb(uint8_t);
 
 #endif

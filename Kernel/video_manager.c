@@ -24,6 +24,13 @@ Color number_color = {255,0,0};
 char stand_by_active = 0;
 int gm = 1;
 
+void set_new_modifier_graphic(Color* nf, Color* nb,Color* nnum);
+void put_graphics(char c);
+void set_command_line_graphic();
+void put_char(char c, uint8_t mod);
+void print_standby_graphic();
+
+
 void set_default_modifiers(char s, char n){
 	str_modifier = s;
 	num_modifier = n;
@@ -287,8 +294,8 @@ void put_char(char c,uint8_t mod){
 	}
 }
 void put_graphics(char c){
-	int totaloffset = 0;
-	uint32_t fontoffset = 0;
+	//int totaloffset = 0;
+	//uint32_t fontoffset = 0;
 	if(graphic_video == 0){
 	graphic_video = (*(uint32_t*)0x5080);
 	current_graphic_video = (*(uint32_t*)0x5080);
@@ -330,7 +337,7 @@ char check_end_of_screen_graphic(char type){
 }
 void scroll_graphic(){
 	int j = 0;
-	int jump = 1024*3*LETTER_HEIGHT;
+	//int jump = 1024*3*LETTER_HEIGHT;
 	for(int i = 1024*3*LETTER_HEIGHT;i<1024*768*3;i++,j++){
 		graphic_video[j] = graphic_video[i];
 		graphic_video[i] = 0;

@@ -23,3 +23,5 @@ int readfifo(int fd, void * buf, int size); // returns message length; size is t
 void copyName(char * dest, char * origin, int max_size);
 int validateName(char * name);
 int entryIndex(int fd);
+
+void list_ipc();

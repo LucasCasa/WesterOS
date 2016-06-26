@@ -3,6 +3,8 @@
 FIFO_table table;
 int current_pos;
 
+void list_entry(int index);
+
 int initIPC(){
 	current_pos = 0;
 	for(int i=0; i<TABLE_SIZE; i++){

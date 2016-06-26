@@ -5,6 +5,7 @@
 #include "typedef.h"
 #include "sys_lib.h"
 #include "image.h"
+#include "sounds.h"
 
 void sys_write(char c,uint8_t mod);
 char sys_get_screen_char();
@@ -31,5 +32,10 @@ uint8_t end_of_line();
 void scroll_graphic();
 void draw_char_graphic(char c);
 char check_end_of_screen_graphic(char type);
+void reset_current_video_graphic();
+void set_default_modifiers_graphic(Color* front, Color* back,Color* num);
+
+void restore_screen_graphic();
+void save_screen_graphic();
 
 #endif //29880

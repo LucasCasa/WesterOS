@@ -1,8 +1,10 @@
 #include "include/typedef.h"
 
+#include "graphic_manager.h"
 #include "sounds.h"
 #include "allocator.h"
-
+#include "sys_lib.h"
+#include "rtc.h"
 
 IDT_entry* IDT;
 MemoryMap mm;
@@ -19,7 +21,7 @@ extern void _change_mode();
 extern int initIPC();
 extern void init_PIT();
 
-
+void init_serial();
 
 void setup_IDT_entry (int index,uint16_t selector, uint64_t offset);
 void set_interrupts();
