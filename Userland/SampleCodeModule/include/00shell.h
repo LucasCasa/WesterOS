@@ -13,6 +13,7 @@ typedef struct {
 
 void * memset(void * destiny, int32_t c, uint64_t length);
 void init_commands(unsigned char index, char * name, char* description, void (*function)());
+int isMuffin(char * name);
 void showRTC();
 void shell_command();
 void shell_erase_screen();
@@ -29,6 +30,7 @@ void songs();
 void piano();
 void draw();
 void game();
+void muffin();
 
 char* time_str = "Shows the time and the date";
 char* help_str = "Shows all available commands";
@@ -43,5 +45,6 @@ char* songs_str= "Choose a song and listen to it";
 char* beep_str= "Listen to the beep";
 char* draw_str ="Paint un poroto al lado de esto";
 char* ipcs_str = "List all existing IPC's";
+char* game_str = "Best game in da world";
 
 #endif

@@ -12,19 +12,19 @@ void modify_colors(){
 	print_message("5- TARGARYEN\n",0xFF); //TARGARYEN
 	char c = 0,i = 0,res = 0;
 	do{
-	c = 0;
-	i = 0;
-	res = 0;
-	print_message("Enter value:\n",0xFF);
-	while( (c = get_char())  != '\n'){
-		i++;
-		//print_message(c);
-		if(isNumber(c)){
-			res = (c - '0') ;
-		}else{
-			res = 0;
+		c = 0;
+		i = 0;
+		res = 0;
+		print_message("Enter value:\n",0xFF);
+		while( (c = get_char())  != '\n'){
+			i++;
+			//print_message(c);
+			if(isNumber(c)){
+				res = (c - '0') ;
+			}else{
+				res = 0;
+			}
 		}
-	}
 	}while(i > 1 || res == 0 || res > 5);
 	Color fr;
 	Color bk;
