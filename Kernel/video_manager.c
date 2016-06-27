@@ -149,8 +149,10 @@ void reset_current_video(){
 }
 void reset_current_video_graphic(){
 	current_graphic_video = graphic_video;
-	draw_new_line_graphic();
-	set_command_line_graphic();
+	if(!draw_mode){
+		draw_new_line_graphic();
+		set_command_line_graphic();
+	}
 }
 void save_screen(){
 	for(int i = 0; i<160*25;i++){
