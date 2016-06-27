@@ -33,7 +33,7 @@ int mkfifo(char * name){
 
 	table[current_pos].fd = current_pos + OFFSET;
 	copyName(table[current_pos].name, name, NAME_SIZE);
-	table[current_pos].addr = malloc();
+	table[current_pos].addr = malloc(1);
 	table[current_pos].addr[0] = 0;
 	return table[current_pos].fd;
 }

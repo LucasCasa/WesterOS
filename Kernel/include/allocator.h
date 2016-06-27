@@ -20,11 +20,11 @@ void init_malloc();
 
 void init_bitmap(MemoryMap * bitmap, uint64_t address, uint64_t memory_size);
 
-void * alloc_block(MemoryMap * bitmap);
+void * alloc_block(MemoryMap * bitmap, int cantidad);
 
 void free_block(MemoryMap * bitmap, void * address);
 
-void *  malloc();
+void *  malloc(uint64_t size);
 
 void free(void * address);
 #endif

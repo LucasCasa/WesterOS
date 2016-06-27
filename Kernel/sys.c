@@ -70,7 +70,7 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 			read_song(arg1);
 			break;
 		case MALLOC:
-			return (uint64_t)malloc();
+			return (uint64_t)malloc(arg1);
 			break;
 		case FREE:
 			free((void *)arg1);
