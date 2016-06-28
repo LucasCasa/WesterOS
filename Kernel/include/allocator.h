@@ -18,6 +18,12 @@ typedef struct {
 
 void init_malloc();
 
+uint64_t get_free_block(MemoryMap * bitmap,int cantidad);
+
+int get_block_status(MemoryMap * bitmap, int bit);
+
+void set_block_status(MemoryMap * bitmap, uint64_t block, int status,int cant);
+
 void init_bitmap(MemoryMap * bitmap, uint64_t address, uint64_t memory_size);
 
 void * alloc_block(MemoryMap * bitmap, int cantidad);
