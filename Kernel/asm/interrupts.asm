@@ -25,6 +25,7 @@ EXTERN piano_handler
 EXTERN switch_user_to_kernel
 EXTERN switch_kernel_to_user
 EXTERN get_entry_point
+EXTERN print_number
 
 %macro	pushState 0
 	push rax
@@ -114,18 +115,23 @@ _int_timer_hand: ;Handler de INT 8 ( Timer tick)
 		pushState; Se salvan los registros
 		; save current process's RSP
 		mov rdi, rsp
-
+		mov rcx,rsp
 		; enter kernel context by setting current process's kernel-RSP
 		call switch_user_to_kernel
+		mov rsp, rax
+
 		;mov al,10h
 		;mov es, ax
 		;mov ds, ax
 
-		;call 		timer_handler
-		mov rsp, rax
+		call 		timer_handler
 		; schedule, get new process's RSP and load it
 		call switch_kernel_to_user
-
+		;cmp rcx,rax
+		;je eqls
+		;mov rdi,rax
+		;call print_number
+eqls:
 		mov rsp, rax
 
 	; Send end of interrupt

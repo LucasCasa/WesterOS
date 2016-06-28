@@ -15,7 +15,7 @@ void set_block_status(MemoryMap * bitmap, uint64_t block, int status,int cant);
 
 void * alloc_block(MemoryMap * bitmap, int cantidad);
 
-void free_block(MemoryMap * bitmap, void * address);
+void free_block(MemoryMap * bitmap, void * add);
 
 static uint64_t address =0x10000000;
 
@@ -61,8 +61,8 @@ alloc_block(MemoryMap * bitmap, int cantidad){
 }
 
 void
-free_block(MemoryMap * bitmap, void * address){
-    uint64_t block = (address-address-BLOCK_SIZE) / BLOCK_SIZE;
+free_block(MemoryMap * bitmap, void * add){
+    uint64_t block = ((uint64_t)add-address-BLOCK_SIZE) / BLOCK_SIZE;
     int cantidad = bitmap->address[block+bitmap->size];
     set_block_status(bitmap, block, 0,cantidad);
 }
@@ -70,31 +70,29 @@ free_block(MemoryMap * bitmap, void * address){
 uint64_t
 get_free_block(MemoryMap * bitmap,int cantidad){
     int first_search = 1;
-    uint64_t byte = bitmap->last_alloc;
+    uint64_t byte = bitmap->last_alloc,last_byte;
+    int j = 0;
 
     while (byte != bitmap->last_alloc || first_search == 1) {
-        int j = 0;
-        for(;j<cantidad;){
-            if (bitmap->address[byte] != 0xFF) {
-                int status = get_block_status(bitmap,byte);
-                if (status == FREE_BLOCK && (j= cantidad +1)) {
-                    bitmap->last_alloc = byte;
-                    bitmap->address[byte+bitmap->size] = cantidad;
-                    return address + (BLOCK_SIZE*(byte + 1));
+        if (bitmap->address[byte] != 0xFF) {
+            int status = get_block_status(bitmap,byte);
+            if (status == FREE_BLOCK) {
+                if(j == 0){
+                    last_byte = byte;
                 }
-                if(status == FREE_BLOCK){
-                    j++;
-                }else{
-                    j=0;
+                j++;
+                if(j == cantidad){
+                    bitmap->last_alloc = last_byte + cantidad;
+                    bitmap->address[last_byte+bitmap->size] = cantidad;
+                    return address + (BLOCK_SIZE*(last_byte + 1));
                 }
+            }else{
+                j=0;
             }
-
         }
-
         byte = (byte + 1) % bitmap->size; //voy recorriento la tabla en forma circular
         first_search = 0;
     }
-
     return -1;
 }
 

@@ -3,6 +3,7 @@
 ProcessHolder phs[MAX_PROC];
 
 ProcessHolder* current = 0;
+int count = 0;
 ProcessHolder* last;
 extern void** stacks;
 void init_scheduler(){
@@ -11,6 +12,9 @@ void init_scheduler(){
 
    	for(int i = 0; i<MAX_PROC; i++)
    		stacks[i] = (void*)(stack_end - STACK_SIZE*i);
+
+}
+void yield(){
 
 }
 
@@ -23,9 +27,16 @@ void start_process(){
 }
 void schedule(){
     _cli();
+    if(count > 110 || current->p->state == PROC_WAITING){
+      count = 0;
 	do{
 		current = current->next;
    }while(current->p->state == PROC_WAITING);
+   print_message("Cambiando a: ",0xFF);
+   print_number(current->p->stack);
+}else{
+   count++;
+}
     _sti();
 }
 void add_new_process(Process* p){

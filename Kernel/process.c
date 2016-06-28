@@ -35,6 +35,7 @@ void* fill_stack_frame(void * entry_point, void * user_stack) {
 Process* create_process(entry entry_point){
 	//_cli();
 	Process* p = &processes[next_pid]; //ESTO CON UN MALLOC
+	p->pid = next_pid++;
 	put_char('a',0xFF);
 	p->kernel_stack = malloc(1);
 	print_number(p->kernel_stack);
@@ -44,7 +45,7 @@ Process* create_process(entry entry_point){
 	p->stack = to_stack_address(p->stack);
 	put_char('d',0xFF);
 	p->kernel_stack = to_stack_address(p->kernel_stack);
-	fill_stack_frame(entry_point,p->stack);
+	p->stack = fill_stack_frame(entry_point,p->stack);
 	p->entry_point = entry_point;
 	process_ready(p);
 	//_sti();
