@@ -257,7 +257,7 @@ void sys_write(char c,uint8_t mod){
 	switch(c){
 		case '\n':
 			new_line();
-			new_line_graphic();
+			//new_line_graphic();
 			aux = 1;
 			break;
 		case '\b':
@@ -267,7 +267,7 @@ void sys_write(char c,uint8_t mod){
 			break;
 		default:
 			put_char(c,mod);
-			put_graphics(c);
+			//put_graphics(c);
 		break;
 	}
 	check_end_of_screen(aux);

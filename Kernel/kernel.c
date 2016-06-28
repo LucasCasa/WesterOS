@@ -89,19 +89,21 @@ void * initializeKernelBinary()
 
 int main()
 {
+
 	init_scheduler();
-	Process* shell = create_process(start_shell);
-	while(1);
-	add_new_process(shell);
-	while(1);
+	init_malloc();
+	ncPrint("Scheduler");
+	put_char('a',0xFF);
+	put_char('b',0xFF);
 	Process* IDT_init = create_process(initialize_task);
-	while(1);
+	put_char('c',0xFF);
 	add_new_process(initialize_task);
-	while(1);
+
+	Process* shell = create_process(start_shell);
+	add_new_process(shell);
 	kmain();
-	while(1);
 	_start_userland();
-	while(1);
+	ncPrint("Start");
 	return 0;
 }
 void* start_shell(void* a){

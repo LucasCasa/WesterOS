@@ -2,9 +2,10 @@
 void* stacks[MAX_PROC];
 Process processes[MAX_PROC];
 uint8_t next_pid = 1;
+void * to_stack_address(void * page);
 
 void* fill_stack_frame(void * entry_point, void * user_stack) {
-	stack_frame* frame = (stack_frame*) user_stack ;
+	stack_frame* frame = (stack_frame*) user_stack -1;
 	frame->gs =		0x001;
 	frame->fs =		0x002;
 	frame->r15 =	0x003;
@@ -34,9 +35,15 @@ void* fill_stack_frame(void * entry_point, void * user_stack) {
 Process* create_process(entry entry_point){
 	//_cli();
 	Process* p = &processes[next_pid]; //ESTO CON UN MALLOC
-	p->stack = stacks[next_pid];
-	p->stack -= sizeof(stack_frame);
-	stack_frame* context = (stack_frame*)p->stack;
+	put_char('a',0xFF);
+	p->kernel_stack = malloc(1);
+	print_number(p->kernel_stack);
+	put_char('b',0xFF);
+	p->stack = malloc(1);
+	put_char('c',0xFF);
+	p->stack = to_stack_address(p->stack);
+	put_char('d',0xFF);
+	p->kernel_stack = to_stack_address(p->kernel_stack);
 	fill_stack_frame(entry_point,p->stack);
 	p->entry_point = entry_point;
 	process_ready(p);
@@ -44,18 +51,20 @@ Process* create_process(entry entry_point){
 	return p;
 
 }
+void * to_stack_address(void * page) {
+	return (uint8_t*)page + 4098 - 0x10;
+}
 void process_wrapper(entry proc) {
 
-	 proc();
+	 proc(0);
 
-    Process* task = get_current_process();
-    remove_task_with_pid(task->pid);
-    _reschedule();
+    Process* p = get_current_process();
+    remove_process(p->pid);
+    //_reschedule();
 }
 void process_ready(Process* p){
 	p->state = PROC_READY;
 }
-
 void process_waiting(Process* p){
 	p->state = PROC_WAITING;
 }

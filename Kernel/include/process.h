@@ -48,7 +48,7 @@ typedef struct Process {
 	 char name[20];
 
 	 void* stack;
- 	 void* stack_base;
+ 	 void* kernel_stack;
 
    uint8_t pid;
    uint8_t state;

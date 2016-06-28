@@ -33,11 +33,11 @@ void add_new_process(Process* p){
   ProcessHolder* ph = &phs[p->pid];
   ph->p = p;
   if(current == 0){
-    current = &ph;
-    ph->next = &ph;
+    current = ph;
+    ph->next = ph;
   }else{
     ph->next = current->next;
-    current->next = &ph;
+    current->next = ph;
   }
   _sti();
 }
@@ -53,6 +53,11 @@ void push_to_top(uint8_t pid){
 void* get_all_process(){
 
 }
+
+Process* get_current_process(){
+	return current->p;
+}
+
 void* get_entry_point(){
    return current->p->entry_point;
 }
@@ -60,7 +65,7 @@ void* switch_user_to_kernel(uint64_t esp) {
    _cli();
 	current->p->stack = esp;
    _sti();
-	return kernel_stack;
+	return current->p->kernel_stack;
 }
 
 void* switch_kernel_to_user(uint64_t esp){

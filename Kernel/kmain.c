@@ -27,12 +27,11 @@ void set_interrupts();
 int kmain(){
 	IDT = 0;
 	//set_interrupts();
+	put_char('b',0xFF);
 	init_serial();
-	init_malloc();
 	//set_graphic_pointer();
 	initIPC();
-	init_PIT(1193182 / 100);
-	srand(RTCparameters(0));
+
 	return 0;
 }
 
@@ -54,6 +53,9 @@ void set_interrupts() {
 	setup_IDT_entry(0x61,0x08,(uint64_t) &_int_start_sound);
 	_sti();
 	_write_port(0x21,0xFC);
+	init_PIT(1193182 / 100);
+	srand(RTCparameters(0));
+	put_char('a',0xFF);
 }
 
 void setup_IDT_entry(int index,uint16_t selector, uint64_t offset){
