@@ -22,7 +22,7 @@ void init_bitmap(MemoryMap * bitmap, uint64_t address, uint64_t memory_size);
 
 void * alloc_block(MemoryMap * bitmap, int cantidad);
 
-void free_block(MemoryMap * bitmap, void * address);
+void free_block(MemoryMap * bitmap, void * add);
 
 void *  malloc(uint64_t size);
 
