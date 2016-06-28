@@ -118,7 +118,7 @@ uint32_t get_xoffset(){
 	int o = (current_graphic_video - graphic_video) % (1024*3);
 	return o;
 }
-uint32_t get_yoffset(){
+uint32_t get_yoffset(){ // retorna el numero de linea sobre el eje y
 	int o = (current_graphic_video - graphic_video) / (1024*3);
 	return o;
 }
@@ -318,7 +318,7 @@ char check_end_of_screen(char type){
 	return 0;
 }
 char check_end_of_screen_graphic(char type){
-	if((current_graphic_video >= graphic_video + 1024*768*3)){
+	if(get_yoffset() + LETTER_HEIGHT > 768){
 		scroll_graphic();
 		current_graphic_video = graphic_video + (get_yoffset()-LETTER_HEIGHT)*1024*3;
 		if(type == 1){

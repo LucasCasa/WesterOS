@@ -27,12 +27,19 @@ void set_interrupts();
 int kmain(){
 	IDT = 0;
 	set_interrupts();
-	init_serial();
-	init_malloc();
 	set_graphic_pointer();
+
+	init_serial();
 	initIPC();
 	init_PIT(1193182 / 100);
 	srand(RTCparameters(0));
+
+
+
+	put_char('b',0xFF);
+
+
+	put_char('z',0xFF);
 	return 0;
 }
 
@@ -48,6 +55,7 @@ void init_serial() {
 }
 
 void set_interrupts() {
+	IDT = 0;
 	setup_IDT_entry(0x20,0x08,(uint64_t) &_int_timer_hand);
 	setup_IDT_entry(0x21,0x08,(uint64_t) &_int_keyboard_hand);
 	setup_IDT_entry(0x80,0x08,(uint64_t) &_int80_hand);

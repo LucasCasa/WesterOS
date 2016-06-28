@@ -30,6 +30,7 @@ int validateScreenTime(int time){
 }
 void timer_handler(){
 	time++;
+	//put_char('a',0xFF);
 	if(!draw_mode){ // DRAW MODE ESTA EN SYS.C
 		sleep_time++;
 	}
@@ -54,6 +55,7 @@ void setPiano(){
 }
 
 void keyboard_handler(uint8_t scancode){
+	//put_char('a',0xFF);
 	if(scancode > 128 && up != 0){
 		uint8_t axu = scancode & 0x7F;
 		up(scancode_to_char(axu)); //UP
