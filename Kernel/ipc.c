@@ -3,6 +3,8 @@
 FIFO_table table;
 int current_pos;
 
+void list_entry(int index);
+
 int initIPC(){
 	current_pos = 0;
 	for(int i=0; i<TABLE_SIZE; i++){
@@ -31,8 +33,7 @@ int mkfifo(char * name){
 
 	table[current_pos].fd = current_pos + OFFSET;
 	copyName(table[current_pos].name, name, NAME_SIZE);
-	// ACA DEBERIA SER MALLOC
-	table[current_pos].addr = (uint8_t*)(BASE_MEMORY + BUFFER_SIZE * current_pos);
+	table[current_pos].addr = malloc(1);
 	table[current_pos].addr[0] = 0;
 	return table[current_pos].fd;
 }
@@ -51,14 +52,14 @@ int closefifo(int fd){
 	if(i<0)
 		return 0;
 	table[i].fd = 0;
-	// cuando ande el malloc acordarse del FREE aca --!--
+	free(table[current_pos].addr);
 	return 1;
 }
 
 
 int writefifo(int fd, void * msg, int size){ // ret -1 on error (fifo not exists (?))
 	int i = entryIndex(fd);
-	if(i<0 || size>BUFFER_SIZE)
+	if(i<0 || size>BLOCK_SIZE)
 		return 0;
 	memcpy(table[i].addr, msg, size);
 	return 1;

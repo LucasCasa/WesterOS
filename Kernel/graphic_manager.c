@@ -1,12 +1,16 @@
 #include "graphic_manager.h"
 
 extern Color background_color;
+extern draw_mode;
 erasable_circle buffer[10];
 int next = 0;
 uint64_t st = 0xD000000;
 static Image* font = (Image*)0x800000;
 
 static uint8_t* start = 0;
+
+void draw_letter(int x, int y, char c);
+void find_new_next();
 
 void draw_circle(Point* p, uint64_t radius, Color* c){
    signed int r = radius;
@@ -33,6 +37,7 @@ void draw_text(Point*p,char* text){
     i++;
   }
 }
+
 void draw_letter(int x, int y, char c){
   int totaloffset = x*BPP + y*SCR_WIDTH*BPP;
 	int fontoffset = 0;
@@ -107,11 +112,17 @@ void undraw_erasable_circle(int id){
   buffer[id].used = 0;
 }
 void clear_screen(){
-   for( int i = 0; i<SCR_WIDTH*SCR_HEIGHT*BPP;i++){
+  for( int i = 0; i<SCR_WIDTH*SCR_HEIGHT*BPP;i++){
+    if(!draw_mode){
       start[i++] = background_color.b;
       start[i++] = background_color.g;
       start[i] = background_color.r;
-   }
+    }else{
+      start[i++] = 0;
+      start[i++] = 0;
+      start[i] = 0;
+    }
+  }
 }
 /*void draw_image(Image g){
 

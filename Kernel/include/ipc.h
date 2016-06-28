@@ -1,8 +1,8 @@
 #include "sys_lib.h"
+#include "allocator.h"
 
 #define NAME_SIZE 32
 #define TABLE_SIZE 32
-#define BUFFER_SIZE 0x100000 // 1MB
 #define BASE_MEMORY 0xA00000
 #define OFFSET 666
 
@@ -23,3 +23,5 @@ int readfifo(int fd, void * buf, int size); // returns message length; size is t
 void copyName(char * dest, char * origin, int max_size);
 int validateName(char * name);
 int entryIndex(int fd);
+
+void list_ipc();

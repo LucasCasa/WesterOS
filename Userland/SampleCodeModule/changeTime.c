@@ -4,30 +4,27 @@
 
 
 void changeTime(){
-	void * aux = malloc(1);
-	print_message("ACA EL OTRO",0xFF);
-	print_number(&aux);
-	// unsigned int parameters[6];
-	// int size = 6,i=0;
-	// char aux[10];
-	// //int year,month,day,hour,min,sec;
-	// showRTC(); //Imprime el tiempo para que lo vea antes de preguntarle por cambiar
-	// while(i<size){
-	// 	int value;
-	// 	print_message(INPUT[i],0xFF);
-	// 	readKeyboard(aux);
-	// 	value=atoi(aux);
-	// 	if(validate(value,MAX_VALUES[i],MIN_VALUES[i])){
-	// 		if(i==2 && validateDay(value,parameters[i-1],parameters[i-2])==NO){	
-	// 				;
-	// 		}else{
-	// 				parameters[i]=value;
-	// 				i++;				
-	// 		}
-	// 	}
-	// }
-	// callSetters(parameters);
-	// showRTC();
+	unsigned int parameters[6];
+	int size = 6,i=0;
+	char aux[10];
+	//int year,month,day,hour,min,sec;
+	showRTC(); //Imprime el tiempo para que lo vea antes de preguntarle por cambiar
+	while(i<size){
+		int value;
+		print_message(INPUT[i],0xFF);
+		readKeyboard(aux);
+		value=atoi(aux);
+		if(validate(value,MAX_VALUES[i],MIN_VALUES[i])){
+			if(i==2 && validateDay(value,parameters[i-1],parameters[i-2])==NO){	
+					;
+			}else{
+					parameters[i]=value;
+					i++;				
+			}
+		}
+	}
+	callSetters(parameters);
+	showRTC();
 }
 
 void callSetters(unsigned int parameters[6]){

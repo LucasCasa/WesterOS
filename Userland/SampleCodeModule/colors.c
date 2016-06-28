@@ -1,6 +1,8 @@
 #include "lib.h"
 #include "call80.h"
+#include "colors.h"
 
+Image* imgs = 0x850000;
 void modify_colors(){
 	print_message("Select Colors:\n",0xFF);
 	print_message("1- GREYJOY\n",0xFF);
@@ -10,19 +12,19 @@ void modify_colors(){
 	print_message("5- TARGARYEN\n",0xFF); //TARGARYEN
 	char c = 0,i = 0,res = 0;
 	do{
-	c = 0;
-	i = 0;
-	res = 0;
-	print_message("Enter value:\n",0xFF);
-	while( (c = get_char())  != '\n'){
-		i++;
-		//print_message(c);
-		if(isNumber(c)){
-			res = (c - '0') ;
-		}else{
-			res = 0;
+		c = 0;
+		i = 0;
+		res = 0;
+		print_message("Enter value:\n",0xFF);
+		while( (c = get_char())  != '\n'){
+			i++;
+			//print_message(c);
+			if(isNumber(c)){
+				res = (c - '0') ;
+			}else{
+				res = 0;
+			}
 		}
-	}
 	}while(i > 1 || res == 0 || res > 5);
 	Color fr;
 	Color bk;
@@ -42,6 +44,7 @@ void modify_colors(){
 			num.g = 0;
 			num.b = 0;
 			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk,&num);
+			_call_int80(INT_SCREENSAVER,&imgs[0]);
 			break;
 		case 2:
 			_call_int80(INT_COLORS,0x1F,0x12);
@@ -57,6 +60,7 @@ void modify_colors(){
 			num.g = 30;
 			num.b = 30;
 			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk,&num);
+			_call_int80(INT_SCREENSAVER,&imgs[1]);
 			break;
 		case 3:
 			_call_int80(INT_COLORS,0x0E,0x0B);
@@ -72,6 +76,7 @@ void modify_colors(){
 			num.g = 255;
 			num.b = 100;
 			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk,&num);
+			_call_int80(INT_SCREENSAVER,&imgs[2]);
 			break;
 		case 4:
 			_call_int80(INT_COLORS,0x70,0x71);
@@ -87,6 +92,7 @@ void modify_colors(){
 			num.g = 0;
 			num.b = 0;
 			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk,&num);
+			_call_int80(INT_SCREENSAVER,&imgs[3]);
 			break;
 		case 5:
 			_call_int80(INT_COLORS,0x04,0x0F);
@@ -102,6 +108,7 @@ void modify_colors(){
 			num.g = 255;
 			num.b = 255;
 			_call_int80(INT_COLORS_GRAPHIC,&fr,&bk,&num);
+			_call_int80(INT_SCREENSAVER,&imgs[4]);
 			break;
 	}
 }

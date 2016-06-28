@@ -2,21 +2,30 @@
 #define INTERVAL 50
 double MASS = 1;
 double RADIUS = 52;
-ScreenImage* image = (ScreenImage*) 0x850000;
+ScreenImage* image = (ScreenImage*) (0x850000);
 Point offset[10];
 PointD mod[10];
 static int next = 0;
 int ttn = 1;
 int time_to_reset = 1000;
+
+void westeros();
+int getDistance2(Point p1, Point p2);
+void bounce(Point* p1, PointD* mod1,Point* p2, PointD* mod2);
+
 void show_screensaver(){
 	//clear_screen();
 	reset_current_video();
 	westeros();
 }
+
+void set_screensaver_image(ScreenImage* s){
+	image = s;
+}
+
 void westeros(){
 	time_to_reset--;
 	if(!time_to_reset){
-		image++;
 		next = 0;
 		ttn = 1;
 		time_to_reset = 1000;
@@ -28,7 +37,6 @@ void westeros(){
 	ttn--;
 	if(ttn == 0 && next < 10){
 		int valid = 0;
-		int j = 0;
 		while(!valid){
 			valid = 1;
 			offset[next].x = (rand() % 800) + 50;
@@ -69,9 +77,9 @@ void westeros(){
 
 		for(uint64_t i = 0; i<image->height;i++){
 			for(uint64_t j = 0;j<image->width*3;j++){
-				r = image->pixel_data[j + i*image->width*3];
-				g = image->pixel_data[j+1 + i*image->width*3];
-				b = image->pixel_data[j+2 + i*image->width*3];
+				r = image->pixel_data[j + (i)*image->width*3];
+				g = image->pixel_data[j+1 + (i)*image->width*3];
+				b = image->pixel_data[j+2 + (i)*image->width*3];
 				if(r || g || b){
 				st[totaloffset + j + 1024*i*3] = b;
 				j++;

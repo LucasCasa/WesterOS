@@ -19,11 +19,15 @@ typedef struct erasable_circle{
   int used;
 }erasable_circle;
 
+void set_graphic_pointer();
+
 void draw_circle(Point* p, uint64_t radius, Color* c);
 void draw_text(Point*p,char* text);
 void clear_screen();
 //void draw_image(Image g);
 void setpixel(int x, int y, Color* c);
+int draw_erasable_circle(Point* p, uint64_t radius, Color* c);
+void undraw_erasable_circle(int id);
 
 
 #endif

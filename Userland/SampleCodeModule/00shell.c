@@ -23,13 +23,13 @@ int main(){
 	memset(&bss, 0, &endOfBinary - &bss);
 	shell_erase_screen();
 
-print_message("#   #                                ######  #### \n", 0xFF);
-print_message("# # # #####  ###  ##### ##### #####  #    # #    #\n", 0xFF);
-print_message("# # # #     #       #   #     #    # #    # #     \n", 0xFF);
-print_message("# # # ####   ###    #   ####  #    # #    #  #### \n", 0xFF);
-print_message("# # # #         #   #   #     #####  #    #      #\n", 0xFF);
-print_message("# # # #     #   #   #   #     #   #  #    # #    #\n", 0xFF);
-print_message(" # #  #####  ###    #   ##### #    # ######  #### \n", 0xFF);
+	print_message("#   #                                ######  #### \n", 0xFF);
+	print_message("# # # #####  ###  ##### ##### #####  #    # #    #\n", 0xFF);
+	print_message("# # # #     #       #   #     #    # #    # #     \n", 0xFF);
+	print_message("# # # ####   ###    #   ####  #    # #    #  #### \n", 0xFF);
+	print_message("# # # #         #   #   #     #####  #    #      #\n", 0xFF);
+	print_message("# # # #     #   #   #   #     #   #  #    # #    #\n", 0xFF);
+	print_message(" # #  #####  ###    #   ##### #    # ######  #### \n", 0xFF);
 
 	print_message("\nType help and hit enter to see available commands\n\n", 0xFF);
 
@@ -45,7 +45,7 @@ print_message(" # #  #####  ###    #   ##### #    # ######  #### \n", 0xFF);
 	init_commands(9,"songs",songs_str,&songs);
 	init_commands(10,"beep", beep_str,&beep);
 	init_commands(11,"draw",draw_str,&draw);
-	init_commands(12,"game",draw_str,&game);
+	init_commands(12,"game",game_str,&game);
 	init_commands(13,"ipcs",ipcs_str,&list_ipcs);
 	while(1){
 		shell_command();
@@ -124,7 +124,10 @@ void whoami(){
 		if(i==19)
 			flush_buffer();
 	}else{
-		printf("%s \n",0xFF,name);
+		if(isMuffin(name))
+			muffin();
+		else
+			printf("%s \n",0xFF,name);
 	}
 }
 
@@ -163,7 +166,7 @@ void draw(){
 			_call_int80(INT_DRAW_CIRCLE,&aux,20,&c);
 		}
 
-		while((ch = _call_int80(INT_GCFB)) == 0 && pass < 300000){
+		while((ch = _call_int80(INT_GCFB)) == 0 && pass < 30000){
 			pass++;
 		}
 
@@ -198,6 +201,29 @@ void list_ipcs(){
 	_call_int80(SHOWIPCS);
 }
 
+void muffin(){
+	print_message("   .-\"`\"`\"`\"-.   \n", 0xFF);
+    print_message("  /.\'\'\'`.\'`.\'`\\  \n", 0xFF);
+    print_message(" /`.\'`.`\'.`\'`.\'\\ \n", 0xFF);
+    print_message("/.`.\'`.`\'.`\'`.\'\\ \n", 0xFF);
+    print_message("(.`\'.`\'.\'`.\'`.`\')\n", 0xFF);
+    print_message(" ~|||||||||||||~ \n", 0xFF);
+    print_message("  |||||||||||||  \n", 0xFF);
+    print_message("  |||||||||||||  \n", 0xFF);
+    print_message("  |||||||||||||  \n", 0xFF);
+    print_message("  `\"\"\"\"\"\"\"\"\"\"\"`  \n", 0xFF);
+}
+
+int isMuffin(char * name){
+	int i;
+	char * m = "muffin";
+	for(i=0; name[i]!=0 && m[i]!=0; i++){
+		if(name[i]!=m[i])
+			return 0;
+	}
+	return m[i]==name[i];
+}
+
 /*void testipc(){
 	char buf[6];
 	int n;
@@ -210,6 +236,7 @@ void list_ipcs(){
 	n = _call_int80(READFIFO,fd,buf,6);
 	printf("read ret: %d\n",0xFF,n);
 	printf("leo: %s\n",0xFF,buf);
-	fd = _call_int80(MKFIFO,"muffin");
+	fd = _call_int80(MKFIFO,"magda");
+	n = _call_int80(WRITEFIFO,fd,"panqueque",9);
 	printf("segundo mkfifo ret: %d\n",0xFF,fd);
 }*/

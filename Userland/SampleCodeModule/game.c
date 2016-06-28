@@ -104,7 +104,7 @@ void game(){
       if(p[i].alive)
         total_alive++;
     }
-    if(nplayers>1 && total_alive == 1 || nplayers==1 && total_alive==0){
+    if((nplayers>1 && total_alive == 1) || (nplayers==1 && total_alive==0)){
       for(int i = 0; i<nplayers;i++){
         if(p[i].alive){
           exit_game();
