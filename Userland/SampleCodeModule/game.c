@@ -2,9 +2,6 @@
 
 char board[WIDTH*HEIGHT];
 
-uint32_t last[] = {1,2,3,4,5,6};
-uint32_t next[] = {7,8,9,11,12};
-
 int nplayers;
 Color c[] = {{255,0,0},{0,0,255},{0,255,0},{255,0,255},{255,255,0},{255,255,255}};
 char* controls[6][2] = {{"A","D"},{"J","L"},{"L Arrow","R Arrow"},{"Z","C"},{"I","P"},{"1","3"}};
@@ -49,7 +46,7 @@ void game(){
 
 
   while(1){
-    while(pass < 6500000){
+    while(pass < 2100000){
       pass++;
     }
 
@@ -68,7 +65,7 @@ void game(){
         }
       }
     }
-
+    int iter = 0;
     for(int i = 0; i<nplayers;i++){
       if(p[i].alive){
         checkEffects(&(p[i]));
@@ -82,8 +79,45 @@ void game(){
         p[i].angle += p[i].mod;
         p[i].acum.x += _cos(p[i].angle)*p[i].speed;
         p[i].acum.y += _sin(p[i].angle)*p[i].speed;
+
+        // Save state
+        p[i].pp_pos.x = p[i].prev_pos.x;
+        p[i].pp_pos.y = p[i].prev_pos.y;
+        p[i].pp_radius = p[i].prev_radius;
+
+        p[i].prev_pos.x = p[i].pos.x;
+        p[i].prev_pos.y = p[i].pos.y;
+        p[i].prev_radius = p[i].radius;
+
+       /* print_number(p[i].pos.x);
+        print_message(",",0xFF);
+        print_number(p[i].pos.y);
+        print_message("\n",0xFF);*/
+
+
         p[i].pos.x = p[i].acum.x;
         p[i].pos.y = p[i].acum.y;
+        if(0){
+          print_number(i+1);
+          if(p[i].pos.x == p[i].prev_pos.x){
+            
+            print_message(" Igual X ",0xFF);
+          }else{
+            print_message(" DiffX: ",0xFF);
+            print_number(p[i].pos.x - p[i].prev_pos.x);
+          }
+          if(p[i].pos.y == p[i].prev_pos.y){
+            print_message(" Igual Y ",0xFF);
+          }else{
+            print_message(" DiffY: ",0xFF);
+            print_number(p[i].pos.y - p[i].prev_pos.y);
+          }
+          if(p[i].prev_radius == p[i].radius){
+            print_message(" Igual Radio ",0xFF);
+          }
+          print_message("\n",0xFF);
+        }
+        
         if(p[i].time_no_inv < p[i].time_with_inv){
           _call_int80(INT_DRAW_CIRCLE,&(p[i].pos),p[i].radius,&c[i]);
           p[i].alive = draw_into_board(i+1,&(p[i]));
@@ -100,11 +134,13 @@ void game(){
       }
     }
     int total_alive = 0;
+
     for(int i = 0; i<nplayers;i++){
       if(p[i].alive)
         total_alive++;
     }
-    if((nplayers>1 && total_alive == 1) || (nplayers==1 && total_alive==0)){
+
+    if((nplayers>1 && total_alive <= 1) || (nplayers==1 && total_alive==0)){
       for(int i = 0; i<nplayers;i++){
         if(p[i].alive){
           exit_game();
@@ -277,25 +313,37 @@ char draw_into_board(uint32_t pn,Player * player){
   }
   for(signed int y=-player->radius ; y<=player->radius; y++){
     for(signed int x=-player->radius ; x<=player->radius; x++){
-      if(x*x+y*y <= player->radius*player->radius){
-        if(board[player->pos.x + x + (player->pos.y+y)*WIDTH ] == last[pn-1] || board[player->pos.x + x + (player->pos.y +y)*WIDTH] == 0){
-          board[player->pos.x + x + (player->pos.y +y)*WIDTH ] = next[pn-1];
+      //print_number(square(player->prev_pos.x - (player->pos.x + x))*square(player->prev_pos.y - (player->pos.y+y)));
+      //print_message("\n",0xFF);
+      if(x*x+y*y < player->radius*player->radius && checkPrev(x,y,player) && checkPP(x,y,player)){
+        if(board[player->pos.x + x + (player->pos.y +y)*WIDTH] == 0){
+          board[player->pos.x + x + (player->pos.y +y)*WIDTH ] = player->id;
         }else{
+          /*print_message("Perdi",0xFF);
+          print_message("Dist de viejo a punto: ",0xFF);
+          print_number(square(player->prev_pos.x - (player->pos.x + x))+square(player->prev_pos.y-(player->pos.y+y)));
+          print_message("Dist de nuevo a punto: ",0xFF);
+          print_number(x*x+y*y);
+          print_message("Juador",0xFF);
+          print_number(player->id);
+          print_message("\n",0xFF);*/
+
           return 0;
         }
       }
     }
   }
-  uint32_t aux;
-  aux = last[pn - 1];
-  last[pn - 1] = next[pn - 1];
-  next[pn - 1] = aux;
   return 1;
 }
-
+ int checkPrev(int x, int y,Player* player){
+    return square(player->prev_pos.x - (player->pos.x + x))+square(player->prev_pos.y-(player->pos.y+y))>square(player->prev_radius);
+ }
+ int checkPP(int x, int y, Player* player){
+    return square(player->pp_pos.x - (player->pos.x + x))+square(player->pp_pos.y-(player->pos.y+y))>square(player->pp_radius);
+ }
 void init_players(int nplayers){
   for(int i = 0; i<nplayers;i++){
-    p[i].id = i;
+    p[i].id = i+1;
     p[i].pos.x = rand() % (WIDTH-400) + 200;
     p[i].pos.y = rand() % (HEIGHT-360) + 180;
     p[i].acum.x = p[i].pos.x;
@@ -308,6 +356,9 @@ void init_players(int nplayers){
     p[i].time_no_inv = 0;
     p[i].erasable = -1;
     p[i].speed = INIT_SPEED;
+    p[i].prev_radius = 0;
+    p[i].prev_pos.x = 0;
+    p[i].prev_pos.y = 0;
     for(int j = 0; j<MAX_ACTIVE_EFFECTS; j++){
       p[i].effects[j].active = 0;
       p[i].effects[j].time_left = 0;
@@ -416,7 +467,7 @@ void managePowerups(){
   powerup_cont++;
 }
 
-int square(int n){
+double square(int n){
   return  n*n;
 }
 

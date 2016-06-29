@@ -16,7 +16,7 @@ void draw_circle(Point* p, uint64_t radius, Color* c){
    signed int r = radius;
    for(signed int y=-r ; y<=r; y++){
       for(signed int x=-r; x<=r; x++){
-         if(x*x+y*y <= r*r){
+         if(x*x+y*y < r*r){
             setpixel(p->x*3 + x*3 , p->y +y,c);
          }
       }

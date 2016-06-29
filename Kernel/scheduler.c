@@ -27,13 +27,13 @@ void start_process(){
 }
 void schedule(){
     _cli();
-    if(count > 110 || current->p->state == PROC_WAITING){
+    if(count > 11000 || current->p->state == PROC_WAITING){
       count = 0;
 	do{
 		current = current->next;
    }while(current->p->state == PROC_WAITING);
-   print_message("Cambiando a: ",0xFF);
-   print_number(current->p->stack);
+   //print_message("Cambiando a: ",0xFF);
+   //print_number(current->p->stack);
 }else{
    count++;
 }

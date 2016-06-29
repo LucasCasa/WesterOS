@@ -6,13 +6,13 @@
 
 	#define RADIUS      4
 	#define MAX_PLAYERS 6
-	#define HOLE_SIZE   10
-	#define MAX_DRAW    90
+	#define HOLE_SIZE   25
+	#define MAX_DRAW    200
 	#define COLOR_POS   50
 	#define NUMBER_POS  180
 	#define RIGHT_POS   310
 	#define LEFT_POS    500
-	#define INIT_SPEED 	3
+	#define INIT_SPEED 	1
 
 	#define WIDTH 1024
 	#define HEIGHT 768
@@ -41,9 +41,13 @@
 		int id;
 		int alive;
 		Point pos;
+		Point prev_pos;
+		Point pp_pos;
 		Vector acum;
 		double speed;
 		int radius;
+		int prev_radius;
+		int pp_radius;
 		int angle;
 		int mod;
 		int time_with_inv;
@@ -75,7 +79,10 @@
 	int getRandIndex(int max);
 	int getAvailablePowerupIndex();
 	int getAvailableEffectIndex(Player*);
-	int square(int n);
+	double square(int n);
+
+	int checkPrev(int,int,Player*);
+	int checkPP(int,int,Player*);
 
 	void collide_powerup(PowerUp * pwup, Player * player);
 	void managePowerups();
