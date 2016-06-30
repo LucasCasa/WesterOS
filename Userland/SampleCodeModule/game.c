@@ -46,7 +46,7 @@ void game(){
 
 
   while(1){
-    while(pass < 2100000){
+    while(pass < 2000000){
       pass++;
     }
 
@@ -487,7 +487,7 @@ void collide_powerup(PowerUp * pwup, Player * player){
     print_number(n);
     pwup->initial_effect(player);
     player->effects[n].active = 1;
-    player->effects[n].time_left = 250; // MAGIC NUMBER CAMBIAR DESP
+    player->effects[n].time_left = PWUP_DURATION;
     player->effects[n].final_effect = pwup->final_effect;
   }
   pwup->active = 0;

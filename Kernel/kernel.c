@@ -107,7 +107,7 @@ int main()
 	Process* shell = create_process(start_shell);
 	add_new_process(shell);
 	//add_new_process(test);
-	add_new_process(s1);
+	//add_new_process(s1);
 	//add_new_process(s3);
 	kmain();
 

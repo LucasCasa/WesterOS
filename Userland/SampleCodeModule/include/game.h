@@ -23,6 +23,7 @@
 	#define MAX_POWERUP_TIME 100
 	#define POWERUP_RADIUS 15
 	#define MAX_ACTIVE_EFFECTS 10
+	#define PWUP_DURATION 1000
 	
 	struct Player;	
 

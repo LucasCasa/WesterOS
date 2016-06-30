@@ -47,7 +47,7 @@ int main(){
 	init_commands(11,"draw",draw_str,&draw);
 	init_commands(12,"game",game_str,&game);
 	init_commands(13,"ipcs",ipcs_str,&list_ipcs);
-	_call_int80(INT_SLEEP,100);
+	//_call_int80(INT_SLEEP,100);
 	while(1){
 		shell_command();
 	}
@@ -178,7 +178,7 @@ void draw(){
 		}
 		if(ch == 'x'){
 			_call_int80(INT_EXIT_DRAW_MODE);
-			_call_int80(INT_CLEAR);
+			_call_int80(INT_ERASE_SCR);
 			return;
 		}
 		accumx+= 2*_cos(angle);

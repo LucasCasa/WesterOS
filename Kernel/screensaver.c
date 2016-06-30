@@ -5,11 +5,13 @@ double RADIUS = 52;
 ScreenImage* image = (ScreenImage*) (0x710000);
 Point offset[10];
 PointD mod[10];
+int last_hit[14] = {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1};
 static int next = 0;
 int ttn = 1;
 int time_to_reset = 1000;
 
 void westeros();
+int sign(double);
 int getDistance2(Point p1, Point p2);
 void bounce(Point* p1, PointD* mod1,Point* p2, PointD* mod2);
 
@@ -30,7 +32,7 @@ void westeros(){
 		ttn = 1;
 		time_to_reset = 1000;
 		clear_screen();
-		print_number(image);
+		//print_number(image);
 	}
 	int r = 0,g = 0, b = 0;
 	uint8_t* st = (*(uint32_t*)0x5080);
@@ -55,14 +57,30 @@ void westeros(){
 	int totaloffset;
 	for(int i = 0; i<next; i++){
 		if(offset[i].y + image->height >= 768){
-			mod[i].y = -1*mod[i].y;
+			if(last_hit[i]!=10){
+				last_hit[i] = 10;
+				mod[i].y = -1*mod[i].y;
+				offset[i].y = 768-image->height;
+			}
 		}else if(offset[i].y <= 0){
-			mod[i].y = -1*mod[i].y;
+			if(last_hit[i]!=11){
+				last_hit[i] = 11;
+				mod[i].y = -1*mod[i].y;
+				offset[i].y = 0;
+			}
 		}
 		if(offset[i].x + image->width >= 1024){
-			mod[i].x = -1*mod[i].x;
+			if(last_hit[i]!=12){
+				last_hit[i] = 12;
+				mod[i].x = -1*mod[i].x;
+				offset[i].x = 1024-image->width;
+			}
 		}else if(offset[i].x <= 0){
-			mod[i].x = -1*mod[i].x;
+			if(last_hit[i]!=13){
+				last_hit[i] = 13;
+				mod[i].x = -1*mod[i].x;
+				offset[i].x = 0;
+			}
 		}
 		offset[i].x+= mod[i].x;
 		offset[i].y+= mod[i].y;
@@ -70,7 +88,11 @@ void westeros(){
 	for(int i = 0; i<next;i++){
 		for(int j = i+1; j<next;j++){
 			if(getDistance2(offset[i],offset[j]) < 4*(RADIUS)*(RADIUS)){
-				bounce(&(offset[i]),&(mod[i]),&(offset[j]),&(mod[j]));
+				if(last_hit[i] != j || last_hit[j] != i){
+					last_hit[i] = j;
+					last_hit[j] = i;
+					bounce(&(offset[i]),&(mod[i]),&(offset[j]),&(mod[j]));
+				}
 			}
 		}
 		totaloffset = offset[i].y*1024*3 + offset[i].x*3;
@@ -111,37 +133,19 @@ void bounce(Point* p1, PointD* mod1,Point* p2, PointD* mod2) {
         mod1->y += jy / MASS;
         mod2->x -= jx / MASS;
         mod2->y -= jy / MASS;
-				p1->x+=mod1->x;
-				p1->y+=mod1->y;
-				p2->x+=mod2->x;
-				p2->y+=mod2->y;
+
+        p1->x+=mod1->x;
+        p1->y+=mod1->y;
+		p2->x+=mod2->x;
+		p2->y+=mod2->y;
 }
 
-void alien(){
-	print_message("############.`::::::::::::::::::::::::::::::::::::::::::::::::'.#############\n",0xFF);
-	print_message("############# :::::'#######`::::::::::::::::::::'#######`::::: ##############\n",0xFF);
-	print_message("############# ::::'##.S$S.##`::::::::::::::::::'##.S$S.##`:::: ##############\n",0xFF);
-	print_message("############'.:::'##.$$$$$.##`::::::::::::::::'##.$$$$$.##`:::.`#############\n",0xFF);
-	print_message("############ :::'##.$$$$$$$.##`::::::::::::::'##.$$$$$$$.##`::: #############\n",0xFF);
-	print_message("############ :'##.$$$$$$$$$$$.##`::::::::::'##.$$$$$$$$$$$.##`: #############\n",0xFF);
-	print_message("############ :.##`$$$$$$$$$$$$.##`::::::::'##.$$$$$$$$$$$$'##.: #############\n",0xFF);
-	print_message("############ ::.##`$$$$$$$$$$$$.##`::::::'##.$$$$$$$$$$$$'##.:: #############\n",0xFF);
-	print_message("############ :::.##`$$$$$$$$$$$$.##`::::'##.$$$$$$$$$$$$'##.::: #############\n",0xFF);
-	print_message("############.`:::.##`$$$$$$$$$$$$.##`::'##.$$$$$$$$$$$$'##.:::'.#############\n",0xFF);
-	print_message("############# ::::.##`S$$$$$$$$$$S.##::##.S$$$$$$$$$$S'##.:::: ##############\n",0xFF);
-	print_message("############# :::::.#################::#################.::::: ##############\n",0xFF);
-	print_message("#############.`::::::::::::::::::::::::::::::::::::::::::::::'.##############\n",0xFF);
-	print_message("##############.`::::::::::::::::::::::::::::::::::::::::::::'.###############\n",0xFF);
-	print_message("###############.`::::::::::::::::::::::::::::::::::::::::::'.################\n",0xFF);
-	print_message("################.`::::::::::::::::::::::::::::::::::::::::'.#################\n",0xFF);
-	print_message("#################.`::::::::::::::::::::::::::::::::::::::'.##################\n",0xFF);
-	print_message("##################.`::::::::::::::::::::::::::::::::::::'.###################\n",0xFF);
-	print_message("###################.`::::::::::::::::::::::::::::::::::'.####################\n",0xFF);
-	print_message("####################.`::::::::::::::::::::::::::::::::'.#####################\n",0xFF);
-	print_message("#####################.`::::::::::::::::::::::::::::::'.######################\n",0xFF);
-	print_message("######################.`::::::::############::::::::'.#######################\n",0xFF);
-	print_message("#######################.`:::::::############:::::::'.########################\n",0xFF);
-	print_message("########################.`::::::::::::::::::::::::'.#########################\n",0xFF);
-	print_message("#########################.`:::::::::::::::::::::::'.#########################\n",0xFF);
-	print_message("##########################.`:::::::::::::::::::::'.##########################\n",0xFF);
+int sign(double x){
+	if(x==0)
+		return 0;
+	if(x<0)
+		return -1;
+	else
+		return 1;
 }
+
