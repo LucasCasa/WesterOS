@@ -11,11 +11,12 @@ extern uint8_t bss;
 extern uint8_t endOfKernelBinary;
 extern uint8_t endOfKernel;
 extern void _change_to_graphics();
+extern void _inactive_process();
 void* start_shell(void*);
 extern void set_interrupts();
 extern void _start_userland();
 void initialize_task();
-void soy1();
+void inactive_p();
 void soy2();
 void soy3();
 static const uint64_t PageSize = 0x1000;
@@ -100,15 +101,13 @@ int main()
 	Process* test = create_process(initialize_task);
 
 	process_waiting(test);
-	Process* s1 = create_process(soy1);
-	Process* s2 = create_process(soy2);
+	Process* s1 = create_process(inactive_p);
 	Process* s3 = create_process(soy3);
 
 	Process* shell = create_process(start_shell);
 	add_new_process(shell);
 	//add_new_process(test);
-	//add_new_process(s1);
-	//add_new_process(s2);
+	add_new_process(s1);
 	//add_new_process(s3);
 	kmain();
 
@@ -124,17 +123,12 @@ void* start_shell(void* a){
 	print_message("Termino la shell\n",0xFF);
 	return 0;
 }
-void soy1(){
-	int i = 0;
+void inactive_p(){
+	print_message("llamo a inactive\n",0xFF);
 	while(1){
-		i++;
-		if(i> 10000000){
-			print_message("  Soy 1!!!  \n",0xFF);
-			i = 0;
-
-		}
-	}
-
+	 __asm__( "hlt" );
+ 	}
+	print_message("salgo de inactive\n",0xFF);
 }
 void soy2(){
 	int i = 0;

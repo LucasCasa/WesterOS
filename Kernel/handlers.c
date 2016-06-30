@@ -2,7 +2,7 @@
 #include "include/handlers.h"
 #include "sounds.h"
 
-#define PIT_FREQ 	100
+
 
 extern void set_PIT(uint64_t);
 static int time = 0;
@@ -48,6 +48,7 @@ void timer_handler(){
 			time = 0;
 		}
 	}
+	check_sleeping();
 }
 
 void setPiano(){

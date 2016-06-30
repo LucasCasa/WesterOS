@@ -47,6 +47,7 @@ int main(){
 	init_commands(11,"draw",draw_str,&draw);
 	init_commands(12,"game",game_str,&game);
 	init_commands(13,"ipcs",ipcs_str,&list_ipcs);
+	_call_int80(INT_SLEEP,100);
 	while(1){
 		shell_command();
 	}

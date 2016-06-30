@@ -60,6 +60,8 @@
 #define END_PROCESS              70
 #define GET_ALL_PROCESS          71
 
+#define SLEEP                    80
+
 
 
 char read(char* buff, uint8_t size);

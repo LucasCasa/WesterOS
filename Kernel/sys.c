@@ -131,7 +131,9 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case UNSET_EVENT_KEYDOWN:
 			down = 0;
 		break;
-
+		case SLEEP:
+			add_new_sleep(get_current_process(),(int)arg1);
+		break;
 	}
 	return 0;
 }
@@ -141,8 +143,11 @@ char get_char_from_buffer(){
 		return aux;
 }
 char read_char(){
-	if(C_is_empty())
+	if(C_is_empty()){
+		//go to sleep
+		// reschedule
 		return 0;
+	}
 	char c = clean_get_char();
 	return c;
 }

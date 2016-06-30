@@ -44,6 +44,8 @@
 #define INT_SET_EVENT_KEYDOWN 53
 #define INT_UNSET_EVENT_KEYDOWN 54
 
+#define INT_SLEEP 80
+
 
 
 void * memset(void * destination, int32_t character, uint64_t length);

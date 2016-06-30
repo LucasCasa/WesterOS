@@ -27,7 +27,7 @@ void start_process(){
 }
 void schedule(){
     _cli();
-    if(count > 11000 || current->p->state == PROC_WAITING){
+    if(count > 110 || current->p->state == PROC_WAITING){
       count = 0;
 	do{
 		current = current->next;

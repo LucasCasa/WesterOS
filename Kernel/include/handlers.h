@@ -8,6 +8,7 @@
 
 #define MINSCRSAVERTIME 3600 //1 hour
 
+#define PIT_FREQ 	100 // 100 veces x segundo = 10ms
 
 void timer_handler();
 void keyboard_handler(uint8_t scancode);

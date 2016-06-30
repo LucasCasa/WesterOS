@@ -14,6 +14,7 @@ GLOBAL _int_end_sound
 GLOBAL _beep
 GLOBAL _song_note
 GLOBAL _start_userland
+GLOBAL _inactive_process
 
 GLOBAL haltcpu
 GLOBAL _call_int80
@@ -177,7 +178,9 @@ haltcpu:
 	hlt
 	ret
 
-
+_inactive_process:
+	hlt
+	ret
 
 _int_start_sound:
 
