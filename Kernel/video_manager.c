@@ -1,6 +1,6 @@
 #include "video_manager.h"
 #include "letter.h"
-static Image* font = (Image*)0x800000;
+static FontImage* font = (FontImage*)0x800000;
 extern draw_mode;
 void write_serial(char a);
 static uint8_t * video = (uint8_t*) 0xB8000;

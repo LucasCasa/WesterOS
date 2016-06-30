@@ -5,7 +5,8 @@ extern draw_mode;
 erasable_circle buffer[10];
 int next = 0;
 uint64_t st = 0xD000000;
-static Image* font = (Image*)0x800000;
+uint64_t dir = 0x28640 + 0x710000;
+static FontImage* font =sizeof(ScreenImage)*5 + 0x710000;
 
 static uint8_t* start = 0;
 
@@ -33,7 +34,7 @@ void setpixel(int x ,int y, Color* c){
 void draw_text(Point*p,char* text){
   int i = 0;
   while(text[i] != 0){
-    draw_letter(p->x + LETTER_WIDTH_GRAPHIC*i,p->y,text[i]);
+    draw_letter(p->x + (LETTER_WIDTH+5)*i,p->y,text[i]);
     i++;
   }
 }
@@ -47,13 +48,14 @@ void draw_letter(int x, int y, char c){
 	}else{
 	 startf = font->pixel_data + 21*(c - 32)*3;
 	}
-	for(int i = 0; i<LETTER_HEIGHT_GRAPHIC;i++){
-		for(int j = 0; j<LETTER_WIDTH_GRAPHIC*BPP;j++){
-			start[totaloffset + j] =startf[fontoffset + j + 2 ] ;
+	for(int i = 0; i<LETTER_HEIGHT;i++){
+      int k = 0;
+		for(int j = 0; k<LETTER_WIDTH;j++,k++){
+			start[totaloffset + j] =lettersf[c].pixel_data[k + i*LETTER_WIDTH] * 200;//startf[fontoffset + j + 2 ] ;
 			j++;
-			start[totaloffset + j] = startf[j + fontoffset];
+			start[totaloffset + j] =lettersf[c].pixel_data[k + i*LETTER_WIDTH] * 100;// startf[j + fontoffset];
 			j++;
-			start[totaloffset + j] = startf[j-2 + fontoffset];
+			start[totaloffset + j] =lettersf[c].pixel_data[k + i*LETTER_WIDTH] * 0;// startf[j-2 + fontoffset];
 		}
 		totaloffset += SCR_WIDTH*BPP;
 		fontoffset += font->width*BPP;

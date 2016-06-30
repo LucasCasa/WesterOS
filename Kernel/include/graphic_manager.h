@@ -3,6 +3,7 @@
 
 #include "typedef.h"
 #include "image.h"
+#include "letter.h"
 
 #define SCR_WIDTH    1024
 #define SCR_HEIGHT   768

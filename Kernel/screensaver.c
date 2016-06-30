@@ -2,7 +2,7 @@
 #define INTERVAL 50
 double MASS = 1;
 double RADIUS = 52;
-ScreenImage* image = (ScreenImage*) (0x850000);
+ScreenImage* image = (ScreenImage*) (0x710000);
 Point offset[10];
 PointD mod[10];
 static int next = 0;

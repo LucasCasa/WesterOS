@@ -2,7 +2,7 @@
 #include "call80.h"
 #include "colors.h"
 
-Image* imgs = 0x850000;
+Image* imgs = 0x710000;
 void modify_colors(){
 	print_message("Select Colors:\n",0xFF);
 	print_message("1- GREYJOY\n",0xFF);

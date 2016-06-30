@@ -22,8 +22,7 @@ static const uint64_t PageSize = 0x1000;
 void* kernel_stack;
 static void * const sampleCodeModuleAddress = (void*)0x600000;
 static void * const sampleDataModuleAddress = (void*)0x700000;
-static void * const ImageDataModuleAddress = (void*)0x800000;
-static void * const TarImageModuleAddress = (void*)0x850000;
+static void * const TarImageModuleAddress = (void*)0x710000;
 
 typedef int (*EntryPoint)();
 
@@ -58,8 +57,7 @@ void * initializeKernelBinary()
 	void * moduleAddresses[] = {
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress,
-		ImageDataModuleAddress,
-		TarImageModuleAddress
+		TarImageModuleAddress,
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
@@ -69,7 +67,7 @@ void * initializeKernelBinary()
 
 	ncPrint("[Initializing kernel's binary]");
 	ncNewline();
-
+	//while(1);
 	clearBSS(&bss, &endOfKernel - &bss);
 
 	ncPrint("  text: 0x");
