@@ -114,18 +114,14 @@ int main()
 	return 0;
 }
 void* start_shell(void* a){
-	print_message("Arranco la shell\n",0xFF);
 	((EntryPoint)sampleCodeModuleAddress)();
 	while(1);
-	print_message("Termino la shell\n",0xFF);
 	return 0;
 }
 void* inactive_p(void* s){
-	print_message("llamo a inactive\n",0xFF);
 	while(1){
 	 __asm__( "hlt" );
  	}
-	print_message("salgo de inactive\n",0xFF);
 }
 void* soy2(void* s){
 	int i = 0;

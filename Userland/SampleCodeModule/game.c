@@ -21,13 +21,13 @@ void* game(void*saaasdsdsd){
   _call_int80(INT_ENTER_DRAW_MODE);
   _call_int80(INT_CLEAR);
   fd_beep = _call_int80(INT_MKFIFO,"sound");
-  fd_song = _call_int80(INT_MKFIFO,"song");
+  //fd_song = _call_int80(INT_MKFIFO,"song");
   _call_int80(INT_NEW_PROCESS,"Sound",game_sound);
 
   //AMOUNT OF PLAYERS
   nplayers = lobby();
 
-  _call_int80(INT_NEW_PROCESS,"Song",game_song);
+  //_call_int80(INT_NEW_PROCESS,"Song",game_song);
 
   _call_int80(INT_CLEAR);
 
@@ -54,7 +54,7 @@ void* game(void*saaasdsdsd){
 
 
   while(1){
-    _call_int80(INT_SLEEP,8);
+    _call_int80(INT_SLEEP,20);
     //print_message("Hola\n",0xFF);
     // Decides when to create new powerups
     if(!starting)

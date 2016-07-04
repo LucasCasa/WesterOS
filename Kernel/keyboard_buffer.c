@@ -84,7 +84,6 @@ void load_user_buffer(){
 	while(keyboard_actual != keyboard_last){
 		clean_set_char(keyboard_get_key());
 	}
-	print_message("intento liberar el proceso\n",0xFF);
 	check_clear_buffer();
 }
 int get_dirty(char* b,int s){

@@ -5,9 +5,9 @@
 #include "sounds.h"
 
 
-Command commands[15];
+Command commands[14];
 char comm[20];
-int number_of_commands = 15;
+int number_of_commands = 14;
 char aux;
 char name[20] = {0};
 
@@ -26,7 +26,6 @@ extern double _cos(int angle);
 int main(){
 	memset(&bss, 0, &endOfBinary - &bss);
 	shell_erase_screen();
-	beep(0);
 	print_message("#   #                                ######  #### \n", 0xFF);
 	print_message("# # # #####  ###  ##### ##### #####  #    # #    #\n", 0xFF);
 	print_message("# # # #     #       #   #     #    # #    # #     \n", 0xFF);
@@ -37,8 +36,6 @@ int main(){
 
 	print_message("\nType help and hit enter to see available commands\n\n", 0xFF);
 
-	_call_int80(INT_GET_ALL_PROCESS);
-
 	init_commands(0,"clear", clear_str ,&shell_erase_screen);
 	init_commands(1,"time", time_str , &showRTC);
 	init_commands(2,"help" , help_str, &shell_show_commands);
@@ -48,16 +45,11 @@ int main(){
 	init_commands(6, "colors" ,modi_str, &modify_colors);
 	init_commands(7, "screen time", saver_str, &set_screensaver_time);
 	init_commands(8,"piano",piano_str,&piano);
-	init_commands(9,"songs",songs_str,&songs);
-	init_commands(10,"beep", beep_str,&beep);
-	init_commands(11,"draw",draw_str,&draw);
-	init_commands(12,"game",game_str,&game);
-	init_commands(13,"ipcs",ipcs_str,&list_ipcs);
-	init_commands(14,"ps",show_process_str,&show_process);
-	//_call_int80(INT_SLEEP,100);
-
-	//_call_int80(INT_NEW_PROCESS,"read",&reader);
-	//_call_int80(INT_NEW_PROCESS,"write",&writer);
+	init_commands(9,"beep", beep_str,&beep);
+	init_commands(10,"draw",draw_str,&draw);
+	init_commands(11,"game",game_str,&game);
+	init_commands(12,"ipcs",ipcs_str,&list_ipcs);
+	init_commands(13,"ps",show_process_str,&show_process);
 
 	while(1){
 		shell_command();

@@ -177,7 +177,7 @@ void* switch_kernel_to_user(uint64_t rsp){
      if(current->p->state != PROC_FINISHED && current->p->state != PROC_WAITING){
         current->p->state = PROC_RUNNING;
      }else{
-        print_message("Estoy scheduleando algo que no tendria\n",0xFF);
+        //print_message("Estoy scheduleando algo que no tendria\n",0xFF);
      }
 	    return current->p->stack;
   }
@@ -211,8 +211,6 @@ void check_key_blocked(){
 void check_clear_buffer(){
     for(int i = 0; i<MAX_PROC;i++){
       if(ckeypid[i] != 0 && get_process(ckeypid[i])->has_foreground == 1){
-        print_message("Libero el proceso: ",0xFF);
-        print_message(get_process(ckeypid[i])->name,0xFF);
         process_ready(get_process(ckeypid[i]));
         ckeypid[i] = 0;
       }

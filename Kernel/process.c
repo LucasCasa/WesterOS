@@ -71,13 +71,10 @@ void * to_stack_address(void * page) {
 void process_wrapper(entry proc) {
 	 proc(0);
 	 _cli();
-	 print_message("Proceso Terminado 1\n",0xFF);
     Process* p = get_current_process();
 	 process_finished(p);
     remove_process(p->pid);
-	 // while(1);
 	 _sti();
-	 //print_message("Proceso Terminado 2\n",0xFF);
     _reschedule();
 	 while(1);
 }
