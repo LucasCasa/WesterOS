@@ -15,6 +15,7 @@ int num_powerup, powerup_cont, powerup_next;
 
 Player p[MAX_PLAYERS];
 int fd_beep,fd_song;
+int game_end = 0;
 
 void* game(void*saaasdsdsd){
   _call_int80(INT_ENTER_DRAW_MODE);
@@ -149,6 +150,7 @@ void* game(void*saaasdsdsd){
     }
 
     if((nplayers>1 && total_alive <= 1) || (nplayers==1 && total_alive==0)){
+      game_end = 1;
       for(int i = 0; i<nplayers;i++){
         if(p[i].alive){
           exit_game();
@@ -520,16 +522,12 @@ void checkEffects(Player * player){
 
 void* game_sound(void* ss){
   int fd = 0;
-  int finished = 0;
   char* buff = malloc();
   while((fd = _call_int80(INT_OPENFIFO,"sound")) == 0);
-  while(!finished){
+  while(!game_end){
     int size = _call_int80(INT_READBLOQFIFO,fd,buff,4096);
     for(int i = 0; i<size;i++){
       buff[i] = 0;
-    }
-    if(!size){
-      finished = 1;
     }
     beep(0);
   }
@@ -547,7 +545,5 @@ void* game_keyboard(void* ss){
 }
 
 void* game_song(void * asdf){
-  Point point = {600,600};
   _call_int80(INT_SONGS, 2);
-  _call_int80(INT_DRAW_TEXT,&point,"return game_song");
 }

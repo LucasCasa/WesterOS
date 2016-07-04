@@ -59,11 +59,11 @@ int closefifo(int fd){
 	if(i<0)
 		return 0;
 	table[i].fd = 0;
-	free(table[current_pos].addr);
 	if(waiting[i]!=0){
 		process_ready(waiting[i]);
 		waiting[i] = 0;
 	}
+	free(table[current_pos].addr);
 	return 1;
 }
 

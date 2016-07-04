@@ -37,7 +37,7 @@ void read_song(uint64_t songNum){
 
 void play_song2(){
 	int size = 26, fd=0;
-	char buf[1];
+	char buf[2];
 	int end = 0;
 	int growing = 1, i=0;;
 	while((fd=openfifo("song")) == 0);
@@ -57,7 +57,7 @@ void play_song2(){
 		}else{
 			i--;
 		}
-		end = readfifo(fd,buf,1);
+		end = readfifo(fd,buf,2);
 	}
 	closefifo(fd);
 }

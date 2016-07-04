@@ -6,13 +6,13 @@
 
 	#define RADIUS      4
 	#define MAX_PLAYERS 6
-	#define HOLE_SIZE   25
+	#define HOLE_SIZE   8
 	#define MAX_DRAW    200
 	#define COLOR_POS   50
 	#define NUMBER_POS  180
 	#define RIGHT_POS   310
 	#define LEFT_POS    500
-	#define INIT_SPEED 	1
+	#define INIT_SPEED 	3
 
 	#define WIDTH 1024
 	#define HEIGHT 768
