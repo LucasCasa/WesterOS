@@ -56,8 +56,8 @@ int main(){
 	init_commands(14,"ps",show_process_str,&show_process);
 	//_call_int80(INT_SLEEP,100);
 
-	_call_int80(INT_NEW_PROCESS,"read",&reader);
-	_call_int80(INT_NEW_PROCESS,"write",&writer);
+	//_call_int80(INT_NEW_PROCESS,"read",&reader);
+	//_call_int80(INT_NEW_PROCESS,"write",&writer);
 
 	while(1){
 		shell_command();
