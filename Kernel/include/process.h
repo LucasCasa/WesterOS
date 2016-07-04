@@ -11,6 +11,8 @@
 #define PROC_READY      1
 #define PROC_WAITING    2
 #define PROC_RUNNING    3
+#define PROC_FINISHED 	4
+#define PROC_OUT_OF_SCHEDULER 5
 
 typedef struct stack_frame {
 	//Registers restore context
@@ -43,7 +45,6 @@ typedef struct stack_frame {
 
 typedef void*(*entry)(void*);
 
-
 typedef struct Process {
 	 char name[20];
 
@@ -56,4 +57,5 @@ typedef struct Process {
    entry entry_point;
 }Process;
 
+Process* create_process(char*,entry);
 #endif

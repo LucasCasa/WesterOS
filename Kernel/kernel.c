@@ -16,9 +16,9 @@ void* start_shell(void*);
 extern void set_interrupts();
 extern void _start_userland();
 void initialize_task();
-void inactive_p();
-void soy2();
-void soy3();
+void* inactive_p(void*);
+void* soy2(void* s);
+void* soy3(void *s);
 static const uint64_t PageSize = 0x1000;
 void* kernel_stack;
 static void * const sampleCodeModuleAddress = (void*)0x600000;
@@ -98,13 +98,13 @@ int main()
 	ncPrint("Scheduler");
 	put_char('a',0xFF);
 	put_char('b',0xFF);
-	Process* test = create_process(initialize_task);
+	Process* test = create_process("Snorlax",initialize_task);
 
-	process_waiting(test);
-	Process* s1 = create_process(inactive_p);
-	Process* s3 = create_process(soy3);
+	//process_waiting(test);
+	Process* s1 = create_process("Inactive P",inactive_p);
+	Process* s3 = create_process("Soy 3", soy3);
 
-	Process* shell = create_process(start_shell);
+	Process* shell = create_process("Shell",start_shell);
 	add_new_process(shell);
 	//add_new_process(test);
 	//add_new_process(s1);
@@ -123,14 +123,14 @@ void* start_shell(void* a){
 	print_message("Termino la shell\n",0xFF);
 	return 0;
 }
-void inactive_p(){
+void* inactive_p(void* s){
 	print_message("llamo a inactive\n",0xFF);
 	while(1){
 	 __asm__( "hlt" );
  	}
 	print_message("salgo de inactive\n",0xFF);
 }
-void soy2(){
+void* soy2(void* s){
 	int i = 0;
 	while(1){
 		i++;
@@ -141,7 +141,7 @@ void soy2(){
 		}
 	}
 }
-void soy3(){
+void* soy3(void* ss){
 	int i = 0;
 	while(1){
 		i++;

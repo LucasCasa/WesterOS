@@ -7,7 +7,7 @@
 
 void changeTime();
 
-void showRTC();
+void* showRTC(void*);
 
 int validate(int value,int maxValue, int minValue);
 int setDate(int parameters[6]);

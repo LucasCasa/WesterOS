@@ -15,6 +15,8 @@ GLOBAL _beep
 GLOBAL _song_note
 GLOBAL _start_userland
 GLOBAL _inactive_process
+GLOBAL _reschedule
+GLOBAL _reschedule_int
 
 GLOBAL haltcpu
 GLOBAL _call_int80
@@ -116,7 +118,6 @@ _int_timer_hand: ;Handler de INT 8 ( Timer tick)
 		pushState; Se salvan los registros
 		; save current process's RSP
 		mov rdi, rsp
-		mov rcx,rsp
 		; enter kernel context by setting current process's kernel-RSP
 		call switch_user_to_kernel
 		mov rsp, rax
@@ -128,11 +129,6 @@ _int_timer_hand: ;Handler de INT 8 ( Timer tick)
 		call 		timer_handler
 		; schedule, get new process's RSP and load it
 		call switch_kernel_to_user
-		;cmp rcx,rax
-		;je eqls
-		;mov rdi,rax
-		;call print_number
-eqls:
 		mov rsp, rax
 
 	; Send end of interrupt
@@ -165,6 +161,46 @@ _int_keyboard_hand:				; Handler de INT 9 ( Teclado )
 
     popState
     iretq
+
+_reschedule:
+	pushState
+  	mov rdi, rsp
+
+  	call switch_user_to_kernel
+
+  	mov rsp, rax
+
+  	call switch_kernel_to_user
+
+  	mov rsp, rax
+
+      popState
+      ret
+_reschedule_int:
+		pop QWORD[ret_addr] ;Direccion de retorno
+
+		mov QWORD[ss_addr], ss
+		push QWORD[ss_addr]
+
+		push rsp
+		pushf
+		mov QWORD[cs_addr], cs
+		push QWORD[cs_addr]
+		push QWORD[ret_addr]
+	pushState
+  	mov rdi, rsp
+
+  	call switch_user_to_kernel
+
+  	mov rsp, rax
+
+  	call switch_kernel_to_user
+
+  	mov rsp, rax
+
+   popState
+iretq
+
 
 _call_int80:
     push    rbp
@@ -259,3 +295,12 @@ _int_end_sound:
  	and al, -4
  	out 61h, al
  	ret
+
+	ret_addr:
+		resq 1
+cs_addr:
+		resq 1
+eip_add:
+		resq 1
+ss_addr:
+		resq 1

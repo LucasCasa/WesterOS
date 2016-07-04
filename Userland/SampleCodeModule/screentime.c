@@ -2,7 +2,7 @@
 #include "lib.h"
 #include "call80.h"
 
-void set_screensaver_time(){
+void* set_screensaver_time(void*s){
 	char value[10];
 	uint8_t c = 1;
 	int res = 0;
@@ -25,5 +25,5 @@ void set_screensaver_time(){
 			flush_buffer();
 	}while(!flag);
 
-	return;
+	return 0;
 }

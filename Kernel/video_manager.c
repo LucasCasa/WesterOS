@@ -274,6 +274,10 @@ void sys_write(char c,uint8_t mod){
 		case '\b':
 			sys_delete_char();
 			sys_delete_char_graphic();
+			break;
+		case '\t':
+			new_tab_graphic();
+			break;
 		case 0:
 			break;
 		default:
@@ -282,6 +286,11 @@ void sys_write(char c,uint8_t mod){
 		break;
 	}
 	check_end_of_screen(aux);
+}
+void new_tab_graphic(){
+	while(((get_char_xoffset()-2) % 13) != 0){
+		put_graphics(' ');
+	}
 }
 void put_char(char c,uint8_t mod){
 	*(currentVideo++) = c;

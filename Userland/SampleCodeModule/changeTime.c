@@ -8,23 +8,24 @@ void changeTime(){
 	int size = 6,i=0;
 	char aux[10];
 	//int year,month,day,hour,min,sec;
-	showRTC(); //Imprime el tiempo para que lo vea antes de preguntarle por cambiar
+	showRTC(0); //Imprime el tiempo para que lo vea antes de preguntarle por cambiar
 	while(i<size){
 		int value;
 		print_message(INPUT[i],0xFF);
 		readKeyboard(aux);
 		value=atoi(aux);
 		if(validate(value,MAX_VALUES[i],MIN_VALUES[i])){
-			if(i==2 && validateDay(value,parameters[i-1],parameters[i-2])==NO){	
+			if(i==2 && validateDay(value,parameters[i-1],parameters[i-2])==NO){
 					;
 			}else{
 					parameters[i]=value;
-					i++;				
+					i++;
 			}
 		}
 	}
 	callSetters(parameters);
-	showRTC();
+	void* showRTC(void*);
+	return 0;
 }
 
 void callSetters(unsigned int parameters[6]){
@@ -33,7 +34,7 @@ void callSetters(unsigned int parameters[6]){
 	}
 }
 
-//Valida que el numbero que halla escrito el usuario este entre el menor y mayor numero, si es un mes lo valido despues	
+//Valida que el numbero que halla escrito el usuario este entre el menor y mayor numero, si es un mes lo valido despues
 int validate(int value,int maxValue, int minValue){
 	if(value>maxValue || value<minValue)
 		return NO;

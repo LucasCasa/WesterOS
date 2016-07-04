@@ -20,7 +20,7 @@ void add_new_sleep(Process * p, int msec){
    }while(sleeping[next_slot].p != 0);
    sleeping[next_slot].p = p;
    sleeping[next_slot].msec = msec;
-   print_message("sleeping \n",0xFF);
+   //print_message("sleeping \n",0xFF);
    process_waiting(p);
 }
 
@@ -30,7 +30,8 @@ void check_sleeping(){
          sleeping[i].msec-= 1000 / PIT_FREQ;
          if(sleeping[i].msec <= 0){
             wake_up(sleeping[i].p);
-            print_message("waking \n",0xFF);
+            //push_to_top(sleeping[i].p->pid);
+            //print_message("waking \n",0xFF);
             sleeping[i].p = 0;
          }
       }

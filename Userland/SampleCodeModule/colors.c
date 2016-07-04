@@ -3,7 +3,7 @@
 #include "colors.h"
 
 Image* imgs = 0x710000;
-void modify_colors(){
+void* modify_colors(void*ssss){
 	print_message("Select Colors:\n",0xFF);
 	print_message("1- GREYJOY\n",0xFF);
 	print_message("2- TYRELL \n",0xFF); //TYRELL
@@ -111,4 +111,5 @@ void modify_colors(){
 			_call_int80(INT_SCREENSAVER,&imgs[4]);
 			break;
 	}
+	return 0;
 }

@@ -5,9 +5,9 @@
 #include "sounds.h"
 
 
-Command commands[14];
+Command commands[15];
 char comm[20];
-int number_of_commands = 14;
+int number_of_commands = 15;
 char aux;
 char name[20] = {0};
 
@@ -33,6 +33,8 @@ int main(){
 
 	print_message("\nType help and hit enter to see available commands\n\n", 0xFF);
 
+	_call_int80(INT_GET_ALL_PROCESS);
+
 	init_commands(0,"clear", clear_str ,&shell_erase_screen);
 	init_commands(1,"time", time_str , &showRTC);
 	init_commands(2,"help" , help_str, &shell_show_commands);
@@ -47,6 +49,7 @@ int main(){
 	init_commands(11,"draw",draw_str,&draw);
 	init_commands(12,"game",game_str,&game);
 	init_commands(13,"ipcs",ipcs_str,&list_ipcs);
+	init_commands(14,"process",show_process_str,&show_process);
 	//_call_int80(INT_SLEEP,100);
 	while(1){
 		shell_command();
@@ -70,7 +73,7 @@ void shell_command(){
 
 	for(int i = 0;i<number_of_commands;i++){
 		if(strcmp(comm,commands[i].name) == 0){
-			commands[i].function();
+			_call_int80(INT_NEW_PROCESS,commands[i].name,commands[i].function);
 			valid_command = 1;
 		}
 	}
@@ -79,9 +82,13 @@ void shell_command(){
 	}
 
 }
-
-void shell_show_commands(){
+void* show_process(void* s){
+	_call_int80(INT_GET_ALL_PROCESS);
+	return 0;
+}
+void* shell_show_commands(void* sss){
 	shell_erase_screen();
+
 	print_message(" _          _       \n", 0xFF);
 	print_message("| |        | |      \n", 0xFF);
 	print_message("| |__   ___| |_ __  \n", 0xFF);
@@ -104,7 +111,7 @@ void shell_erase_screen(){
 	_call_int80(INT_ERASE_SCR);
 }
 
-void showRTC(){
+void* showRTC(void* sss){
 	unsigned char seg = _call_int80(INT_RTC_READ,0);
 	unsigned char min = _call_int80(INT_RTC_READ,1);
 	unsigned char hora = _call_int80(INT_RTC_READ,2);
@@ -115,7 +122,7 @@ void showRTC(){
 	printf("Time: %d:%d:%d \n", 0xFF,hora,min,seg);
 }
 
-void whoami(){
+void* whoami(void* sss){
 	if(name[0] == 0){
 		unsigned char c = 0,i = 0;
 		print_message("No se... Quien sos?\n",0xFF);
@@ -126,13 +133,13 @@ void whoami(){
 			flush_buffer();
 	}else{
 		if(isMuffin(name))
-			muffin();
+			muffin(0);
 		else
 			printf("%s \n",0xFF,name);
 	}
 }
 
-void draw(){
+void* draw(void* sss){
 	_call_int80(INT_ENTER_DRAW_MODE);
 	_call_int80(INT_CLEAR);
 	Point aux;
@@ -202,7 +209,7 @@ void list_ipcs(){
 	_call_int80(SHOWIPCS);
 }
 
-void muffin(){
+void* muffin(void* sss){
 	print_message("   .-\"`\"`\"`\"-.   \n", 0xFF);
     print_message("  /.\'\'\'`.\'`.\'`\\  \n", 0xFF);
     print_message(" /`.\'`.`\'.`\'`.\'\\ \n", 0xFF);

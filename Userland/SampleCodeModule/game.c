@@ -14,7 +14,7 @@ int num_powerup, powerup_cont, powerup_next;
 
 Player p[MAX_PLAYERS];
 
-void game(){
+void* game(void*saaasdsdsd){
   _call_int80(INT_ENTER_DRAW_MODE);
   _call_int80(INT_CLEAR);
 
@@ -46,10 +46,8 @@ void game(){
 
 
   while(1){
-    while(pass < 2000000){
-      pass++;
-    }
-
+    _call_int80(INT_SLEEP,8);
+    //print_message("Hola\n",0xFF);
     // Decides when to create new powerups
     if(!starting)
       managePowerups();
@@ -100,7 +98,7 @@ void game(){
         if(0){
           print_number(i+1);
           if(p[i].pos.x == p[i].prev_pos.x){
-            
+
             print_message(" Igual X ",0xFF);
           }else{
             print_message(" DiffX: ",0xFF);
@@ -117,7 +115,7 @@ void game(){
           }
           print_message("\n",0xFF);
         }
-        
+
         if(p[i].time_no_inv < p[i].time_with_inv){
           _call_int80(INT_DRAW_CIRCLE,&(p[i].pos),p[i].radius,&c[i]);
           p[i].alive = draw_into_board(i+1,&(p[i]));
@@ -147,12 +145,12 @@ void game(){
           print_message("Player ",0xFF);
           print_number(i+1);
           print_message(" has won!\n",0xFF);
-          return;
+          return 0;
         }
       }
       exit_game();
       print_message("Tie\n",0xFF);
-      return;
+      return 0;
     }
     pass = 0;
     if(starting == 40){
@@ -164,6 +162,7 @@ void game(){
   _call_int80(INT_UNSET_EVENT_KEYUP);
   _call_int80(INT_UNSET_EVENT_KEYDOWN);
   //MALLOC DE UN TABLERO??
+  return 0;
 }
 
 int lobby(){

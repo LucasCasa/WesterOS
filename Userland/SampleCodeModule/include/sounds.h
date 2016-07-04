@@ -6,8 +6,8 @@
 
 
 
-void beep();
-void songs();
-void piano();
+void* beep(void*);
+void* songs(void*);
+void* piano(void*);
 
 #endif

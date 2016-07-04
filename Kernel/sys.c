@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include "sys.h"
-
+#include "process.h"
 //syscall 1 ---> escribo en pantalla
 //syscall 2 ---> borro caracter
 //syscall 3 ---> devuelvo el ultimo caracter
@@ -131,8 +131,20 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case UNSET_EVENT_KEYDOWN:
 			down = 0;
 		break;
+		case NEW_PROCESS:
+			return add_new_process(create_process((char*) arg1,(entry) arg2));
+		break;
+		case END_PROCESS:
+			remove_process(arg1);
+		break;
+		case GET_ALL_PROCESS:
+			print_all_process();
+		break;
 		case SLEEP:
 			add_new_sleep(get_current_process(),(int)arg1);
+			//_reschedule_int();
+				//print_message("HHH",0xFF);
+			//while(1);
 		break;
 	}
 	return 0;

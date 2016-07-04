@@ -44,7 +44,13 @@
 #define INT_SET_EVENT_KEYDOWN 53
 #define INT_UNSET_EVENT_KEYDOWN 54
 
+#define INT_NEW_PROCESS              69
+#define INT_END_PROCESS              70
+#define INT_GET_ALL_PROCESS          71
+
+
 #define INT_SLEEP 80
+
 
 
 
