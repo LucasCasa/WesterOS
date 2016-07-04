@@ -19,6 +19,10 @@ extern uint8_t text;
 extern uint8_t rodata;
 extern double _sin(int angle);
 extern double _cos(int angle);
+
+//void* reader(void* algo);
+//void* writer(void* algo);
+
 int main(){
 	memset(&bss, 0, &endOfBinary - &bss);
 	shell_erase_screen();
@@ -51,6 +55,10 @@ int main(){
 	init_commands(13,"ipcs",ipcs_str,&list_ipcs);
 	init_commands(14,"ps",show_process_str,&show_process);
 	//_call_int80(INT_SLEEP,100);
+
+	//_call_int80(INT_NEW_PROCESS,"read",&reader);
+	//_call_int80(INT_NEW_PROCESS,"write",&writer);
+
 	while(1){
 		shell_command();
 	}
@@ -231,6 +239,30 @@ int isMuffin(char * name){
 	}
 	return m[i]==name[i];
 }
+
+
+//PARA TESTEAR READ BLOQUEANTE
+/*void* reader(void* algo){
+	print_message("En el process que lee\n",0xFF);
+	char * buff = _call_int80(INT_MALLOC,1);
+	for(int i=0; i<128; i++){
+		buff[i] = 0;
+	}
+	int fd = _call_int80(INT_MKFIFO,"test");
+	_call_int80(INT_READFIFOBLOQ,fd,buff,128);
+	print_message("lei: ",0xFF);
+	print_message(buff,0xFF);
+	print_message("\n",0xFF);
+}
+
+void* writer(void* algo){
+	print_message("En el process que escribe\n",0xFF);
+	int fd;
+	char * buf = "HOLA QUE TAL AMIGO";
+	while((fd=_call_int80(INT_OPENFIFO,"test"))==0);
+	_call_int80(INT_SLEEP,10000);
+	_call_int80(INT_WRITEFIFO,fd,buf,19);
+}*/
 
 /*void testipc(){
 	char buf[6];

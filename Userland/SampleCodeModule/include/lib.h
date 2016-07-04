@@ -25,7 +25,11 @@
 #define INT_CLOSEFIFO 22
 #define INT_WRITEFIFO 23
 #define INT_READFIFO 24
+<<<<<<< HEAD
 #define INT_READBLOQFIFO 25
+=======
+#define INT_READFIFOBLOQ 25
+>>>>>>> 56437a789ab6c95d36b1beadab797b5016aadb10
 #define INT_SHOWIPCS 26
 
 /* --- GRAPHIC SYS CALLS --- */
