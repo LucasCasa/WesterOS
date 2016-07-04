@@ -19,12 +19,13 @@
 
 /* --- IPC CALLS --- */
 
-#define MKFIFO 20
-#define OPENFIFO 21
-#define CLOSEFIFO 22
-#define WRITEFIFO 23
-#define READFIFO 24
-#define SHOWIPCS 25
+#define INT_MKFIFO 20
+#define INT_OPENFIFO 21
+#define INT_CLOSEFIFO 22
+#define INT_WRITEFIFO 23
+#define INT_READFIFO 24
+#define INT_READFIFOBLOQ 25
+#define INT_SHOWIPCS 26
 
 /* --- GRAPHIC SYS CALLS --- */
 #define INT_SCREENSAVER   40

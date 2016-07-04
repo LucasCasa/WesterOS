@@ -116,6 +116,9 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case READFIFO:
 			return readfifo(arg1,(void*)arg2,arg3);
 		break;
+		case READFIFOBLOQ:
+			return readBloq(arg1,(void*)arg2,arg3);
+		break;
 		case SHOWIPCS:
 			list_ipc();
 		break;

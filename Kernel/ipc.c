@@ -3,12 +3,17 @@
 FIFO_table table;
 int current_pos;
 
+Process* waiting[TABLE_SIZE];
+
 void list_entry(int index);
 
 int initIPC(){
 	current_pos = 0;
 	for(int i=0; i<TABLE_SIZE; i++){
 		table[i].fd = 0;
+	}
+	for(int i=0; i<MAX_PROC; i++){
+		waiting[i] = 0;
 	}
 	return 1;
 }
@@ -57,18 +62,35 @@ int closefifo(int fd){
 }
 
 
-int writefifo(int fd, void * msg, int size){ // ret -1 on error (fifo not exists (?))
+int writefifo(int fd, void * msg, int size){ // ret 0 on error (fifo not exists (?))
 	int i = entryIndex(fd);
 	if(i<0 || size>BLOCK_SIZE)
 		return 0;
 	memcpy(table[i].addr, msg, size);
+	if(waiting[i] != 0){
+		process_ready(waiting[i]);
+		waiting[i] = 0;
+	}
 	return 1;
 }
 
 int readfifo(int fd, void * buf, int size){ // returns message length; size is the buf size (max read amount)
+	int i = entryIndex(fd);
+	if(table[i].addr[0] == 0){
+		return 0;
+	}else{
+		return readBloq(fd,buf,size);
+	}
+}
+
+int readBloq(int fd, void * buf, int size){
 	int i = entryIndex(fd),j;
 	if(i<0)
 		return 0;
+	if(table[i].addr[0] == 0){
+		waiting[i] = get_current_process();
+		process_waiting(get_current_process());
+	}
 	for(j=0; j<size-1 && table[i].addr[j]!=0; j++){
 		((char*)buf)[j] = table[i].addr[j];
 		table[i].addr[j] = 0;

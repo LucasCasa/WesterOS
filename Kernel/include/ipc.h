@@ -1,5 +1,7 @@
 #include "sys_lib.h"
 #include "allocator.h"
+#include "process.h"
+#include "scheduler.h"
 
 #define NAME_SIZE 32
 #define TABLE_SIZE 32
@@ -19,6 +21,7 @@ int openfifo(char * name); // returns fd
 int closefifo(int fd); // -1 error
 int writefifo(int fd, void * msg, int size); // ret -1 on error (fifo not exists (?))
 int readfifo(int fd, void * buf, int size); // returns message length; size is the buf size (max read amount)
+int readBloq(int fd, void * buf, int size);
 
 void copyName(char * dest, char * origin, int max_size);
 int validateName(char * name);
