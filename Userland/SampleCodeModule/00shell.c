@@ -26,7 +26,7 @@ extern double _cos(int angle);
 int main(){
 	memset(&bss, 0, &endOfBinary - &bss);
 	shell_erase_screen();
-
+	beep(0);
 	print_message("#   #                                ######  #### \n", 0xFF);
 	print_message("# # # #####  ###  ##### ##### #####  #    # #    #\n", 0xFF);
 	print_message("# # # #     #       #   #     #    # #    # #     \n", 0xFF);

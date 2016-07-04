@@ -35,13 +35,6 @@ int kmain(){
 	initIPC();
 	init_PIT(1193182 / 100);
 	srand(RTCparameters(0));
-
-
-
-	put_char('b',0xFF);
-
-
-	put_char('z',0xFF);
 	return 0;
 }
 

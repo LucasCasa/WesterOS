@@ -4,10 +4,13 @@ ProcessHolder phs[MAX_PROC];
 uint8_t keypid[MAX_PROC]; // dirty_keyboard
 uint8_t ckeypid[MAX_PROC]; // clean_keyboard
 ProcessHolder* current = 0;
+ProcessHolder* ina = 0;
 int count = 0;
+int p_inactive = 0;
 ProcessHolder* last;
 extern void** stacks;
 uint8_t get_next_block_slot(uint8_t* buf);
+void set_foreground_process(uint8_t pid);
 void init_scheduler(){
 
    uint64_t stack_end = STACK_END;
@@ -21,23 +24,21 @@ void init_scheduler(){
 void yield(){
 
 }
-
-void* next_process(){
-
-
-}
-void start_process(){
-
-}
 void schedule(){
     _cli();
-    if(count > 1 || current->p->state == PROC_WAITING || current->p->state == PROC_FINISHED ){
+    if(count > 1 || current->p->state == PROC_WAITING || current->p->state == PROC_FINISHED || p_inactive){
       count = 0;
+      ProcessHolder* aux = current;
+      p_inactive = 0;
+      int i = 0;
 	do{
 		current = current->next;
-   }while(current->p->state == PROC_WAITING || current->p->state == PROC_FINISHED);
-   //print_message(current->p->name,0xFF);
-   //      while(1);
+    if(aux == current && ina != 0 && current->p->state == PROC_WAITING){
+      p_inactive = 1;
+    }else{
+      p_inactive = 0;
+    }
+  }while((current->p->state == PROC_WAITING || current->p->state == PROC_FINISHED) && !p_inactive);
 }else{
    count++;
 }
@@ -56,24 +57,42 @@ int add_new_process(Process* p){
   }
   process_ready(p);
   _sti();
+  if(strcmp(p->name,"Snorlax")){
+    set_foreground_process(p->pid);
+  }
   return p->pid;
 }
-
+void add_inactive(Process * p){
+    _cli();
+    ProcessHolder* ph = &phs[p->pid];
+    ph->p = p;
+    ph->next = current;
+    process_ready(p);
+    ina = ph;
+    return;
+}
 void remove_process(uint8_t pid){
-      int removed = 1;
+      int removed = 0;
       ProcessHolder* aux;
+      ProcessHolder* aux2;
       aux = current;
       if(current->next == current){
          current = 0;
       }
+      if(current->p->pid == pid){
+        current = current->next;
+      }
       while(!removed){
          if(aux->next->p->pid == pid){
-            aux->next = aux->next->next;
-            removed = 0;
+           set_foreground_process(aux->next->p->ppid);
+            aux2 = aux->next;
+            aux->next = aux2->next;
+            removed = 1;
          }else{
             aux = aux->next;
          }
       }
+
 }
 
 void push_to_top(uint8_t pid){
@@ -98,6 +117,22 @@ void push_to_top(uint8_t pid){
 void* get_all_process(){
 
 }
+void set_foreground_process(uint8_t pid){
+  if(current->p->pid == pid){
+    current->p->has_foreground = 1;
+  }else{
+    current->p->has_foreground = 0;
+  }
+  ProcessHolder* aux = current->next;
+  while(aux->p->pid != current->p->pid){
+    if(aux->p->pid == pid){
+      aux->p->has_foreground = 1;
+    }else{
+      aux->p->has_foreground = 0;
+    }
+    aux = aux->next;
+  }
+}
 
 Process* get_current_process(){
 	return current->p;
@@ -106,23 +141,46 @@ Process* get_current_process(){
 void* get_entry_point(){
    return current->p->entry_point;
 }
+Process* get_process(uint8_t pid){
+  if(current->p->pid == pid){
+    return current->p;
+  }
+  ProcessHolder* aux = current->next;
+  while(aux->p->pid != pid){
+    if(aux == current){
+      return 0; //ERROR;
+    }
+    aux = aux->next;
+  }
+  return aux->p;
+}
 void* switch_user_to_kernel(uint64_t rsp) {
    _cli();
-	current->p->stack = rsp;
-   if(current->p->state != PROC_FINISHED && current->p->state != PROC_WAITING)
-      current->p->state = PROC_READY;
-   _sti();
+   if(p_inactive){
+     ina->p->stack = rsp;
+    _sti();
+     return ina->p->kernel_stack;
+   }else{
+     current->p->stack = rsp;
+      if(current->p->state != PROC_FINISHED && current->p->state != PROC_WAITING)
+         current->p->state = PROC_READY;
+   }
+
 	return current->p->kernel_stack;
 }
 
 void* switch_kernel_to_user(uint64_t rsp){
 	schedule();
-   if(current->p->state != PROC_FINISHED && current->p->state != PROC_WAITING){
-      current->p->state = PROC_RUNNING;
+   if(p_inactive){
+      return ina->p->stack;
    }else{
-      print_message("Estoy scheduleando algo que no tendria\n",0xFF);
-   }
-	return current->p->stack;
+     if(current->p->state != PROC_FINISHED && current->p->state != PROC_WAITING){
+        current->p->state = PROC_RUNNING;
+     }else{
+        print_message("Estoy scheduleando algo que no tendria\n",0xFF);
+     }
+	    return current->p->stack;
+  }
 }
 
 void block_key(uint8_t pid){
@@ -130,18 +188,33 @@ void block_key(uint8_t pid){
   process_waiting();
 }
 void block_key_clean(uint8_t pid){
-
+  ckeypid[get_next_block_slot(ckeypid)] = pid;
+  process_waiting(get_process(pid));
 }
 uint8_t get_next_block_slot(uint8_t* buf){
   int i = 0;
-  //while()
+  while(buf[i] != 0){
+    i++;
+  }
+  return i;
 }
 void check_key_blocked(){
   if(!keyboard_is_empty()){
     for(int i = 0; i<MAX_PROC;i++){
       if(keypid[i] != 0){
-        process_ready(keypid[i]);
+        process_ready(get_process(keypid[i]));
+        keypid[i] = 0;
       }
     }
   }
+}
+void check_clear_buffer(){
+    for(int i = 0; i<MAX_PROC;i++){
+      if(ckeypid[i] != 0 && get_process(ckeypid[i])->has_foreground == 1){
+        print_message("Libero el proceso: ",0xFF);
+        print_message(get_process(ckeypid[i])->name,0xFF);
+        process_ready(get_process(ckeypid[i]));
+        ckeypid[i] = 0;
+      }
+    }
 }

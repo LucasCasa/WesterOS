@@ -52,10 +52,15 @@ typedef struct Process {
  	 void* kernel_stack;
 
    uint8_t pid;
+	 uint8_t ppid;
    uint8_t state;
+
+	 int has_foreground;
+	 char* screen;
 
    entry entry_point;
 }Process;
 
-Process* create_process(char*,entry);
+Process* create_process(char*,entry,int);
+Process* get_current_process();
 #endif

@@ -138,7 +138,7 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 			down = 0;
 		break;
 		case NEW_PROCESS:
-			return add_new_process(create_process((char*) arg1,(entry) arg2));
+			return add_new_process(create_process((char*) arg1,(entry) arg2,69));
 		break;
 		case END_PROCESS:
 			remove_process(arg1);
@@ -162,9 +162,8 @@ char get_char_from_buffer(){
 }
 char read_char(){
 	if(C_is_empty()){
-		//go to sleep
-		// reschedule
-		return 0;
+		block_key_clean(get_current_process()->pid);
+		//return 0;
 	}
 	char c = clean_get_char();
 	return c;
@@ -178,7 +177,7 @@ int get_dirty_string(char* buff,int size){
 char read(char* buff, uint8_t size){
 	int i;
 	if(C_is_empty())
-		return 0;
+		block_key_clean(get_current_process()->pid);
 
 
 	if(size == 0)

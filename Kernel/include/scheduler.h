@@ -15,6 +15,7 @@ void remove_process(uint8_t pid);
 void push_to_top(uint8_t pid);
 void* get_all_process();
 Process* get_current_process();
+void add_inactive(Process*);
 
 extern void* kernel_stack;
 

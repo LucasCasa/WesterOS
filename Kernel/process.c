@@ -33,10 +33,15 @@ void* fill_stack_frame(void * entry_point, void * user_stack) {
 
 	return frame;
 }
-Process* create_process(char*name,entry entry_point){
+Process* create_process(char*name,entry entry_point,int ppid){
 	//_cli();
 	Process* p = &processes[next_pid]; //ESTO CON UN MALLOC
 	p->pid = next_pid++;
+	if(ppid == 0){
+		p->ppid = 0;
+	}else{
+		p->ppid = get_current_process()->pid;
+	}
 	int i = 0;
 	while(name[i] != 0){
 		p->name[i] = name[i];
@@ -66,12 +71,13 @@ void * to_stack_address(void * page) {
 void process_wrapper(entry proc) {
 	 proc(0);
 	 _cli();
-	 print_message("Proceso Terminado \n",0xFF);
+	 print_message("Proceso Terminado 1\n",0xFF);
     Process* p = get_current_process();
 	 process_finished(p);
     remove_process(p->pid);
 	 // while(1);
 	 _sti();
+	 //print_message("Proceso Terminado 2\n",0xFF);
     _reschedule();
 	 while(1);
 }
@@ -95,7 +101,9 @@ void print_all_process(){
 	print_message("***************************************************\n\n",0xFF);
 	print_message("Process: ",0xFF);
 	print_message("\tPID: ");
-	print_message("\tState: \n",0xFF);
+	print_message("\tPPID: ");
+	print_message("\tState:",0xFF);
+	print_message("\tHas Foreground: \n",0xFF);
 	for(int i=0; i<next_pid; i++){
 		if(processes[i].state != PROC_FINISHED && processes[i].state != 0){
 			print_process(&processes[i]);
@@ -107,23 +115,29 @@ void print_process(Process *p){
 	print_message("\t",0xFF);
 	print_number(p->pid);
 	print_message("\t",0xFF);
+	print_number(p->ppid);
+	print_message("\t",0xFF);
 	switch (p->state) {
 		case PROC_RUNNING:
-			print_message("Running \n",0xFF);
+			print_message("Running ",0xFF);
 		break;
 		case PROC_READY:
-			print_message("Ready \n",0xFF);
+			print_message("Ready ",0xFF);
 		break;
 		case PROC_WAITING:
-			print_message("Waiting \n",0xFF);
+			print_message("Waiting ",0xFF);
 		break;
 		case PROC_OUT_OF_SCHEDULER:
-			print_message("Out of Scheduler \n",0xFF);
+			print_message("Out of Scheduler ",0xFF);
 			break;
 		default:
 			print_message("Unknown state; ",0xFF);
 			print_number(p->state);
-			print_message("\n",0xFF);
 		break;
+	}
+	if(p->has_foreground){
+		print_message("\tYes \n",0xFF);
+	}else{
+		print_message("\tNo \n",0xFF);
 	}
 }

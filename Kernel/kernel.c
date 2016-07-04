@@ -98,22 +98,19 @@ int main()
 	ncPrint("Scheduler");
 	put_char('a',0xFF);
 	put_char('b',0xFF);
-	Process* test = create_process("Snorlax",initialize_task);
-
-	//process_waiting(test);
-	Process* s1 = create_process("Inactive P",inactive_p);
-	Process* s3 = create_process("Soy 3", soy3);
-
-	Process* shell = create_process("Shell",start_shell);
+	Process* test = create_process("Snorlax",initialize_task,0);
+	Process* s1 = create_process("Inactive P",inactive_p,0);
+	Process* shell = create_process("Shell",start_shell,0);
+	add_inactive(s1);
 	add_new_process(shell);
-	//add_new_process(test);
-	//add_new_process(s1);
+	//shell->has_foreground = 1;
+	add_new_process(test);
+	//test->has_foreground = 0;
+	test->state = PROC_WAITING;
+
 	//add_new_process(s3);
 	kmain();
-
-	print_message("LLL",0xFF);
 	_start_userland();
-	ncPrint("Start");
 	return 0;
 }
 void* start_shell(void* a){
