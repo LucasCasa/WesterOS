@@ -26,6 +26,7 @@
 #define SONGS        11
 #define MALLOC       12
 #define FREE         13
+#define GET_DIRTY_STR 14
 
 /* --- IPC CALLS --- */
 
@@ -34,7 +35,8 @@
 #define CLOSEFIFO    22
 #define WRITEFIFO    23
 #define READFIFO     24
-#define SHOWIPCS	   25
+#define READFIFOBLOQ 25
+#define SHOWIPCS	 26
 
 /* --- GRAPHIC SYS CALLS --- */
 #define SET_SCREENSAVER          40

@@ -1,17 +1,21 @@
 #include "scheduler.h"
 
 ProcessHolder phs[MAX_PROC];
-
+uint8_t keypid[MAX_PROC]; // dirty_keyboard
+uint8_t ckeypid[MAX_PROC]; // clean_keyboard
 ProcessHolder* current = 0;
 int count = 0;
 ProcessHolder* last;
 extern void** stacks;
+uint8_t get_next_block_slot(uint8_t* buf);
 void init_scheduler(){
 
    uint64_t stack_end = STACK_END;
 
-   	for(int i = 0; i<MAX_PROC; i++)
-   		stacks[i] = (void*)(stack_end - STACK_SIZE*i);
+   	for(int i = 0; i<MAX_PROC; i++){
+      keypid[i] = 0;
+      ckeypid[i] = 0;
+    }
 
 }
 void yield(){
@@ -119,4 +123,25 @@ void* switch_kernel_to_user(uint64_t rsp){
       print_message("Estoy scheduleando algo que no tendria\n",0xFF);
    }
 	return current->p->stack;
+}
+
+void block_key(uint8_t pid){
+  keypid[get_next_block_slot(keypid)] = pid;
+  process_waiting();
+}
+void block_key_clean(uint8_t pid){
+
+}
+uint8_t get_next_block_slot(uint8_t* buf){
+  int i = 0;
+  //while()
+}
+void check_key_blocked(){
+  if(!keyboard_is_empty()){
+    for(int i = 0; i<MAX_PROC;i++){
+      if(keypid[i] != 0){
+        process_ready(keypid[i]);
+      }
+    }
+  }
 }

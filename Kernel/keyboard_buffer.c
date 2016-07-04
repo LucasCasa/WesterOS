@@ -85,3 +85,24 @@ void load_user_buffer(){
 		clean_set_char(keyboard_get_key());
 	}
 }
+int get_dirty(char* b,int s){
+
+	int i = 0;
+	if(keyboard_actual < keyboard_last){
+				while(i + keyboard_actual < keyboard_last && i < s){
+					b[i] = keyboard_buffer[keyboard_actual + i];
+					i++;
+				}
+				return i;
+	}else if(keyboard_last == keyboard_actual){
+		return 0;
+	}else{
+		int dist = KB_SIZE - keyboard_actual + keyboard_last;
+		while(i < dist && i < s){
+			b[i] = keyboard_buffer[(keyboard_actual + i) % KB_SIZE];
+			i++;
+		}
+		return i;
+	}
+
+}

@@ -206,7 +206,7 @@ void* draw(void* sss){
 }
 
 void list_ipcs(){
-	_call_int80(SHOWIPCS);
+	_call_int80(INT_SHOWIPCS);
 }
 
 void* muffin(void* sss){

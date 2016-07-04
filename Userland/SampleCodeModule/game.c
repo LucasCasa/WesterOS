@@ -1,7 +1,7 @@
 #include "game.h"
 
 char board[WIDTH*HEIGHT];
-
+void* game_sound(void*);
 int nplayers;
 Color c[] = {{255,0,0},{0,0,255},{0,255,0},{255,0,255},{255,255,0},{255,255,255}};
 char* controls[6][2] = {{"A","D"},{"J","L"},{"L Arrow","R Arrow"},{"Z","C"},{"I","P"},{"1","3"}};
@@ -13,11 +13,13 @@ PowerUp powerups[MAX_POWERUPS];
 int num_powerup, powerup_cont, powerup_next;
 
 Player p[MAX_PLAYERS];
+int fd;
 
 void* game(void*saaasdsdsd){
   _call_int80(INT_ENTER_DRAW_MODE);
   _call_int80(INT_CLEAR);
-
+  fd = _call_int80(INT_MKFIFO,"sound");
+  _call_int80(INT_NEW_PROCESS,"Sound",game_sound);
   //AMOUNT OF PLAYERS
   nplayers = lobby();
 
@@ -119,6 +121,9 @@ void* game(void*saaasdsdsd){
         if(p[i].time_no_inv < p[i].time_with_inv){
           _call_int80(INT_DRAW_CIRCLE,&(p[i].pos),p[i].radius,&c[i]);
           p[i].alive = draw_into_board(i+1,&(p[i]));
+          if(!p[i].alive){
+            _call_int80(INT_WRITEFIFO,fd,"A",1);
+          }
           if(p[i].erasable >= 0){
             _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,p[i].erasable);
             p[i].erasable = -1;
@@ -222,6 +227,7 @@ void exit_game(){
   _call_int80(INT_UNSET_EVENT_KEYDOWN);
   _call_int80(INT_EXIT_DRAW_MODE);
   _call_int80(INT_ERASE_SCR);
+  _call_int80(INT_CLOSEFIFO,fd);
 }
 void get_key_down(uint8_t key){
   switch(key){
@@ -303,6 +309,7 @@ void get_key_up(uint8_t key){
       break;
   }
 }
+
 char draw_into_board(uint32_t pn,Player * player){
   if(player->pos.x-player->radius < 0 || player->pos.x+player->radius > WIDTH){
     return 0;
@@ -502,5 +509,33 @@ void checkEffects(Player * player){
       }
       player->effects[i].time_left--;
     }
+  }
+}
+
+void* game_sound(void* ss){
+  int fd = 0;
+  int finished = 0;
+  char* buff = malloc();
+  while((fd = _call_int80(INT_OPENFIFO,"sound")) == 0);
+  while(!finished){
+    int size = _call_int80(INT_READBLOQFIFO,fd,buff,4096);
+    for(int i = 0; i<size;i++){
+      buff[i] = 0;
+    }
+    if(!size){
+      finished = 1;
+    }
+    beep(0);
+  }
+}
+
+void* game_keyboard(void* ss){
+  int fd = 0;
+  int finished = 0;
+  char* buff;
+  while((fd = _call_int80(INT_OPENFIFO,"keyboard")) == 0);
+  while(!finished){
+    _call_int80(INT_GET_STR,buff); // ESTE SI
+    _call_int80(INT_WRITEFIFO,fd,buff,strlen(buff));
   }
 }

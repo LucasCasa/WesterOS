@@ -16,15 +16,17 @@
 #define INT_SONGS 11
 #define INT_MALLOC 12
 #define INT_FREE 13
+#define INT_GET_DIRTY_STR 14
 
 /* --- IPC CALLS --- */
 
-#define MKFIFO 20
-#define OPENFIFO 21
-#define CLOSEFIFO 22
-#define WRITEFIFO 23
-#define READFIFO 24
-#define SHOWIPCS 25
+#define INT_MKFIFO 20
+#define INT_OPENFIFO 21
+#define INT_CLOSEFIFO 22
+#define INT_WRITEFIFO 23
+#define INT_READFIFO 24
+#define INT_READBLOQFIFO 25
+#define INT_SHOWIPCS 26
 
 /* --- GRAPHIC SYS CALLS --- */
 #define INT_SCREENSAVER   40

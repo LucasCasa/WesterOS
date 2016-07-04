@@ -87,4 +87,5 @@ void keyboard_handler(uint8_t scancode){
 		sleep_time = 0;
 		time = 0;
 	}
+	check_key_blocked();
 }

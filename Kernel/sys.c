@@ -41,6 +41,9 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 			c = read_char();
 			return c;
 			break;
+			case GET_DIRTY_STR:
+				return get_dirty_string(arg1,arg2);
+			break;
 		case RTC_READ:
 			return RTCparameters((char)arg1);
 			break;
@@ -116,6 +119,9 @@ uint64_t sys_manager(int order,uint64_t arg1, uint64_t arg2,uint64_t arg3){
 		case READFIFO:
 			return readfifo(arg1,(void*)arg2,arg3);
 		break;
+		case READFIFOBLOQ:
+ 			return readBloq(arg1,(void*)arg2,arg3);
+ 		break;
 		case SHOWIPCS:
 			list_ipc();
 		break;
@@ -162,6 +168,12 @@ char read_char(){
 	}
 	char c = clean_get_char();
 	return c;
+}
+int get_dirty_string(char* buff,int size){
+	if(keyboard_is_empty()){
+		block_key();
+	}
+	return get_dirty(buff,size);
 }
 char read(char* buff, uint8_t size){
 	int i;
