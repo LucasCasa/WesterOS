@@ -1,3 +1,5 @@
+#ifndef _IPC_H
+#define _IPC_H
 #include "sys_lib.h"
 #include "allocator.h"
 #include "process.h"
@@ -28,3 +30,5 @@ int validateName(char * name);
 int entryIndex(int fd);
 
 void list_ipc();
+
+#endif

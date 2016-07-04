@@ -2,6 +2,7 @@
 
 char board[WIDTH*HEIGHT];
 void* game_sound(void*);
+void* game_song(void *);
 int nplayers;
 Color c[] = {{255,0,0},{0,0,255},{0,255,0},{255,0,255},{255,255,0},{255,255,255}};
 char* controls[6][2] = {{"A","D"},{"J","L"},{"L Arrow","R Arrow"},{"Z","C"},{"I","P"},{"1","3"}};
@@ -13,15 +14,19 @@ PowerUp powerups[MAX_POWERUPS];
 int num_powerup, powerup_cont, powerup_next;
 
 Player p[MAX_PLAYERS];
-int fd;
+int fd_beep,fd_song;
 
 void* game(void*saaasdsdsd){
   _call_int80(INT_ENTER_DRAW_MODE);
   _call_int80(INT_CLEAR);
-  fd = _call_int80(INT_MKFIFO,"sound");
+  fd_beep = _call_int80(INT_MKFIFO,"sound");
+  fd_song = _call_int80(INT_MKFIFO,"song");
   _call_int80(INT_NEW_PROCESS,"Sound",game_sound);
+
   //AMOUNT OF PLAYERS
   nplayers = lobby();
+
+  _call_int80(INT_NEW_PROCESS,"Song",game_song);
 
   _call_int80(INT_CLEAR);
 
@@ -122,7 +127,7 @@ void* game(void*saaasdsdsd){
           _call_int80(INT_DRAW_CIRCLE,&(p[i].pos),p[i].radius,&c[i]);
           p[i].alive = draw_into_board(i+1,&(p[i]));
           if(!p[i].alive){
-            _call_int80(INT_WRITEFIFO,fd,"A",1);
+            _call_int80(INT_WRITEFIFO,fd_beep,"A",1);
           }
           if(p[i].erasable >= 0){
             _call_int80(INT_UNDRAW_ERASABLE_CIRCLE,p[i].erasable);
@@ -227,7 +232,8 @@ void exit_game(){
   _call_int80(INT_UNSET_EVENT_KEYDOWN);
   _call_int80(INT_EXIT_DRAW_MODE);
   _call_int80(INT_ERASE_SCR);
-  _call_int80(INT_CLOSEFIFO,fd);
+  _call_int80(INT_CLOSEFIFO,fd_beep);
+  _call_int80(INT_WRITEFIFO,fd_song,"a",1);
 }
 void get_key_down(uint8_t key){
   switch(key){
@@ -538,4 +544,10 @@ void* game_keyboard(void* ss){
     _call_int80(INT_GET_STR,buff); // ESTE SI
     _call_int80(INT_WRITEFIFO,fd,buff,strlen(buff));
   }
+}
+
+void* game_song(void * asdf){
+  Point point = {600,600};
+  _call_int80(INT_SONGS, 2);
+  _call_int80(INT_DRAW_TEXT,&point,"return game_song");
 }

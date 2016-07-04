@@ -354,7 +354,9 @@ void scroll_graphic(){
 		graphic_video[i] = 0;
 	}
 	while( j < 1024*768*3){
-		graphic_video[++j] = 0;
+		graphic_video[++j] = background_color.b;
+		graphic_video[++j] = background_color.g;
+		graphic_video[++j] = background_color.r;
 	}
 }
 void scroll(){

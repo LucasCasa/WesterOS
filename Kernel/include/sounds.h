@@ -31,15 +31,30 @@
 
 #define BECAUSE (uint8_t*) 0x500003
 #define RICKROLL (uint8_t*) 0x50009D
+
+#define MAX_NOTES 100
  
  
 #include <stdint.h>
 #include "sys_lib.h"
 #include "video_manager.h"
+#include "sleep.h"
+#include "ipc.h"
+
+typedef struct Note{
+	int frec;
+	int duration; //milis
+}Note;
+
+typedef struct Song{
+	char name[20];
+	Note notes[MAX_NOTES];
+	int size;
+}Song;
 
 void read_song(uint64_t songNum);
 void playPiano(uint32_t frec);
-void play_song2(uint8_t song, uint32_t tempo);
+void play_song2();
 
 extern void outb(uint8_t, uint8_t);
 extern uint8_t inb(uint8_t);

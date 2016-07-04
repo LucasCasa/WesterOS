@@ -16,6 +16,10 @@ uint32_t notes[26] = {11492, 10847, 9121, 8609, 8126, 7670, 7239, 6833, 6449, 60
 					  5743, 5423, 5119, 4831, 4560, 4304, 4063, 3834, 3619, 3416,
 					  3224, 3043, 2873, 2711, 2559, 2416};
 
+void init_songs(){
+
+}
+
 void read_song(uint64_t songNum){
 	if(songNum == 1){
 		print_message("   ////\\     //||\\     //\\|\\      ///||\\\n",0xFF);
@@ -27,39 +31,35 @@ void read_song(uint64_t songNum){
 		play_song2(0,1200);
 	}
 	if(songNum == 2){
-		erase_screen();
-		reset_current_video();
-		print_message("\n\n ............................... .......,-~~'''''''~~--,,_\n",0xFF);
-		print_message(" ..................................,-~''-,:::::::::::::::::::''-,\n",0xFF);
-		print_message(" .............................,~''::::::::',::::::: :::::::::::::|',\n",0xFF);
-		print_message(" .............................|::::::,-~'''___''''~~--~''':}\n",0xFF);
-		print_message(" .............................'|:::::|: : : : : : : : : : : : : : :|\n",0xFF);
-		print_message(" .............................|:::::|: : :-~~---: : : -----: |\n",0xFF);
-		print_message(" ...NEVER GONNA GIVE U UP....(_''~-': : : :o: : :|: :o: : : :|\n",0xFF);
-		print_message(" ............................'''~-,|: : : : : : ~---': : : :,'--\n",0xFF);
-		print_message(" .................................|,: : : : : :-~~--: : ::/ ----- \n",0xFF);
-		print_message(" ............................,-''\':\\: :'~,,_: : : : : _,-'\n",0xFF);
-		print_message(" ......................__,-';;;;;\\:''-,: : : :'~---~''/|\n",0xFF);
-		print_message(" .............__,-~'';;;;;;/;;;;;;;\\: :\\: : :____/: :',__\n",0xFF);
-		print_message(" .,-~~~''''_;;;;;;;;;;;;;;;;;;;;;;;;;',. .''-,:|:::::::|. . |;;;;''-,__\n",0xFF);
-
-		play_song2(1,400);
-		
-		erase_screen();
-		reset_current_video();
+		play_song2();
 	}
 }
 
-void play_song2(uint8_t song, uint32_t tempo){
-		int i = 0;
-		while(songsDirections[song][i] != '0'){
-			uint32_t notePos = songsDirections[song][i] - 'A';
-			uint32_t note = notes[notePos];
-			uint8_t len = songsDirections[song][i+1] - '0';
-			uint32_t aux = tempo * len;
-			_song_note(note, aux);
-			i+=2;
+void play_song2(){
+	int size = 26, fd=0;
+	char buf[1];
+	int end = 0;
+	int growing = 1, i=0;;
+	while((fd=openfifo("song")) == 0);
+	while(!end){
+		if(i==-1){
+			i=0;
+			growing = 1;
+		}else if(i==size){
+			i=size-1;
+			growing = 0;
 		}
+		_int_start_sound(notes[i]);
+		add_new_sleep(get_current_process(), 100);
+		_int_end_sound();
+		if(growing){
+			i++;
+		}else{
+			i--;
+		}
+		end = readfifo(fd,buf,1);
+	}
+	closefifo(fd);
 }
 
  
